@@ -158,13 +158,16 @@ app.get([
   res.sendFile(path.join(__dirname, "cooler.html"));
 });
 
-// Card Visual Styler / Editor Route
+// Card Visual Styler / Editor Route (standalone or /:card/editor e.g. /cooler/editor)
 app.get([
   "/editor",
   "/editor.html",
   "/styler",
   "/styler.html",
-  "/widgets/editor"
+  "/widgets/editor",
+  "/:card/editor",
+  "/:card/editor.html",
+  "/:card/styler"
 ], (req, res) => {
   res.sendFile(path.join(__dirname, "editor.html"));
 });

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Card Visual Styler & Theme Editor — Cement Plant</title>
+  <title>Cement Plant — Visual Card & Component Editor</title>
   <style>
     * {
       box-sizing: border-box;
@@ -11,19 +11,22 @@
       padding: 0;
     }
     :root {
-      --bg-dark: #0b0f19;
-      --panel-bg: #111827;
-      --card-bg: rgba(30, 41, 59, 0.7);
-      --border-color: rgba(255, 255, 255, 0.12);
+      --bg-dark: #080c16;
+      --panel-bg: #0f172a;
+      --card-surface: #1e293b;
+      --border-color: #334155;
+      --border-subtle: rgba(255, 255, 255, 0.1);
       --accent-blue: #3b82f6;
       --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-purple: #a855f7;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
     }
     body {
       background: var(--bg-dark);
       color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       height: 100vh;
       overflow: hidden;
       display: flex;
@@ -32,8 +35,8 @@
 
     /* Top Navigation Bar */
     header {
-      height: 60px;
-      background: #0f172a;
+      height: 62px;
+      background: #090e1a;
       border-bottom: 1px solid var(--border-color);
       display: flex;
       align-items: center;
@@ -41,7 +44,7 @@
       padding: 0 20px;
       gap: 16px;
       flex-shrink: 0;
-      z-index: 10;
+      z-index: 20;
     }
     .brand {
       display: flex;
@@ -52,27 +55,40 @@
       color: #60a5fa;
       letter-spacing: -0.01em;
     }
+    .brand-tag {
+      font-size: 11px;
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #93c5fd;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      font-weight: 700;
+    }
+
     .card-select-wrap {
       display: flex;
       align-items: center;
       gap: 10px;
+      background: rgba(30, 41, 59, 0.7);
+      padding: 4px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
     }
     .card-select-label {
       font-size: 13px;
-      color: var(--text-muted);
-      font-weight: 600;
+      color: #cbd5e1;
+      font-weight: 700;
     }
     select.card-dropdown {
-      background: #1e293b;
+      background: #0f172a;
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 7px 12px;
-      border-radius: 8px;
+      border: 1px solid #475569;
+      padding: 6px 12px;
+      border-radius: 7px;
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
       outline: none;
-      transition: border-color 0.2s;
     }
     select.card-dropdown:focus {
       border-color: var(--accent-blue);
@@ -99,7 +115,7 @@
     .btn-secondary {
       background: #1e293b;
       color: #cbd5e1;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid #475569;
     }
     .btn-secondary:hover {
       background: #334155;
@@ -108,7 +124,7 @@
     .btn-save {
       background: #10b981;
       color: #ffffff;
-      box-shadow: 0 0 14px rgba(16, 185, 129, 0.4);
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.45);
     }
     .btn-save:hover {
       background: #059669;
@@ -119,7 +135,7 @@
     .app-main {
       flex: 1;
       display: flex;
-      height: calc(100vh - 60px);
+      height: calc(100vh - 62px);
       overflow: hidden;
     }
 
@@ -128,33 +144,37 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      background: #060913;
+      background: #030712;
       border-right: 1px solid var(--border-color);
       position: relative;
     }
     .preview-toolbar {
-      height: 44px;
-      background: rgba(15, 23, 42, 0.85);
+      height: 48px;
+      background: #0c1222;
       border-bottom: 1px solid var(--border-color);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px;
-      font-size: 12px;
-      color: var(--text-muted);
+      padding: 0 18px;
+      font-size: 13px;
     }
     .toolbar-group {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+    }
+    .toolbar-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
     }
     .bg-toggle-btn {
       background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid var(--border-color);
       color: #cbd5e1;
-      padding: 4px 10px;
+      padding: 5px 12px;
       border-radius: 6px;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 600;
       cursor: pointer;
     }
@@ -163,14 +183,17 @@
       color: #ffffff;
       border-color: #60a5fa;
     }
-    .dim-tag {
+    .direct-url-pill {
       font-family: monospace;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 3px 8px;
-      border-radius: 4px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      background: #1e293b;
+      border: 1px solid #475569;
+      padding: 4px 10px;
+      border-radius: 6px;
       color: #38bdf8;
-      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .canvas-viewport {
@@ -185,221 +208,291 @@
       background-position: center;
     }
     .canvas-viewport.bg-camera {
-      background: linear-gradient(rgba(10, 15, 30, 0.75), rgba(10, 15, 30, 0.85)),
-                  radial-gradient(ellipse at 30% 40%, rgba(45, 55, 72, 0.8), rgba(15, 23, 42, 0.95)),
+      background: linear-gradient(rgba(10, 15, 30, 0.72), rgba(10, 15, 30, 0.85)),
+                  radial-gradient(ellipse at 30% 40%, #1e293b, #090e1a),
                   repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 20px);
+    }
+    .canvas-viewport.bg-grid {
+      background-color: #080c16;
+      background-image: linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+      background-size: 24px 24px;
     }
     .canvas-viewport.bg-dark {
       background: #020617;
-    }
-    .canvas-viewport.bg-grid {
-      background-color: #0b0f19;
-      background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-      background-size: 20px 20px;
     }
 
     .iframe-wrapper {
       position: relative;
       display: inline-flex;
-      border: 1px dashed rgba(59, 130, 246, 0.4);
-      border-radius: 12px;
-      padding: 10px;
-      background: rgba(0, 0, 0, 0.25);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      border: 1.5px dashed rgba(59, 130, 246, 0.45);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(15, 23, 42, 0.4);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
     }
     iframe#card-preview-frame {
       border: none;
       background: transparent;
       overflow: visible;
-      width: 380px;
-      height: 380px;
-      transition: width 0.15s ease, height 0.15s ease;
+      width: 420px;
+      height: 440px;
+      transition: width 0.15s ease;
     }
 
-    /* Right Panel: Controls Sidebar */
+    /* Right Panel: Controls Inspector */
     .controls-panel {
-      width: 440px;
+      width: 500px;
       background: var(--panel-bg);
       display: flex;
       flex-direction: column;
       flex-shrink: 0;
       border-left: 1px solid var(--border-color);
     }
-    .controls-header {
-      padding: 14px 18px;
-      background: #111827;
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .controls-title {
-      font-size: 15px;
-      font-weight: 800;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
 
-    /* Quick Preset Bar */
-    .presets-bar {
-      padding: 10px 18px;
-      background: rgba(15, 23, 42, 0.6);
-      border-bottom: 1px solid var(--border-color);
+    /* Tab Switcher Bar */
+    .tab-bar {
       display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      background: #090e1a;
+      border-bottom: 1px solid var(--border-color);
+      padding: 6px 12px 0 12px;
+      gap: 6px;
     }
-    .preset-label {
-      font-size: 11px;
+    .tab-btn {
+      flex: 1;
+      padding: 10px 12px;
+      font-size: 13px;
       font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .preset-pill {
-      font-size: 11px;
-      font-weight: 700;
-      background: rgba(255, 255, 255, 0.08);
-      color: #93c5fd;
-      border: 1px solid rgba(147, 197, 253, 0.2);
-      padding: 4px 9px;
-      border-radius: 6px;
+      color: #94a3b8;
+      background: transparent;
+      border: 1px solid transparent;
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
       cursor: pointer;
-      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
     }
-    .preset-pill:hover {
-      background: rgba(59, 130, 246, 0.25);
-      border-color: #60a5fa;
+    .tab-btn:hover {
       color: #ffffff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .tab-btn.active {
+      color: #ffffff;
+      background: var(--panel-bg);
+      border-color: var(--border-color);
+      box-shadow: 0 -2px 0 #3b82f6 inset;
     }
 
-    /* Accordion Scroll Area */
-    .controls-scroll {
+    /* Tab Content Area */
+    .tab-content {
       flex: 1;
       overflow-y: auto;
-      padding: 14px 18px;
+      padding: 18px 20px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 16px;
     }
-    .controls-scroll::-webkit-scrollbar {
+    .tab-content::-webkit-scrollbar {
       width: 6px;
     }
-    .controls-scroll::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.15);
+    .tab-content::-webkit-scrollbar-thumb {
+      background: #334155;
       border-radius: 3px;
     }
+    .tab-pane {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .tab-pane.active {
+      display: flex;
+    }
 
-    /* Component Section Block */
-    .section-card {
-      background: rgba(30, 41, 59, 0.5);
+    /* Component Group Card */
+    .group-card {
+      background: var(--card-surface);
       border: 1px solid var(--border-color);
       border-radius: 12px;
       overflow: hidden;
-      transition: border-color 0.2s;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     }
-    .section-card:hover {
-      border-color: rgba(255, 255, 255, 0.25);
-    }
-    .section-header {
-      padding: 10px 14px;
-      background: rgba(15, 23, 42, 0.5);
+    .group-header {
+      padding: 12px 16px;
+      background: #111e38;
+      border-bottom: 1px solid var(--border-color);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      cursor: pointer;
-      user-select: none;
     }
-    .section-title {
-      font-size: 13px;
+    .group-title {
+      font-size: 14px;
       font-weight: 800;
-      color: #e2e8f0;
+      color: #f1f5f9;
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .section-arrow {
+    .group-badge {
       font-size: 11px;
-      color: var(--text-muted);
-      transition: transform 0.2s;
+      font-weight: 700;
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #93c5fd;
+      padding: 2px 7px;
+      border-radius: 6px;
     }
-    .section-card.collapsed .section-arrow {
-      transform: rotate(-90deg);
-    }
-    .section-card.collapsed .section-body {
-      display: none;
-    }
-    .section-body {
-      padding: 12px 14px;
+    .group-body {
+      padding: 14px 16px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      gap: 14px;
     }
 
     /* Single Property Control Row */
     .prop-row {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 7px;
     }
-    .prop-info {
+    .prop-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
     .prop-label {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
-      color: #cbd5e1;
+      color: #e2e8f0;
     }
-    .prop-value-badge {
+    .prop-val-display {
       font-family: monospace;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 800;
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 2px 7px;
-      border-radius: 5px;
+      background: #090e1a;
+      border: 1px solid #475569;
+      padding: 3px 8px;
+      border-radius: 6px;
       color: #38bdf8;
     }
 
-    .slider-row {
+    .slider-control-wrap {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
-    .step-btn {
-      width: 26px;
-      height: 26px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+    .btn-step {
+      width: 32px;
+      height: 32px;
+      background: #0f172a;
+      border: 1px solid #475569;
       color: #ffffff;
-      border-radius: 6px;
+      border-radius: 7px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 16px;
       font-weight: 900;
-      transition: background 0.15s;
+      transition: all 0.15s ease;
+      user-select: none;
     }
-    .step-btn:hover {
-      background: rgba(59, 130, 246, 0.4);
+    .btn-step:hover {
+      background: var(--accent-blue);
       border-color: #60a5fa;
     }
     input[type="range"] {
       flex: 1;
       accent-color: #3b82f6;
       cursor: pointer;
-      height: 4px;
+      height: 6px;
     }
 
-    /* Toast Notification */
+    /* Text Inputs for Content editing */
+    .text-input-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .text-input-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #cbd5e1;
+    }
+    input.text-field {
+      background: #090e1a;
+      border: 1px solid #475569;
+      color: #ffffff;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input.text-field:focus {
+      border-color: var(--accent-blue);
+    }
+
+    /* Live Simulator Controls */
+    .sim-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: #090e1a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      gap: 12px;
+    }
+    .sim-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .sim-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+    .sim-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .sim-input-box {
+      width: 100px;
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: #38bdf8;
+      font-family: monospace;
+      font-size: 15px;
+      font-weight: 800;
+      padding: 6px 10px;
+      border-radius: 7px;
+      text-align: right;
+    }
+    .sim-toggle-btn {
+      padding: 6px 16px;
+      border-radius: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .sim-toggle-btn.active-on {
+      background: #16a34a;
+      border-color: #4ade80;
+    }
+    .sim-toggle-btn.active-off {
+      background: #dc2626;
+      border-color: #f87171;
+    }
+
+    /* Toast */
     #toast {
       position: fixed;
       bottom: 24px;
@@ -407,11 +500,11 @@
       transform: translateX(-50%) translateY(100px);
       background: #10b981;
       color: #ffffff;
-      padding: 10px 20px;
+      padding: 11px 24px;
       border-radius: 9999px;
-      font-size: 13px;
-      font-weight: 700;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      font-size: 14px;
+      font-weight: 800;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
       opacity: 0;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       z-index: 1000;
@@ -427,25 +520,33 @@
 </head>
 <body>
 
-  <!-- Top App Bar -->
+  <!-- Top Navigation Header -->
   <header>
     <div class="brand">
       <span>🎨</span>
       <span>Card Visual Styler</span>
+      <span class="brand-tag">v2.0</span>
     </div>
 
-    <!-- Card Selector -->
+    <!-- Card Selector Dropdown -->
     <div class="card-select-wrap">
-      <span class="card-select-label">Select Card:</span>
+      <span class="card-select-label">Active Card:</span>
       <select id="card-select" class="card-dropdown">
-        <option value="preheating">🗼 Preheating Tower</option>
-        <option value="kiln">🔥 Kiln (Cline) Zone</option>
-        <option value="cooler">❄️ Cooler Zone</option>
-        <option value="hopper">⚖️ Hopper Reading (Gypsum)</option>
+        <optgroup label="ESP-2 Glassmorphic Cards">
+          <option value="cooler">❄️ Cooler Zone (/cooler/editor)</option>
+          <option value="preheating">🗼 Preheating Tower (/preheating-tower/editor)</option>
+          <option value="kiln">🔥 Kiln (Cline) Zone (/kiln/editor)</option>
+        </optgroup>
+        <optgroup label="ESP-1 Materials (Load Cells)">
+          <option value="hopper_gypsum">⚖️ Gypsum Hopper Reading</option>
+          <option value="hopper_clay">⚖️ Clay Hopper Reading</option>
+          <option value="hopper_sand">⚖️ Sand Hopper Reading</option>
+          <option value="hopper_iron_ore">⚖️ Iron Ore Hopper Reading</option>
+        </optgroup>
       </select>
     </div>
 
-    <!-- Top Action Buttons -->
+    <!-- Actions -->
     <div class="top-actions">
       <button class="btn btn-secondary" id="btn-reset">↺ Reset</button>
       <button class="btn btn-secondary" id="btn-copy-css">📋 Copy CSS</button>
@@ -453,50 +554,215 @@
     </div>
   </header>
 
-  <!-- Main Body -->
+  <!-- Main View -->
   <div class="app-main">
-    
+
     <!-- Left: Preview Canvas -->
     <div class="preview-panel">
       <div class="preview-toolbar">
         <div class="toolbar-group">
-          <span>Background:</span>
+          <span class="toolbar-label">Backdrop:</span>
           <button class="bg-toggle-btn active" data-bg="camera">🎥 Camera Backdrop</button>
           <button class="bg-toggle-btn" data-bg="grid">⬛ Dark Grid</button>
           <button class="bg-toggle-btn" data-bg="dark">⚫ Solid Dark</button>
         </div>
         <div class="toolbar-group">
-          <span class="dim-tag" id="dim-indicator">Width: 310px</span>
+          <div class="direct-url-pill" id="direct-url-display">
+            <span>🔗 URL:</span>
+            <span id="direct-url-text">/cooler/editor</span>
+          </div>
         </div>
       </div>
 
       <div class="canvas-viewport bg-camera" id="canvas-viewport">
         <div class="iframe-wrapper">
-          <iframe id="card-preview-frame" src="/preheating-tower.html"></iframe>
+          <iframe id="card-preview-frame" src="/cooler.html"></iframe>
         </div>
       </div>
     </div>
 
-    <!-- Right: Controls Sidebar -->
+    <!-- Right: Controls Inspector -->
     <div class="controls-panel">
-      <div class="controls-header">
-        <div class="controls-title">
-          <span>🛠️</span>
-          <span id="active-card-name">Preheating Tower Controls</span>
+      
+      <!-- Tab Header Buttons -->
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="tab-sizes">📐 Sizes & Spacing</button>
+        <button class="tab-btn" data-tab="tab-texts">✏️ Texts & Labels</button>
+        <button class="tab-btn" data-tab="tab-simulator">🧪 Live Reading Simulator</button>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div class="tab-content">
+
+        <!-- TAB 1: SIZES & SPACING -->
+        <div class="tab-pane active" id="tab-sizes">
+          
+          <!-- Card Container -->
+          <div class="group-card">
+            <div class="group-header">
+              <span class="group-title">🗂️ Overall Card Dimensions</span>
+              <span class="group-badge">Container</span>
+            </div>
+            <div class="group-body">
+              <div class="prop-row" id="ctrl-cardWidth"></div>
+              <div class="prop-row" id="ctrl-cardPaddingY"></div>
+              <div class="prop-row" id="ctrl-cardPaddingX"></div>
+              <div class="prop-row" id="ctrl-cardRadius"></div>
+              <div class="prop-row" id="ctrl-cardGap"></div>
+            </div>
+          </div>
+
+          <!-- Card Header & Title -->
+          <div class="group-card">
+            <div class="group-header">
+              <span class="group-title">🏷️ Header & Title</span>
+              <span class="group-badge">Header</span>
+            </div>
+            <div class="group-body">
+              <div class="prop-row" id="ctrl-titleFontSize"></div>
+              <div class="prop-row" id="ctrl-iconFontSize"></div>
+              <div class="prop-row" id="ctrl-headerPaddingBottom"></div>
+            </div>
+          </div>
+
+          <!-- Sensor Boxes & Values -->
+          <div class="group-card">
+            <div class="group-header">
+              <span class="group-title">🌡️ Sensor Values & Labels</span>
+              <span class="group-badge">Sensors</span>
+            </div>
+            <div class="group-body">
+              <div class="prop-row" id="ctrl-sensorLabelFontSize"></div>
+              <div class="prop-row" id="ctrl-sensorValueFontSize"></div>
+              <div class="prop-row" id="ctrl-sensorUnitFontSize"></div>
+              <div class="prop-row" id="ctrl-sensorBoxPaddingY"></div>
+              <div class="prop-row" id="ctrl-sensorBoxPaddingX"></div>
+              <div class="prop-row" id="ctrl-sensorBoxRadius"></div>
+            </div>
+          </div>
+
+          <!-- Controls & Buttons -->
+          <div class="group-card" id="group-actuators">
+            <div class="group-header">
+              <span class="group-title">🕹️ Actuators & Buttons</span>
+              <span class="group-badge">Controls</span>
+            </div>
+            <div class="group-body">
+              <div class="prop-row" id="ctrl-controlNameFontSize"></div>
+              <div class="prop-row" id="ctrl-controlPaddingY"></div>
+              <div class="prop-row" id="ctrl-controlPaddingX"></div>
+              <div class="prop-row" id="ctrl-controlGap"></div>
+              <div class="prop-row" id="ctrl-controlRadius"></div>
+              <div class="prop-row" id="ctrl-btnFontSize"></div>
+              <div class="prop-row" id="ctrl-btnPaddingY"></div>
+              <div class="prop-row" id="ctrl-btnPaddingX"></div>
+              <div class="prop-row" id="ctrl-btnRadius"></div>
+            </div>
+          </div>
+
         </div>
-      </div>
 
-      <!-- Quick Presets -->
-      <div class="presets-bar">
-        <span class="preset-label">Presets:</span>
-        <button class="preset-pill" onclick="applyPreset('compact')">Compact (Default)</button>
-        <button class="preset-pill" onclick="applyPreset('large')">Large Font (TV Screen)</button>
-        <button class="preset-pill" onclick="applyPreset('tight')">Extra Compact</button>
-      </div>
+        <!-- TAB 2: TEXTS & LABELS -->
+        <div class="tab-pane" id="tab-texts">
+          
+          <div class="group-card">
+            <div class="group-header">
+              <span class="group-title">📝 Card Texts & Headings</span>
+              <span class="group-badge">Text</span>
+            </div>
+            <div class="group-body">
+              <div class="text-input-wrap">
+                <span class="text-input-label">Card Header Title:</span>
+                <input type="text" class="text-field" id="text-title" placeholder="e.g. COOLER ZONE" />
+              </div>
 
-      <!-- Controls Accordion -->
-      <div class="controls-scroll" id="controls-container">
-        <!-- Rendered dynamically by JS -->
+              <div class="text-input-wrap">
+                <span class="text-input-label">Header Icon (Emoji / Symbol):</span>
+                <input type="text" class="text-field" id="text-icon" placeholder="e.g. ❄️ or 🔥 or 🗼" />
+              </div>
+
+              <div class="text-input-wrap">
+                <span class="text-input-label">Sensor 1 Label:</span>
+                <input type="text" class="text-field" id="text-sensor1" placeholder="e.g. Temperature" />
+              </div>
+
+              <div class="text-input-wrap">
+                <span class="text-input-label">Sensor 2 Label:</span>
+                <input type="text" class="text-field" id="text-sensor2" placeholder="e.g. Humidity" />
+              </div>
+
+              <div class="text-input-wrap" id="wrap-ctrl1">
+                <span class="text-input-label">Device 1 Name:</span>
+                <input type="text" class="text-field" id="text-ctrl1" placeholder="e.g. Heat Blower / Kiln Motor / Heater" />
+              </div>
+
+              <div class="text-input-wrap" id="wrap-ctrl2">
+                <span class="text-input-label">Device 2 Name:</span>
+                <input type="text" class="text-field" id="text-ctrl2" placeholder="e.g. Fan / Kiln Heater" />
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- TAB 3: LIVE READING SIMULATOR -->
+        <div class="tab-pane" id="tab-simulator">
+          <div class="group-card">
+            <div class="group-header">
+              <span class="group-title">🧪 Live Sensor Readings Simulator</span>
+              <span class="group-badge">Simulate</span>
+            </div>
+            <div class="group-body">
+              
+              <!-- Sim Temp -->
+              <div class="sim-row" id="sim-row-temp">
+                <div class="sim-info">
+                  <span class="sim-name">Temperature Reading (°C)</span>
+                  <span class="sim-desc">Test how small/large numbers fit</span>
+                </div>
+                <input type="number" step="0.1" class="sim-input-box" id="sim-temp-input" value="24.5" />
+              </div>
+
+              <!-- Sim Humidity -->
+              <div class="sim-row" id="sim-row-hum">
+                <div class="sim-info">
+                  <span class="sim-name">Humidity Reading (%)</span>
+                  <span class="sim-desc">Test humidity display</span>
+                </div>
+                <input type="number" step="1" class="sim-input-box" id="sim-hum-input" value="31" />
+              </div>
+
+              <!-- Sim Weight (For Hoppers) -->
+              <div class="sim-row" id="sim-row-weight" style="display: none;">
+                <div class="sim-info">
+                  <span class="sim-name">Hopper Weight (g)</span>
+                  <span class="sim-desc">Test load cell reading display</span>
+                </div>
+                <input type="number" step="0.01" class="sim-input-box" id="sim-weight-input" value="1245.50" />
+              </div>
+
+              <!-- Sim Actuator 1 -->
+              <div class="sim-row" id="sim-row-act1">
+                <div class="sim-info">
+                  <span class="sim-name" id="sim-act1-label">Device 1 State</span>
+                  <span class="sim-desc">Toggle ON / OFF highlight</span>
+                </div>
+                <button class="sim-toggle-btn active-off" id="sim-btn-act1" onclick="toggleSimActuator(1)">OFF</button>
+              </div>
+
+              <!-- Sim Actuator 2 -->
+              <div class="sim-row" id="sim-row-act2">
+                <div class="sim-info">
+                  <span class="sim-name" id="sim-act2-label">Device 2 State</span>
+                  <span class="sim-desc">Toggle ON / OFF highlight</span>
+                </div>
+                <button class="sim-toggle-btn active-off" id="sim-btn-act2" onclick="toggleSimActuator(2)">OFF</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -506,367 +772,413 @@
   <div id="toast">✅ Styles saved successfully!</div>
 
   <script>
-    // Master State for all cards
+    // Config Schema
+    const PROPERTY_DEFS = {
+      cardWidth:           { label: "Card Width", min: 200, max: 480, unit: "px" },
+      cardPaddingY:        { label: "Padding Top/Bottom", min: 4, max: 35, unit: "px" },
+      cardPaddingX:        { label: "Padding Left/Right", min: 4, max: 35, unit: "px" },
+      cardRadius:          { label: "Corner Radius", min: 0, max: 32, unit: "px" },
+      cardGap:             { label: "Vertical Spacing (Gap)", min: 2, max: 28, unit: "px" },
+      titleFontSize:       { label: "Title Font Size", min: 11, max: 36, unit: "px" },
+      iconFontSize:        { label: "Header Icon Size", min: 12, max: 36, unit: "px" },
+      headerPaddingBottom: { label: "Header Bottom Padding", min: 0, max: 24, unit: "px" },
+      sensorLabelFontSize: { label: "Sensor Label Font Size", min: 10, max: 28, unit: "px" },
+      sensorValueFontSize: { label: "Sensor Value Font Size", min: 16, max: 54, unit: "px" },
+      sensorUnitFontSize:  { label: "Sensor Unit Font Size", min: 10, max: 28, unit: "px" },
+      sensorBoxPaddingY:   { label: "Sensor Box Padding Y", min: 2, max: 24, unit: "px" },
+      sensorBoxPaddingX:   { label: "Sensor Box Padding X", min: 4, max: 24, unit: "px" },
+      sensorBoxRadius:     { label: "Sensor Box Radius", min: 0, max: 24, unit: "px" },
+      controlNameFontSize: { label: "Device Name Font Size", min: 12, max: 28, unit: "px" },
+      controlPaddingY:     { label: "Control Row Padding Y", min: 2, max: 20, unit: "px" },
+      controlPaddingX:     { label: "Control Row Padding X", min: 4, max: 24, unit: "px" },
+      controlGap:          { label: "Control Row Gap", min: 2, max: 20, unit: "px" },
+      controlRadius:       { label: "Control Row Radius", min: 0, max: 20, unit: "px" },
+      btnFontSize:         { label: "Button Font Size", min: 10, max: 22, unit: "px" },
+      btnPaddingY:         { label: "Button Padding Y", min: 2, max: 16, unit: "px" },
+      btnPaddingX:         { label: "Button Padding X", min: 4, max: 28, unit: "px" },
+      btnRadius:           { label: "Button Radius", min: 0, max: 20, unit: "px" }
+    };
+
     const DEFAULT_CONFIGS = {
+      cooler: {
+        cardWidth: 310, cardPaddingY: 13, cardPaddingX: 15, cardRadius: 18, cardGap: 10,
+        titleFontSize: 20, iconFontSize: 20, headerPaddingBottom: 8,
+        sensorLabelFontSize: 18, sensorValueFontSize: 30, sensorUnitFontSize: 17,
+        sensorBoxPaddingY: 8, sensorBoxPaddingX: 10, sensorBoxRadius: 12,
+        controlNameFontSize: 20, controlPaddingY: 8, controlPaddingX: 12, controlGap: 8, controlRadius: 10,
+        btnFontSize: 13, btnPaddingY: 5, btnPaddingX: 13, btnRadius: 8,
+        titleText: "Cooler Zone", iconText: "❄️", sensor1Label: "Temperature", sensor2Label: "Humidity",
+        control1Name: "Heat Blower"
+      },
       preheating: {
-        cardWidth: 310,
-        cardPaddingY: 13,
-        cardPaddingX: 15,
-        cardRadius: 18,
-        cardGap: 10,
-        headerPaddingBottom: 8,
-        titleFontSize: 20,
-        iconFontSize: 20,
-        sensorBoxPaddingY: 8,
-        sensorBoxPaddingX: 10,
-        sensorBoxRadius: 12,
-        sensorLabelFontSize: 18,
-        sensorValueFontSize: 30,
-        sensorUnitFontSize: 17,
-        controlPaddingY: 8,
-        controlPaddingX: 12,
-        controlGap: 8,
-        controlRadius: 10,
-        controlNameFontSize: 20,
-        btnFontSize: 13,
-        btnPaddingY: 5,
-        btnPaddingX: 13,
-        btnRadius: 8
+        cardWidth: 310, cardPaddingY: 13, cardPaddingX: 15, cardRadius: 18, cardGap: 10,
+        titleFontSize: 20, iconFontSize: 20, headerPaddingBottom: 8,
+        sensorLabelFontSize: 18, sensorValueFontSize: 30, sensorUnitFontSize: 17,
+        sensorBoxPaddingY: 8, sensorBoxPaddingX: 10, sensorBoxRadius: 12,
+        controlNameFontSize: 20, controlPaddingY: 8, controlPaddingX: 12, controlGap: 8, controlRadius: 10,
+        btnFontSize: 13, btnPaddingY: 5, btnPaddingX: 13, btnRadius: 8,
+        titleText: "Preheating Tower", iconText: "🗼", sensor1Label: "Temperature", sensor2Label: "Humidity",
+        control1Name: "Heater", control2Name: "Fan"
       },
       kiln: {
-        cardWidth: 310,
-        cardPaddingY: 13,
-        cardPaddingX: 15,
-        cardRadius: 18,
-        cardGap: 10,
-        headerPaddingBottom: 8,
-        titleFontSize: 20,
-        iconFontSize: 20,
-        sensorBoxPaddingY: 8,
-        sensorBoxPaddingX: 10,
-        sensorBoxRadius: 12,
-        sensorLabelFontSize: 18,
-        sensorValueFontSize: 30,
-        sensorUnitFontSize: 17,
-        controlPaddingY: 8,
-        controlPaddingX: 12,
-        controlGap: 8,
-        controlRadius: 10,
-        controlNameFontSize: 20,
-        btnFontSize: 13,
-        btnPaddingY: 5,
-        btnPaddingX: 13,
-        btnRadius: 8
+        cardWidth: 310, cardPaddingY: 13, cardPaddingX: 15, cardRadius: 18, cardGap: 10,
+        titleFontSize: 20, iconFontSize: 20, headerPaddingBottom: 8,
+        sensorLabelFontSize: 18, sensorValueFontSize: 30, sensorUnitFontSize: 17,
+        sensorBoxPaddingY: 8, sensorBoxPaddingX: 10, sensorBoxRadius: 12,
+        controlNameFontSize: 20, controlPaddingY: 8, controlPaddingX: 12, controlGap: 8, controlRadius: 10,
+        btnFontSize: 13, btnPaddingY: 5, btnPaddingX: 13, btnRadius: 8,
+        titleText: "Kiln (Cline) Zone", iconText: "🔥", sensor1Label: "Temperature", sensor2Label: "Humidity",
+        control1Name: "Kiln Motor", control2Name: "Kiln Heater"
       },
-      cooler: {
-        cardWidth: 310,
-        cardPaddingY: 13,
-        cardPaddingX: 15,
-        cardRadius: 18,
-        cardGap: 10,
-        headerPaddingBottom: 8,
-        titleFontSize: 20,
-        iconFontSize: 20,
-        sensorBoxPaddingY: 8,
-        sensorBoxPaddingX: 10,
-        sensorBoxRadius: 12,
-        sensorLabelFontSize: 18,
-        sensorValueFontSize: 30,
-        sensorUnitFontSize: 17,
-        controlPaddingY: 8,
-        controlPaddingX: 12,
-        controlGap: 8,
-        controlRadius: 10,
-        controlNameFontSize: 20,
-        btnFontSize: 13,
-        btnPaddingY: 5,
-        btnPaddingX: 13,
-        btnRadius: 8
+      hopper_gypsum: {
+        cardWidth: 270, cardPaddingY: 16, cardPaddingX: 16, cardRadius: 18,
+        titleFontSize: 11, sensorValueFontSize: 36, sensorUnitFontSize: 14,
+        titleText: "GYPSUM HOPPER"
       },
-      hopper: {
-        cardWidth: 270,
-        cardPaddingY: 16,
-        cardPaddingX: 16,
-        cardRadius: 18,
-        titleFontSize: 11,
-        sensorValueFontSize: 36,
-        sensorUnitFontSize: 14
+      hopper_clay: {
+        cardWidth: 270, cardPaddingY: 16, cardPaddingX: 16, cardRadius: 18,
+        titleFontSize: 11, sensorValueFontSize: 36, sensorUnitFontSize: 14,
+        titleText: "CLAY HOPPER"
+      },
+      hopper_sand: {
+        cardWidth: 270, cardPaddingY: 16, cardPaddingX: 16, cardRadius: 18,
+        titleFontSize: 11, sensorValueFontSize: 36, sensorUnitFontSize: 14,
+        titleText: "SAND HOPPER"
+      },
+      hopper_iron_ore: {
+        cardWidth: 270, cardPaddingY: 16, cardPaddingX: 16, cardRadius: 18,
+        titleFontSize: 11, sensorValueFontSize: 36, sensorUnitFontSize: 14,
+        titleText: "IRON ORE HOPPER"
       }
+    };
+
+    const CARD_URL_MAP = {
+      cooler: "/cooler.html",
+      preheating: "/preheating-tower.html",
+      kiln: "/kiln.html",
+      hopper_gypsum: "/hopper-reading.html?id=gypsum",
+      hopper_clay: "/hopper-reading.html?id=clay",
+      hopper_sand: "/hopper-reading.html?id=sand",
+      hopper_iron_ore: "/hopper-reading.html?id=iron_ore"
     };
 
     let stylesState = JSON.parse(JSON.stringify(DEFAULT_CONFIGS));
-    let currentCardKey = "preheating";
+    let currentCardKey = "cooler";
 
-    const CARD_URLS = {
-      preheating: "/preheating-tower.html",
-      kiln: "/kiln.html",
-      cooler: "/cooler.html",
-      hopper: "/hopper-reading.html?id=gypsum"
-    };
-
-    // Components schema definition
-    const STANDARD_COMPONENTS = [
-      {
-        title: "🗂️ Card Container",
-        props: [
-          { key: "cardWidth", label: "Card Width", min: 200, max: 480, unit: "px" },
-          { key: "cardPaddingY", label: "Padding Top/Bottom", min: 4, max: 35, unit: "px" },
-          { key: "cardPaddingX", label: "Padding Left/Right", min: 4, max: 35, unit: "px" },
-          { key: "cardRadius", label: "Corner Radius", min: 0, max: 32, unit: "px" },
-          { key: "cardGap", label: "Vertical Spacing (Gap)", min: 4, max: 28, unit: "px" }
-        ]
-      },
-      {
-        title: "🏷️ Header & Title",
-        props: [
-          { key: "titleFontSize", label: "Title Font Size", min: 12, max: 32, unit: "px" },
-          { key: "iconFontSize", label: "Header Icon Size", min: 12, max: 36, unit: "px" },
-          { key: "headerPaddingBottom", label: "Header Bottom Padding", min: 0, max: 24, unit: "px" }
-        ]
-      },
-      {
-        title: "🌡️ Sensor Boxes",
-        props: [
-          { key: "sensorBoxPaddingY", label: "Box Padding Y", min: 2, max: 24, unit: "px" },
-          { key: "sensorBoxPaddingX", label: "Box Padding X", min: 4, max: 24, unit: "px" },
-          { key: "sensorBoxRadius", label: "Box Corner Radius", min: 0, max: 24, unit: "px" }
-        ]
-      },
-      {
-        title: "📝 Sensor Labels (Temp & Humidity)",
-        props: [
-          { key: "sensorLabelFontSize", label: "Label Font Size", min: 10, max: 26, unit: "px" }
-        ]
-      },
-      {
-        title: "🔢 Sensor Value & Unit",
-        props: [
-          { key: "sensorValueFontSize", label: "Value (Number) Font Size", min: 18, max: 48, unit: "px" },
-          { key: "sensorUnitFontSize", label: "Unit (°C / %) Font Size", min: 10, max: 26, unit: "px" }
-        ]
-      },
-      {
-        title: "🕹️ Control Rows (Heater / Fan / Motor)",
-        props: [
-          { key: "controlPaddingY", label: "Row Padding Y", min: 2, max: 20, unit: "px" },
-          { key: "controlPaddingX", label: "Row Padding X", min: 4, max: 24, unit: "px" },
-          { key: "controlGap", label: "Row Gap", min: 2, max: 20, unit: "px" },
-          { key: "controlRadius", label: "Row Corner Radius", min: 0, max: 20, unit: "px" },
-          { key: "controlNameFontSize", label: "Device Name Font Size", min: 12, max: 28, unit: "px" }
-        ]
-      },
-      {
-        title: "🔘 ON / OFF Buttons",
-        props: [
-          { key: "btnFontSize", label: "Button Font Size", min: 10, max: 22, unit: "px" },
-          { key: "btnPaddingY", label: "Button Padding Y", min: 2, max: 16, unit: "px" },
-          { key: "btnPaddingX", label: "Button Padding X", min: 4, max: 28, unit: "px" },
-          { key: "btnRadius", label: "Button Corner Radius", min: 0, max: 20, unit: "px" }
-        ]
-      }
-    ];
-
-    const HOPPER_COMPONENTS = [
-      {
-        title: "🗂️ Hopper Card Container",
-        props: [
-          { key: "cardWidth", label: "Card Width", min: 180, max: 400, unit: "px" },
-          { key: "cardPaddingY", label: "Padding Y", min: 6, max: 30, unit: "px" },
-          { key: "cardPaddingX", label: "Padding X", min: 6, max: 30, unit: "px" },
-          { key: "cardRadius", label: "Corner Radius", min: 0, max: 30, unit: "px" }
-        ]
-      },
-      {
-        title: "📝 Titles & Values",
-        props: [
-          { key: "titleFontSize", label: "Title Font Size", min: 9, max: 24, unit: "px" },
-          { key: "sensorValueFontSize", label: "Weight Number Font Size", min: 18, max: 54, unit: "px" },
-          { key: "sensorUnitFontSize", label: "Unit (g) Font Size", min: 10, max: 24, unit: "px" }
-        ]
-      }
-    ];
-
-    // Elements
-    const cardSelect = document.getElementById("card-select");
-    const previewFrame = document.getElementById("card-preview-frame");
-    const controlsContainer = document.getElementById("controls-container");
-    const dimIndicator = document.getElementById("dim-indicator");
-    const activeCardName = document.getElementById("active-card-name");
-    const toast = document.getElementById("toast");
-
-    // Fetch saved styles from server on load
-    async function loadServerStyles() {
-      try {
-        const res = await fetch("/api/card-styles");
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.styles && Object.keys(data.styles).length > 0) {
-            stylesState = { ...stylesState, ...data.styles };
-          }
+    // Determine card from URL path (e.g. /cooler/editor or /preheating-tower/editor)
+    function detectInitialCard() {
+      const parts = window.location.pathname.split("/").filter(Boolean);
+      let found = "cooler";
+      if (parts.length >= 2 && (parts[1] === "editor" || parts[1] === "editor.html" || parts[1] === "styler")) {
+        const raw = parts[0].toLowerCase().replace(".html", "");
+        if (raw === "cooler") found = "cooler";
+        else if (raw === "preheating-tower" || raw === "preheating" || raw === "preheat") found = "preheating";
+        else if (raw === "kiln" || raw === "cline" || raw === "klin") found = "kiln";
+        else if (raw === "gypsum") found = "hopper_gypsum";
+        else if (raw === "clay") found = "hopper_clay";
+        else if (raw === "sand") found = "hopper_sand";
+        else if (raw === "iron_ore" || raw === "iron-ore") found = "hopper_iron_ore";
+      } else {
+        const p = new URLSearchParams(window.location.search).get("card") || new URLSearchParams(window.location.search).get("id");
+        if (p) {
+          if (p === "cooler") found = "cooler";
+          else if (p.includes("preheat")) found = "preheating";
+          else if (p === "kiln" || p === "cline" || p === "klin") found = "kiln";
+          else if (p === "gypsum") found = "hopper_gypsum";
+          else if (p === "clay") found = "hopper_clay";
+          else if (p === "sand") found = "hopper_sand";
+          else if (p === "iron_ore" || p === "iron-ore") found = "hopper_iron_ore";
         }
-      } catch (e) {
-        console.warn("Could not load styles from server, using local defaults:", e);
       }
-      renderControls();
-      applyStylesToPreview();
+      return found;
     }
 
-    // Render Controls Sidebar
-    function renderControls() {
-      const isHopper = currentCardKey === "hopper";
-      const schema = isHopper ? HOPPER_COMPONENTS : STANDARD_COMPONENTS;
-      const currentConfig = stylesState[currentCardKey] || {};
+    currentCardKey = detectInitialCard();
 
-      activeCardName.textContent = cardSelect.options[cardSelect.selectedIndex].text + " Controls";
+    // DOM Elements
+    const cardSelect = document.getElementById("card-select");
+    const previewFrame = document.getElementById("card-preview-frame");
+    const directUrlText = document.getElementById("direct-url-text");
+    const toast = document.getElementById("toast");
 
-      let html = "";
-      schema.forEach((sec, sIdx) => {
-        html += `
-          <div class="section-card" id="sec-${sIdx}">
-            <div class="section-header" onclick="toggleSection(${sIdx})">
-              <span class="section-title">${sec.title}</span>
-              <span class="section-arrow">▼</span>
-            </div>
-            <div class="section-body">
-        `;
+    // Initialize UI controls
+    function setupControls() {
+      cardSelect.value = currentCardKey;
+      updateDirectUrlDisplay();
+      buildAllSliders();
+      bindTextInputs();
+      bindSimInputs();
+      previewFrame.src = CARD_URL_MAP[currentCardKey] || "/cooler.html";
+    }
 
-        sec.props.forEach(p => {
-          const val = currentConfig[p.key] !== undefined ? currentConfig[p.key] : p.min;
-          html += `
-            <div class="prop-row">
-              <div class="prop-info">
-                <span class="prop-label">${p.label}</span>
-                <span class="prop-value-badge" id="badge-${p.key}">${val}${p.unit}</span>
-              </div>
-              <div class="slider-row">
-                <button class="step-btn" onclick="stepValue('${p.key}', -1, ${p.min}, ${p.max})">−</button>
-                <input type="range" 
-                  id="range-${p.key}" 
-                  min="${p.min}" 
-                  max="${p.max}" 
-                  value="${val}" 
-                  oninput="onSliderChange('${p.key}', this.value, '${p.unit}')"
-                />
-                <button class="step-btn" onclick="stepValue('${p.key}', 1, ${p.min}, ${p.max})">+</button>
-              </div>
-            </div>
-          `;
-        });
+    function updateDirectUrlDisplay() {
+      let slug = currentCardKey;
+      if (currentCardKey === "preheating") slug = "preheating-tower";
+      else if (currentCardKey === "hopper_gypsum") slug = "gypsum";
+      else if (currentCardKey === "hopper_clay") slug = "clay";
+      else if (currentCardKey === "hopper_sand") slug = "sand";
+      else if (currentCardKey === "hopper_iron_ore") slug = "iron_ore";
+      directUrlText.textContent = `/${slug}/editor`;
+    }
 
-        html += `
-            </div>
+    // Build sliders for every property
+    function buildAllSliders() {
+      Object.keys(PROPERTY_DEFS).forEach(k => {
+        const container = document.getElementById(`ctrl-${k}`);
+        if (!container) return;
+        const def = PROPERTY_DEFS[k];
+        const curVal = (stylesState[currentCardKey] && stylesState[currentCardKey][k] !== undefined) 
+          ? stylesState[currentCardKey][k] 
+          : def.min;
+
+        container.innerHTML = `
+          <div class="prop-header">
+            <span class="prop-label">${def.label}</span>
+            <span class="prop-val-display" id="badge-${k}">${curVal}${def.unit}</span>
+          </div>
+          <div class="slider-control-wrap">
+            <button class="btn-step" onclick="stepProp('${k}', -1, ${def.min}, ${def.max})">−</button>
+            <input type="range" id="range-${k}" min="${def.min}" max="${def.max}" value="${curVal}" oninput="onPropChange('${k}', this.value)" />
+            <button class="btn-step" onclick="stepProp('${k}', 1, ${def.min}, ${def.max})">+</button>
           </div>
         `;
       });
 
-      controlsContainer.innerHTML = html;
-      updateDimIndicator();
+      // Show/hide sections for hopper vs regular cards
+      const isHopper = currentCardKey.startsWith("hopper");
+      document.getElementById("group-actuators").style.display = isHopper ? "none" : "block";
+      document.getElementById("wrap-ctrl1").style.display = isHopper ? "none" : "block";
+      document.getElementById("wrap-ctrl2").style.display = (currentCardKey === "cooler" || isHopper) ? "none" : "block";
+      document.getElementById("sim-row-weight").style.display = isHopper ? "flex" : "none";
+      document.getElementById("sim-row-temp").style.display = isHopper ? "none" : "flex";
+      document.getElementById("sim-row-hum").style.display = isHopper ? "none" : "flex";
+      document.getElementById("sim-row-act1").style.display = isHopper ? "none" : "flex";
+      document.getElementById("sim-row-act2").style.display = (currentCardKey === "cooler" || isHopper) ? "none" : "flex";
     }
 
-    function toggleSection(idx) {
-      const sec = document.getElementById(`sec-${idx}`);
-      if (sec) sec.classList.toggle("collapsed");
-    }
-
-    function onSliderChange(key, value, unit = "px") {
-      const num = parseInt(value, 10);
+    function onPropChange(key, val) {
+      const num = parseInt(val, 10);
+      if (!stylesState[currentCardKey]) stylesState[currentCardKey] = {};
       stylesState[currentCardKey][key] = num;
       const badge = document.getElementById(`badge-${key}`);
-      if (badge) badge.textContent = `${num}${unit}`;
-      updateDimIndicator();
-      applyStylesToPreview();
+      if (badge) badge.textContent = `${num}${PROPERTY_DEFS[key].unit}`;
+      applyLiveStylesToPreview();
     }
 
-    function stepValue(key, delta, min, max) {
+    function stepProp(key, delta, min, max) {
       const slider = document.getElementById(`range-${key}`);
       if (!slider) return;
       let curr = parseInt(slider.value, 10) + delta;
       if (curr < min) curr = min;
       if (curr > max) curr = max;
       slider.value = curr;
-      onSliderChange(key, curr);
+      onPropChange(key, curr);
     }
 
-    function updateDimIndicator() {
-      const w = stylesState[currentCardKey].cardWidth || 310;
-      dimIndicator.textContent = `Card Width: ${w}px`;
-      if (previewFrame) {
-        previewFrame.style.width = `${w + 40}px`;
+    // Text inputs binding
+    function bindTextInputs() {
+      const s = stylesState[currentCardKey] || {};
+      const elTitle = document.getElementById("text-title");
+      const elIcon = document.getElementById("text-icon");
+      const elSensor1 = document.getElementById("text-sensor1");
+      const elSensor2 = document.getElementById("text-sensor2");
+      const elCtrl1 = document.getElementById("text-ctrl1");
+      const elCtrl2 = document.getElementById("text-ctrl2");
+
+      elTitle.value = s.titleText || "";
+      elIcon.value = s.iconText || "";
+      elSensor1.value = s.sensor1Label || "Temperature";
+      elSensor2.value = s.sensor2Label || "Humidity";
+      elCtrl1.value = s.control1Name || "";
+      elCtrl2.value = s.control2Name || "";
+
+      elTitle.oninput = (e) => { s.titleText = e.target.value; applyLiveTextsToPreview(); };
+      elIcon.oninput = (e) => { s.iconText = e.target.value; applyLiveTextsToPreview(); };
+      elSensor1.oninput = (e) => { s.sensor1Label = e.target.value; applyLiveTextsToPreview(); };
+      elSensor2.oninput = (e) => { s.sensor2Label = e.target.value; applyLiveTextsToPreview(); };
+      elCtrl1.oninput = (e) => { s.control1Name = e.target.value; applyLiveTextsToPreview(); };
+      elCtrl2.oninput = (e) => { s.control2Name = e.target.value; applyLiveTextsToPreview(); };
+    }
+
+    // Simulator inputs
+    function bindSimInputs() {
+      const simTemp = document.getElementById("sim-temp-input");
+      const simHum = document.getElementById("sim-hum-input");
+      const simWeight = document.getElementById("sim-weight-input");
+
+      simTemp.oninput = (e) => updatePreviewSensor("val-temp", e.target.value);
+      simHum.oninput = (e) => updatePreviewSensor("val-hum", e.target.value);
+      simWeight.oninput = (e) => updatePreviewSensor("val", e.target.value);
+    }
+
+    let simAct1State = false;
+    let simAct2State = false;
+
+    function toggleSimActuator(num) {
+      const btn = document.getElementById(`sim-btn-act${num}`);
+      if (num === 1) {
+        simAct1State = !simAct1State;
+        btn.textContent = simAct1State ? "ON" : "OFF";
+        btn.className = `sim-toggle-btn ${simAct1State ? "active-on" : "active-off"}`;
+        updatePreviewActuator(1, simAct1State);
+      } else {
+        simAct2State = !simAct2State;
+        btn.textContent = simAct2State ? "ON" : "OFF";
+        btn.className = `sim-toggle-btn ${simAct2State ? "active-on" : "active-off"}`;
+        updatePreviewActuator(2, simAct2State);
       }
     }
 
-    // Injects generated CSS directly into iframe without reloading!
-    function applyStylesToPreview() {
+    function updatePreviewSensor(id, val) {
+      try {
+        const frameDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+        const el = frameDoc.getElementById(id);
+        if (el) el.textContent = val;
+      } catch (e) {}
+    }
+
+    function updatePreviewActuator(num, isOn) {
+      try {
+        const frameDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+        const rows = frameDoc.querySelectorAll(".control-row");
+        const row = rows[num - 1];
+        if (!row) return;
+        const onBtn = row.querySelector(".state-btn.on");
+        const offBtn = row.querySelector(".state-btn.off");
+        if (onBtn) onBtn.classList.toggle("active", isOn);
+        if (offBtn) offBtn.classList.toggle("active", !isOn);
+      } catch (e) {}
+    }
+
+    // Apply live styles via injected style tag
+    function applyLiveStylesToPreview() {
       try {
         const frameDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
         if (!frameDoc) return;
-
-        let styleTag = frameDoc.getElementById("live-custom-css");
+        let styleTag = frameDoc.getElementById("live-editor-css");
         if (!styleTag) {
           styleTag = frameDoc.createElement("style");
-          styleTag.id = "live-custom-css";
+          styleTag.id = "live-editor-css";
           frameDoc.head.appendChild(styleTag);
         }
 
-        const css = generateSingleCardCss(currentCardKey, stylesState[currentCardKey]);
+        const s = stylesState[currentCardKey] || {};
+        const isHopper = currentCardKey.startsWith("hopper");
+
+        let css = "";
+        if (isHopper) {
+          css = `
+            .card {
+              width: ${s.cardWidth || 270}px !important;
+              padding: ${s.cardPaddingY || 16}px ${s.cardPaddingX || 16}px !important;
+              border-radius: ${s.cardRadius || 18}px !important;
+            }
+            .card-title { font-size: ${s.titleFontSize || 11}px !important; }
+            .card-value { font-size: ${s.sensorValueFontSize || 36}px !important; }
+            .card-unit { font-size: ${s.sensorUnitFontSize || 14}px !important; }
+          `;
+        } else {
+          css = `
+            .card {
+              width: ${s.cardWidth || 310}px !important;
+              padding: ${s.cardPaddingY || 13}px ${s.cardPaddingX || 15}px !important;
+              border-radius: ${s.cardRadius || 18}px !important;
+              gap: ${s.cardGap || 10}px !important;
+            }
+            .card-header { padding-bottom: ${s.headerPaddingBottom || 8}px !important; }
+            .card-title { font-size: ${s.titleFontSize || 20}px !important; }
+            .card-icon { font-size: ${s.iconFontSize || 20}px !important; }
+            .sensor-box {
+              padding: ${s.sensorBoxPaddingY || 8}px ${s.sensorBoxPaddingX || 10}px !important;
+              border-radius: ${s.sensorBoxRadius || 12}px !important;
+            }
+            .sensor-label { font-size: ${s.sensorLabelFontSize || 18}px !important; }
+            .sensor-value { font-size: ${s.sensorValueFontSize || 30}px !important; }
+            .sensor-unit { font-size: ${s.sensorUnitFontSize || 17}px !important; }
+            .control-row {
+              padding: ${s.controlPaddingY || 8}px ${s.controlPaddingX || 12}px !important;
+              gap: ${s.controlGap || 8}px !important;
+              border-radius: ${s.controlRadius || 10}px !important;
+            }
+            .control-name { font-size: ${s.controlNameFontSize || 20}px !important; }
+            .state-btn {
+              font-size: ${s.btnFontSize || 13}px !important;
+              padding: ${s.btnPaddingY || 5}px ${s.btnPaddingX || 13}px !important;
+              border-radius: ${s.btnRadius || 8}px !important;
+            }
+          `;
+        }
         styleTag.textContent = css;
+
+        // Auto adjust iframe width
+        previewFrame.style.width = `${(s.cardWidth || 310) + 50}px`;
       } catch (err) {
-        console.warn("Could not inject CSS to preview iframe:", err);
+        console.warn("Live CSS inject error:", err);
       }
     }
 
-    function generateSingleCardCss(cardKey, s) {
-      if (!s) return "";
-      let css = "";
-      const isHopper = cardKey === "hopper";
+    // Apply live texts
+    function applyLiveTextsToPreview() {
+      try {
+        const frameDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+        if (!frameDoc) return;
+        const s = stylesState[currentCardKey] || {};
 
-      if (isHopper) {
-        css += `
-          .card {
-            width: ${s.cardWidth}px !important;
-            padding: ${s.cardPaddingY}px ${s.cardPaddingX}px !important;
-            border-radius: ${s.cardRadius}px !important;
-          }
-          .card-title { font-size: ${s.titleFontSize}px !important; }
-          .card-value { font-size: ${s.sensorValueFontSize}px !important; }
-          .card-unit { font-size: ${s.sensorUnitFontSize}px !important; }
-        `;
-        return css;
-      }
+        if (s.titleText) {
+          const titleEl = frameDoc.querySelector(".card-title");
+          if (titleEl) titleEl.textContent = s.titleText;
+        }
+        if (s.iconText) {
+          const iconEl = frameDoc.querySelector(".card-icon");
+          if (iconEl) iconEl.textContent = s.iconText;
+        }
+        const sensorLabels = frameDoc.querySelectorAll(".sensor-label");
+        if (sensorLabels[0] && s.sensor1Label) sensorLabels[0].textContent = s.sensor1Label;
+        if (sensorLabels[1] && s.sensor2Label) sensorLabels[1].textContent = s.sensor2Label;
 
-      css += `
-        .card {
-          width: ${s.cardWidth}px !important;
-          padding: ${s.cardPaddingY}px ${s.cardPaddingX}px !important;
-          border-radius: ${s.cardRadius}px !important;
-          gap: ${s.cardGap}px !important;
-        }
-        .card-header { padding-bottom: ${s.headerPaddingBottom}px !important; }
-        .card-title { font-size: ${s.titleFontSize}px !important; }
-        .card-icon { font-size: ${s.iconFontSize}px !important; }
-        .sensor-box {
-          padding: ${s.sensorBoxPaddingY}px ${s.sensorBoxPaddingX}px !important;
-          border-radius: ${s.sensorBoxRadius}px !important;
-        }
-        .sensor-label { font-size: ${s.sensorLabelFontSize}px !important; }
-        .sensor-value { font-size: ${s.sensorValueFontSize}px !important; }
-        .sensor-unit { font-size: ${s.sensorUnitFontSize}px !important; }
-        .control-row {
-          padding: ${s.controlPaddingY}px ${s.controlPaddingX}px !important;
-          gap: ${s.controlGap}px !important;
-          border-radius: ${s.controlRadius}px !important;
-        }
-        .control-name { font-size: ${s.controlNameFontSize}px !important; }
-        .state-btn {
-          font-size: ${s.btnFontSize}px !important;
-          padding: ${s.btnPaddingY}px ${s.btnPaddingX}px !important;
-          border-radius: ${s.btnRadius}px !important;
-        }
-      `;
-      return css;
+        const ctrlNames = frameDoc.querySelectorAll(".control-name");
+        if (ctrlNames[0] && s.control1Name) ctrlNames[0].textContent = s.control1Name;
+        if (ctrlNames[1] && s.control2Name) ctrlNames[1].textContent = s.control2Name;
+      } catch (e) {}
     }
 
-    // Save to server
+    // Tab switching
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+        btn.classList.add("active");
+        const tabId = btn.dataset.tab;
+        document.getElementById(tabId).classList.add("active");
+      });
+    });
+
+    // Card dropdown change
+    cardSelect.addEventListener("change", (e) => {
+      currentCardKey = e.target.value;
+      updateDirectUrlDisplay();
+      previewFrame.src = CARD_URL_MAP[currentCardKey] || "/cooler.html";
+      buildAllSliders();
+      bindTextInputs();
+    });
+
+    // Iframe loaded
+    previewFrame.addEventListener("load", () => {
+      applyLiveStylesToPreview();
+      applyLiveTextsToPreview();
+    });
+
+    // Background toggle
+    document.querySelectorAll(".bg-toggle-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".bg-toggle-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const mode = btn.dataset.bg;
+        document.getElementById("canvas-viewport").className = `canvas-viewport bg-${mode}`;
+      });
+    });
+
+    // Save to Server
     document.getElementById("btn-save").addEventListener("click", async () => {
       try {
         const res = await fetch("/api/card-styles", {
@@ -875,11 +1187,11 @@
           body: JSON.stringify(stylesState)
         });
         if (res.ok) {
-          showToast("Saved to custom-cards.css! Cupola widgets updated.");
+          showToast("Saved to custom-cards.css! Available in Cupola instantly.");
         } else {
-          showToast("❌ Error saving styles to server");
+          showToast("❌ Server returned error saving styles");
         }
-      } catch (err) {
+      } catch (e) {
         showToast("❌ Network error saving styles");
       }
     });
@@ -887,16 +1199,19 @@
     // Reset button
     document.getElementById("btn-reset").addEventListener("click", () => {
       stylesState[currentCardKey] = JSON.parse(JSON.stringify(DEFAULT_CONFIGS[currentCardKey]));
-      renderControls();
-      applyStylesToPreview();
-      showToast("Reset to default dimensions");
+      buildAllSliders();
+      bindTextInputs();
+      applyLiveStylesToPreview();
+      applyLiveTextsToPreview();
+      showToast("Reset to default settings");
     });
 
-    // Copy CSS button
+    // Copy CSS
     document.getElementById("btn-copy-css").addEventListener("click", () => {
-      const css = generateSingleCardCss(currentCardKey, stylesState[currentCardKey]);
-      navigator.clipboard.writeText(css).then(() => {
-        showToast("CSS copied to clipboard!");
+      const s = stylesState[currentCardKey] || {};
+      const text = JSON.stringify(s, null, 2);
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("Configuration copied to clipboard!");
       });
     });
 
@@ -906,69 +1221,21 @@
       setTimeout(() => toast.classList.remove("show"), 2800);
     }
 
-    // Card switcher
-    cardSelect.addEventListener("change", (e) => {
-      currentCardKey = e.target.value;
-      previewFrame.src = CARD_URLS[currentCardKey];
-      renderControls();
-    });
-
-    // Handle iframe load
-    previewFrame.addEventListener("load", () => {
-      applyStylesToPreview();
-    });
-
-    // Background toggle
-    document.querySelectorAll(".bg-toggle-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".bg-toggle-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        const mode = btn.dataset.bg;
-        const vp = document.getElementById("canvas-viewport");
-        vp.className = `canvas-viewport bg-${mode}`;
-      });
-    });
-
-    // Presets
-    function applyPreset(name) {
-      if (currentCardKey === "hopper") {
-        if (name === "large") {
-          stylesState.hopper.cardWidth = 320;
-          stylesState.hopper.titleFontSize = 14;
-          stylesState.hopper.sensorValueFontSize = 44;
-        } else if (name === "tight") {
-          stylesState.hopper.cardWidth = 240;
-          stylesState.hopper.titleFontSize = 10;
-          stylesState.hopper.sensorValueFontSize = 28;
-        } else {
-          stylesState.hopper = JSON.parse(JSON.stringify(DEFAULT_CONFIGS.hopper));
+    // Load server styles on launch
+    async function loadSavedStyles() {
+      try {
+        const res = await fetch("/api/card-styles");
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.styles && Object.keys(data.styles).length > 0) {
+            stylesState = { ...stylesState, ...data.styles };
+          }
         }
-      } else {
-        if (name === "large") {
-          stylesState[currentCardKey].cardWidth = 350;
-          stylesState[currentCardKey].titleFontSize = 24;
-          stylesState[currentCardKey].sensorLabelFontSize = 20;
-          stylesState[currentCardKey].sensorValueFontSize = 36;
-          stylesState[currentCardKey].controlNameFontSize = 24;
-          stylesState[currentCardKey].btnFontSize = 15;
-        } else if (name === "tight") {
-          stylesState[currentCardKey].cardWidth = 270;
-          stylesState[currentCardKey].titleFontSize = 16;
-          stylesState[currentCardKey].sensorLabelFontSize = 14;
-          stylesState[currentCardKey].sensorValueFontSize = 24;
-          stylesState[currentCardKey].controlNameFontSize = 16;
-          stylesState[currentCardKey].btnFontSize = 11;
-        } else {
-          stylesState[currentCardKey] = JSON.parse(JSON.stringify(DEFAULT_CONFIGS[currentCardKey]));
-        }
-      }
-      renderControls();
-      applyStylesToPreview();
-      showToast(`Applied preset: ${name}`);
+      } catch (e) {}
+      setupControls();
     }
 
-    // Start
-    loadServerStyles();
+    loadSavedStyles();
   </script>
 </body>
 </html>

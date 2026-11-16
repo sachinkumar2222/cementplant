@@ -73,7 +73,14 @@ app.get(["/cooler", "/widgets/cooler"], (req, res) => {
   res.status(404).send("Cooler widget file not found");
 });
 
-app.get(["/editor", "/widgets/editor", "/editor.html"], (req, res) => {
+app.get([
+  "/editor",
+  "/widgets/editor",
+  "/editor.html",
+  "/:card/editor",
+  "/:card/editor.html",
+  "/:card/styler"
+], (req, res) => {
   const file = path.join(widgetDir, "editor.html");
   if (fs.existsSync(file)) return res.sendFile(file);
   res.status(404).send("Editor widget file not found");
