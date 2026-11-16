@@ -1,0 +1,50 @@
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: cement-plant-mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+
+  backend:
+    build:
+      context: ./backend
+    container_name: cement-plant-backend
+    restart: unless-stopped
+    depends_on:
+      - mosquitto
+    environment:
+      PORT: 4000
+      MQTT_HOST: mosquitto
+      MQTT_PORT: 1883
+      OTA_UPDATE_PASSWORD: ${OTA_UPDATE_PASSWORD:-Dts@chennai}
+      HIVEMQ_HOST: ${HIVEMQ_HOST:-}
+      HIVEMQ_PORT: ${HIVEMQ_PORT:-8883}
+      HIVEMQ_USER: ${HIVEMQ_USER:-admin}
+      HIVEMQ_PASSWORD: ${HIVEMQ_PASSWORD:-Admin@321}
+    ports:
+      - "4000:4000"
+
+  dashboard:
+    build:
+      context: ./dashboard-frontend
+    container_name: cement-plant-dashboard
+    restart: unless-stopped
+    ports:
+      - "${DASHBOARD_PORT:-5174}:80"
+    depends_on:
+      - backend
+
+  widget:
+    build:
+      context: ./widget-frontend
+    container_name: cement-plant-widget
+    restart: unless-stopped
+    environment:
+      PORT: 4173
+    ports:
+      - "4173:4173"
+    depends_on:
+      - backend

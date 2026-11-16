@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<!--
+  Part 2: Hopper Dispense Control Card
+  Matches the exact glassmorphic bottom portion of the card.
+  Usage: hopper-control.html?id=clay (or sand, iron_ore, gypsum)
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hopper Dispenser</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      background: transparent !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    .container {
+      display: inline-flex;
+      padding: 6px;
+      background: transparent;
+    }
+
+    .card {
+      width: 250px;
+      border-radius: 18px;
+      padding: 16px;
+      color: #ffffff;
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35);
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: transform 0.15s ease;
+    }
+
+    /* Themes per material */
+    .card-clay {
+      background: rgba(109, 40, 217, 0.30);
+      border: 1px solid rgba(192, 132, 252, 0.45);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(168, 85, 247, 0.2);
+    }
+    .card-sand {
+      background: rgba(194, 65, 12, 0.30);
+      border: 1px solid rgba(251, 146, 60, 0.45);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(249, 115, 22, 0.2);
+    }
+    .card-iron_ore {
+      background: rgba(190, 18, 60, 0.30);
+      border: 1px solid rgba(251, 113, 133, 0.45);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(244, 63, 94, 0.2);
+    }
+    .card-gypsum {
+      background: rgba(30, 64, 175, 0.30);
+      border: 1px solid rgba(147, 197, 253, 0.45);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(59, 130, 246, 0.2);
+    }
+
+    .target-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 16px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.95);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    }
+    .target-input-wrap {
+      position: relative;
+      width: 82px;
+    }
+    .target-input {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.45);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 16px;
+      border-radius: 8px;
+      padding: 5px 22px 5px 8px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      outline: none;
+      backdrop-filter: blur(4px);
+    }
+    .target-input:focus {
+      border-color: rgba(255, 255, 255, 0.6);
+      background: rgba(15, 23, 42, 0.65);
+    }
+    .target-unit {
+      position: absolute;
+      right: 8px;
+      top: 5px;
+      font-size: 16px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.75);
+      pointer-events: none;
+    }
+
+    .dispense-btn {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 16px;
+      padding: 9px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: all 0.15s ease;
+    }
+    .dispense-btn:hover {
+      background: rgba(255, 255, 255, 0.28);
+      border-color: rgba(255, 255, 255, 0.55);
+      transform: translateY(-1px);
+    }
+    .dispense-btn:active {
+      transform: scale(0.98);
+    }
+    .dispense-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card card-clay" id="card">
+      <div class="target-row">
+        <span>Dispense Target:</span>
+        <div class="target-input-wrap">
+          <input type="number" min="0" value="10" id="targetInput" class="target-input" />
+          <span class="target-unit">g</span>
+        </div>
+      </div>
+      <button class="dispense-btn" id="dispenseBtn" onclick="onDispenseClick()">
+        Dispense Clay
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const DISPLAY_NAMES = {
+      clay: "Clay",
+      sand: "Sand",
+      iron_ore: "Iron Ore",
+      gypsum: "Gypsum",
+    };
+
+    const backendProtocol = window.location.protocol === "https:" ? "https:" : "http:";
+    const API_BASE = `${backendProtocol}//${window.location.hostname}:4000`;
+
+    const params = new URLSearchParams(window.location.search);
+    const pathParts = window.location.pathname.toLowerCase().split("/").filter(Boolean);
+    const pathMaterial = ["sand", "clay", "iron_ore", "gypsum"].find((m) => pathParts.includes(m));
+    const rawId = params.get("id") || pathMaterial || "clay";
+    const itemId = rawId.toLowerCase().trim();
+
+    const cardEl = document.getElementById("card");
+    const targetInput = document.getElementById("targetInput");
+    const dispenseBtn = document.getElementById("dispenseBtn");
+
+    const materialName = DISPLAY_NAMES[itemId] || itemId;
+    dispenseBtn.textContent = `Dispense ${materialName}`;
+    cardEl.className = "card card-" + itemId;
+
+    function parseTarget(val) {
+      const n = Number(val);
+      return isNaN(n) ? 10 : n;
+    }
+
+    async function onDispenseClick() {
+      const targetVal = parseTarget(targetInput.value);
+
+      dispenseBtn.disabled = true;
+      dispenseBtn.textContent = "Sending…";
+
+      // 1. Send real hardware target to backend API (Port 4000)
+      try {
+        fetch(`${API_BASE}/api/item/${itemId}/target`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ target: targetVal }),
+        }).catch(() => {});
+      } catch (err) {}
+
+      // 2. Broadcast target to reading card via multi-channel sync
+      const eventNonce = Date.now() + "_" + Math.random();
+      try {
+        localStorage.setItem("dispense_" + itemId, JSON.stringify({
+          item_id: itemId,
+          target: targetVal,
+          nonce: eventNonce,
+        }));
+      } catch (e) {}
+
+      try {
+        const bc = new BroadcastChannel("cement_dispense_channel");
+        bc.postMessage({ item_id: itemId, target: targetVal, nonce: eventNonce });
+      } catch (e) {}
+
+      try {
+        const msg = { type: "CEMENT_DISPENSE", item_id: itemId, target: targetVal, nonce: eventNonce };
+        window.postMessage(msg, "*");
+        if (window.parent && window.parent !== window) window.parent.postMessage(msg, "*");
+        if (window.top && window.top !== window) window.top.postMessage(msg, "*");
+      } catch (e) {}
+
+      try {
+        fetch("/api/dispense-sync", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ item_id: itemId, target: targetVal, time: Date.now() }),
+        }).catch(() => {});
+      } catch (e) {}
+
+      dispenseBtn.textContent = "Target Sent ✓";
+      setTimeout(() => {
+        dispenseBtn.textContent = `Dispense ${materialName}`;
+        dispenseBtn.disabled = false;
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

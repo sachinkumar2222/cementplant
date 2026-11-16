@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<!--
+  Widget Copy - Direct Live Firmware Readings Only
+  - Connected via WebSocket to backend MQTT store
+  - No simulated / manual timers, localStorage or fake counters
+-->
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Widget</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    .widget-container {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 3px;
+      padding: 2px;
+    }
+
+    #label {
+      display: inline-block;
+      background: #c03413;
+      color: #ffffff;
+      font-weight: 800;
+      white-space: nowrap;
+      padding: 3px 8px;
+      border-radius: 2px;
+      user-select: none;
+    }
+
+    #alarm {
+      display: none;
+      background: #c03413;
+      color: #ffffff;
+      font-weight: 800;
+      white-space: nowrap;
+      padding: 3px 8px;
+      border-radius: 2px;
+      user-select: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="widget-container">
+    <div id="label">--</div>
+    <div id="alarm" role="status" aria-live="polite"></div>
+  </div>
+
+  <script src="js/ws-client.js"></script>
+  <script>
+    /* =========================================================================
+     * 🎛️ DEFAULT CONFIGURATION (Direct Live Firmware Readings)
+     * ========================================================================= */
+    const DEFAULT_CONFIG = {
+      color: "#ffffff",      // Text color (pure white)
+      bg: "#c03413",         // Background color (solid red/orange-red)
+      size: "20px",          // Text font size
+      fontWeight: "800",     // Text weight
+      alarmColor: "#ffffff", // Alarm text color
+      alarmBg: "#c03413",    // Alarm background color
+      alarmSize: "18px",     // Alarm font size
+      decimals: 2,           // Decimal places
+    };
+    /* ========================================================================= */
+
+    const backendProtocol = window.location.protocol === "https:" ? "https:" : "http:";
+    const websocketProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const API_BASE = `${backendProtocol}//${window.location.hostname}:4000`;
+    const WS_URL = `${websocketProtocol}//${window.location.hostname}:4000/ws`;
+
+    const params = new URLSearchParams(window.location.search);
+    const rawId = params.get("id") || "gypsum";
+    const itemId = rawId.toLowerCase().trim();
+
+    const customColor = params.get("color");
+    const customBg = params.get("bg");
+    const customSize = params.get("size");
+    const decimalsParam = params.get("decimals");
+    const numDecimals = decimalsParam !== null && !isNaN(decimalsParam) ? parseInt(decimalsParam, 10) : DEFAULT_CONFIG.decimals;
+    const valueOnly = params.get("valueOnly") === "true" || params.get("label") === "false";
+    const hideAlarm = params.get("hideAlarm") === "true" || params.get("alarm") === "false";
+
+    const labelEl = document.getElementById("label");
+    const alarmEl = document.getElementById("alarm");
+
+    const resolvedColor = customColor
+      ? (/^[0-9a-fA-F]{3,8}$/.test(customColor) ? `#${customColor}` : customColor)
+      : DEFAULT_CONFIG.color;
+
+    const resolvedBg = customBg
+      ? (/^[0-9a-fA-F]{3,8}$/.test(customBg) ? `#${customBg}` : customBg)
+      : DEFAULT_CONFIG.bg;
+
+    const resolvedSize = customSize
+      ? (isNaN(customSize) ? customSize : `${customSize}px`)
+      : (typeof DEFAULT_CONFIG.size === "number" ? `${DEFAULT_CONFIG.size}px` : DEFAULT_CONFIG.size);
+
+    labelEl.style.color = resolvedColor;
+    labelEl.style.background = resolvedBg;
+    labelEl.style.fontSize = resolvedSize;
+    labelEl.style.fontWeight = DEFAULT_CONFIG.fontWeight;
+
+    alarmEl.style.color = DEFAULT_CONFIG.alarmColor;
+    alarmEl.style.background = DEFAULT_CONFIG.alarmBg;
+    alarmEl.style.fontSize = DEFAULT_CONFIG.alarmSize;
+    alarmEl.style.fontWeight = DEFAULT_CONFIG.fontWeight;
+    if (hideAlarm) {
+      alarmEl.style.display = "none";
+    }
+
+    const DISPLAY_LABELS = {
+      sand: "Sand",
+      clay: "Clay",
+      iron_ore: "Iron Ore",
+      gypsum: "Gypsum",
+      limestone: "Limestone",
+      lime_stone: "Limestone Gate",
+      klin_dht_temp: "Kiln Temp",
+      klin_dht_humidity: "Kiln Humidity",
+      cooler_dht_temp: "Cooler Temp",
+      cooler_dht_humidity: "Cooler Humidity",
+      preheating_tower_dht_temp: "Preheat Temp",
+      preheating_tower_dht_humidity: "Preheat Humidity",
+      vibration_sensor: "Vibration Value",
+    };
+
+    function render(id, value, unit) {
+      let shown = value === null || value === undefined ? "--" : value;
+      if (typeof shown === "number") {
+        if (shown < 0) shown = 0;
+        if (!Number.isInteger(shown)) {
+          shown = shown.toFixed(numDecimals);
+        }
+      }
+      const label = DISPLAY_LABELS[id] || id;
+      labelEl.textContent = valueOnly
+        ? `${shown}${unit ? " " + unit : ""}`
+        : `${label}: ${shown}${unit ? " " + unit : ""}`;
+
+      const weight = Number(value);
+
+      if (!hideAlarm && value !== null && value !== undefined && value !== "" && Number.isFinite(weight)) {
+        if (weight > 20) {
+          alarmEl.textContent = "OVERLOAD ALARM";
+          alarmEl.style.display = "inline-block";
+        } else if (weight < 5) {
+          alarmEl.textContent = "UNDER WEIGHT ALARM";
+          alarmEl.style.display = "inline-block";
+        } else {
+          alarmEl.textContent = "";
+          alarmEl.style.display = "none";
+        }
+      } else {
+        alarmEl.textContent = "";
+        alarmEl.style.display = "none";
+      }
+    }
+
+    // 1. Initial snapshot from backend store (which receives live values from ESP firmware via MQTT)
+    fetch(`${API_BASE}/api/item/${itemId}`)
+      .then((r) => r.json())
+      .then((data) => render(itemId, data.value, data.unit))
+      .catch(() => {});
+
+    // 2. Real-time live WebSocket stream directly from ESP firmware via backend
+    connectWidgetSocket(WS_URL, itemId, (data) => {
+      render(itemId, data.value, data.unit);
+    });
+  </script>
+</body>
+
+</html>

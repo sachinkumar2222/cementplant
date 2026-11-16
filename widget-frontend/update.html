@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manual Widget Control Panel</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 16px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 800;
+      color: #38bdf8;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .header p {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      width: 100%;
+      max-width: 900px;
+    }
+    .panel {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .panel-sand { border-top: 4px solid #ea580c; }
+    .panel-clay { border-top: 4px solid #9333ea; }
+    .panel-iron_ore { border-top: 4px solid #e11d48; }
+    .panel-gypsum { border-top: 4px solid #2563eb; }
+
+    .panel-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .panel-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .panel-badge {
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 8px;
+      border-radius: 999px;
+      color: #cbd5e1;
+    }
+    .input-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .input-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #94a3b8;
+    }
+    .input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .val-input {
+      flex: 1;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #ffffff;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .val-input:focus {
+      border-color: #38bdf8;
+    }
+    .unit-tag {
+      font-size: 14px;
+      font-weight: 700;
+      color: #64748b;
+    }
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .btn {
+      flex: 2;
+      padding: 11px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      color: #ffffff;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
+    .btn-sand { background: #ea580c; }
+    .btn-sand:hover { background: #c2410c; }
+    .btn-clay { background: #9333ea; }
+    .btn-clay:hover { background: #7e22ce; }
+    .btn-iron_ore { background: #e11d48; }
+    .btn-iron_ore:hover { background: #be123c; }
+    .btn-gypsum { background: #2563eb; }
+    .btn-gypsum:hover { background: #1d4ed8; }
+
+    .btn-reset {
+      flex: 1;
+      background: #334155;
+      color: #cbd5e1;
+    }
+    .btn-reset:hover {
+      background: #475569;
+      color: #ffffff;
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .link-row {
+      margin-top: 6px;
+      font-size: 11px;
+    }
+    .link-row a {
+      color: #38bdf8;
+      text-decoration: none;
+    }
+    .link-row a:hover {
+      text-decoration: underline;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      background: #0284c7;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px 20px;
+      border-radius: 999px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s, transform 0.25s;
+      transform: translateY(10px);
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Manual Widget Value Controller</h1>
+    <p>Update any widget value manually. Triggers physical hardware & syncs to <code>widget-copy.html</code> instantly.</p>
+  </div>
+
+  <div class="grid">
+    <!-- 1. Sand -->
+    <div class="panel panel-sand">
+      <div class="panel-title-row">
+        <span class="panel-title">Sand Hopper</span>
+        <span class="panel-badge">ESP1</span>
+      </div>
+      <div class="input-row">
+        <label class="input-label" for="target-sand">Target Weight:</label>
+        <div class="input-group">
+          <input type="number" id="target-sand" class="val-input" value="10" min="1" max="100" />
+          <span class="unit-tag">grams</span>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-sand" id="btn-sand" onclick="triggerUpdate('sand', 'Sand')">
+          Update Sand
+        </button>
+        <button class="btn btn-reset" onclick="triggerReset('sand', 'Sand')">
+          Reset 0
+        </button>
+      </div>
+      <div class="link-row">
+        <a href="widget-copy.html?id=sand" target="_blank">Open widget-copy.html?id=sand ↗</a>
+      </div>
+    </div>
+
+    <!-- 2. Clay -->
+    <div class="panel panel-clay">
+      <div class="panel-title-row">
+        <span class="panel-title">Clay Hopper</span>
+        <span class="panel-badge">ESP1</span>
+      </div>
+      <div class="input-row">
+        <label class="input-label" for="target-clay">Target Weight:</label>
+        <div class="input-group">
+          <input type="number" id="target-clay" class="val-input" value="10" min="1" max="100" />
+          <span class="unit-tag">grams</span>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-clay" id="btn-clay" onclick="triggerUpdate('clay', 'Clay')">
+          Update Clay
+        </button>
+        <button class="btn btn-reset" onclick="triggerReset('clay', 'Clay')">
+          Reset 0
+        </button>
+      </div>
+      <div class="link-row">
+        <a href="widget-copy.html?id=clay" target="_blank">Open widget-copy.html?id=clay ↗</a>
+      </div>
+    </div>
+
+    <!-- 3. Iron Ore -->
+    <div class="panel panel-iron_ore">
+      <div class="panel-title-row">
+        <span class="panel-title">Iron Ore Hopper</span>
+        <span class="panel-badge">ESP1</span>
+      </div>
+      <div class="input-row">
+        <label class="input-label" for="target-iron_ore">Target Weight:</label>
+        <div class="input-group">
+          <input type="number" id="target-iron_ore" class="val-input" value="10" min="1" max="100" />
+          <span class="unit-tag">grams</span>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-iron_ore" id="btn-iron_ore" onclick="triggerUpdate('iron_ore', 'Iron Ore')">
+          Update Iron Ore
+        </button>
+        <button class="btn btn-reset" onclick="triggerReset('iron_ore', 'Iron Ore')">
+          Reset 0
+        </button>
+      </div>
+      <div class="link-row">
+        <a href="widget-copy.html?id=iron_ore" target="_blank">Open widget-copy.html?id=iron_ore ↗</a>
+      </div>
+    </div>
+
+    <!-- 4. Gypsum -->
+    <div class="panel panel-gypsum">
+      <div class="panel-title-row">
+        <span class="panel-title">Gypsum Hopper</span>
+        <span class="panel-badge">ESP1</span>
+      </div>
+      <div class="input-row">
+        <label class="input-label" for="target-gypsum">Target Weight:</label>
+        <div class="input-group">
+          <input type="number" id="target-gypsum" class="val-input" value="10" min="1" max="100" />
+          <span class="unit-tag">grams</span>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-gypsum" id="btn-gypsum" onclick="triggerUpdate('gypsum', 'Gypsum')">
+          Update Gypsum
+        </button>
+        <button class="btn btn-reset" onclick="triggerReset('gypsum', 'Gypsum')">
+          Reset 0
+        </button>
+      </div>
+      <div class="link-row">
+        <a href="widget-copy.html?id=gypsum" target="_blank">Open widget-copy.html?id=gypsum ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Command sent!</div>
+
+  <script>
+    const backendProtocol = window.location.protocol === "https:" ? "https:" : "http:";
+    const API_BASE = `${backendProtocol}//${window.location.hostname}:4000`;
+
+    function showToast(text) {
+      const t = document.getElementById("toast");
+      t.textContent = text;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2500);
+    }
+
+    function broadcastEvent(id, targetVal) {
+      const eventNonce = Date.now() + "_" + Math.random();
+      const cleanId = id.toLowerCase().trim();
+
+      // 1. localStorage with unique nonce (polled every 200ms by widget-copy.html)
+      try {
+        localStorage.setItem("dispense_" + cleanId, JSON.stringify({
+          item_id: cleanId,
+          target: targetVal,
+          nonce: eventNonce
+        }));
+      } catch (e) {}
+
+      // 2. BroadcastChannel
+      try {
+        const bc = new BroadcastChannel("cement_dispense_channel");
+        bc.postMessage({ item_id: cleanId, target: targetVal, nonce: eventNonce });
+      } catch (e) {}
+
+      // 3. postMessage to all parent/top frames
+      try {
+        const msg = { type: "CEMENT_DISPENSE", item_id: cleanId, target: targetVal, nonce: eventNonce };
+        window.postMessage(msg, "*");
+        if (window.parent && window.parent !== window) window.parent.postMessage(msg, "*");
+        if (window.top && window.top !== window) window.top.postMessage(msg, "*");
+      } catch (e) {}
+
+      // 4. Server sync endpoint on Port 4173
+      try {
+        fetch("/api/dispense-sync", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ item_id: cleanId, target: targetVal, time: Date.now() }),
+        }).catch(() => {});
+      } catch (e) {}
+    }
+
+    async function triggerUpdate(id, label) {
+      const input = document.getElementById(`target-${id}`);
+      const btn = document.getElementById(`btn-${id}`);
+      const targetVal = Number(input.value) || 10;
+
+      btn.disabled = true;
+      btn.textContent = "Sending…";
+
+      // 1. Send real hardware target to backend API (port 4000)
+      try {
+        fetch(`${API_BASE}/api/item/${id}/target`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ target: targetVal }),
+        }).catch((err) => console.error(err));
+      } catch (e) {}
+
+      // 2. Broadcast to all open widget-copy.html pages
+      broadcastEvent(id, targetVal);
+
+      showToast(`Updated ${label} to ${targetVal}g!`);
+
+      setTimeout(() => {
+        btn.textContent = `Update ${label}`;
+        btn.disabled = false;
+      }, 1500);
+    }
+
+    function triggerReset(id, label) {
+      // 1. Send reset to backend API
+      try {
+        fetch(`${API_BASE}/api/item/${id}/target`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ target: 0 }),
+        }).catch(() => {});
+      } catch (e) {}
+
+      // 2. Broadcast 0 to all widgets
+      broadcastEvent(id, 0);
+
+      const input = document.getElementById(`target-${id}`);
+      if (input) input.value = 0;
+
+      showToast(`${label} reset to 0.00g (Underweight alarm on)`);
+    }
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sand &amp; Clay Hopper Cards</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      background: transparent !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    .container {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 12px;
+      background: transparent;
+      align-items: flex-start;
+    }
+    .container.col {
+      flex-direction: column;
+    }
+
+    .card {
+      width: 270px;
+      border-radius: 16px;
+      padding: 16px;
+      color: #ffffff;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      user-select: none;
+      transition: transform 0.15s ease;
+    }
+
+    /* Sand Orange Gradient */
+    .card-sand {
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      box-shadow: 0 10px 25px -5px rgba(234, 88, 12, 0.35);
+    }
+    /* Clay Purple Gradient */
+    .card-clay {
+      background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+      box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.35);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-title {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      opacity: 0.95;
+    }
+    .card-badge {
+      font-size: 10px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.22);
+      padding: 2px 8px;
+      border-radius: 9999px;
+      letter-spacing: 0.05em;
+    }
+
+    .card-value-row {
+      margin: 10px 0 12px 0;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .card-value {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .card-unit {
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0.85;
+    }
+
+    .card-controls {
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .target-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 600;
+      opacity: 0.95;
+    }
+    .target-input-wrap {
+      position: relative;
+      width: 80px;
+    }
+    .target-input {
+      width: 100%;
+      background: #ffffff;
+      color: #111827;
+      font-weight: 700;
+      font-size: 12px;
+      border-radius: 8px;
+      padding: 4px 22px 4px 8px;
+      border: none;
+      outline: none;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15);
+    }
+    .target-unit {
+      position: absolute;
+      right: 8px;
+      top: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #6b7280;
+      pointer-events: none;
+    }
+
+    .dispense-btn {
+      width: 100%;
+      background: #ffffff;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: all 0.15s ease;
+    }
+    .btn-sand {
+      color: #c2410c;
+    }
+    .btn-clay {
+      color: #6d28d9;
+    }
+    .dispense-btn:hover {
+      background: #f8fafc;
+      transform: translateY(-1px);
+    }
+    .dispense-btn:active {
+      transform: scale(0.98);
+    }
+    .dispense-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="container">
+    <!-- Sand Card -->
+    <div class="card card-sand" id="card-sand">
+      <div>
+        <div class="card-header">
+          <span class="card-title">Sand Hopper</span>
+          <span class="card-badge">ESP1</span>
+        </div>
+        <div class="card-value-row">
+          <span class="card-value" id="val-sand">--</span>
+          <span class="card-unit">g</span>
+        </div>
+      </div>
+      <div class="card-controls">
+        <div class="target-row">
+          <span>Dispense Target:</span>
+          <div class="target-input-wrap">
+            <input type="number" min="1" value="10" id="target-sand" class="target-input" />
+            <span class="target-unit">g</span>
+          </div>
+        </div>
+        <button class="dispense-btn btn-sand" id="btn-sand" onclick="dispense('sand', 'Sand')">
+          Dispense Sand
+        </button>
+      </div>
+    </div>
+
+    <!-- Clay Card -->
+    <div class="card card-clay" id="card-clay">
+      <div>
+        <div class="card-header">
+          <span class="card-title">Clay Hopper</span>
+          <span class="card-badge">ESP1</span>
+        </div>
+        <div class="card-value-row">
+          <span class="card-value" id="val-clay">--</span>
+          <span class="card-unit">g</span>
+        </div>
+      </div>
+      <div class="card-controls">
+        <div class="target-row">
+          <span>Dispense Target:</span>
+          <div class="target-input-wrap">
+            <input type="number" min="1" value="10" id="target-clay" class="target-input" />
+            <span class="target-unit">g</span>
+          </div>
+        </div>
+        <button class="dispense-btn btn-clay" id="btn-clay" onclick="dispense('clay', 'Clay')">
+          Dispense Clay
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ITEMS = ["sand", "clay"];
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("layout") === "col") {
+      document.getElementById("container").classList.add("col");
+    }
+
+    const backendProtocol = window.location.protocol === "https:" ? "https:" : "http:";
+    const websocketProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const API_BASE = `${backendProtocol}//${window.location.hostname}:4000`;
+    const WS_URL = `${websocketProtocol}//${window.location.hostname}:4000/ws`;
+
+    function updateVal(id, val) {
+      const el = document.getElementById(`val-${id}`);
+      if (!el) return;
+      if (val === null || val === undefined) {
+        el.textContent = "--";
+      } else if (typeof val === "number") {
+        const nonNeg = val < 0 ? 0 : val;
+        el.textContent = Number.isInteger(nonNeg) ? nonNeg : nonNeg.toFixed(1);
+      } else {
+        el.textContent = val;
+      }
+    }
+
+    // Initial snapshot
+    ITEMS.forEach((id) => {
+      fetch(`${API_BASE}/api/item/${id}`)
+        .then((r) => r.json())
+        .then((d) => updateVal(id, d.value))
+        .catch(() => {});
+    });
+
+    // WebSocket updates
+    function connectSocket() {
+      const ws = new WebSocket(WS_URL);
+      ws.onopen = () => ws.send(JSON.stringify({ type: "subscribe", items: ITEMS }));
+      ws.onmessage = (e) => {
+        try {
+          const msg = JSON.parse(e.data);
+          if (msg.type === "update" && ITEMS.includes(msg.item_id)) {
+            updateVal(msg.item_id, msg.value);
+          }
+        } catch (err) {}
+      };
+      ws.onclose = () => setTimeout(connectSocket, 2000);
+      ws.onerror = () => ws.close();
+    }
+    connectSocket();
+
+    async function dispense(id, label) {
+      const btn = document.getElementById(`btn-${id}`);
+      const targetInput = document.getElementById(`target-${id}`);
+      const targetVal = Number(targetInput.value) || 10;
+
+      btn.disabled = true;
+      btn.textContent = "Sending…";
+
+      try {
+        const res = await fetch(`${API_BASE}/api/item/${id}/target`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ target: targetVal }),
+        });
+        if (!res.ok) throw new Error("Failed");
+        btn.textContent = "Target Sent ✓";
+        setTimeout(() => {
+          btn.textContent = `Dispense ${label}`;
+          btn.disabled = false;
+        }, 2500);
+      } catch (err) {
+        btn.textContent = "Failed";
+        setTimeout(() => {
+          btn.textContent = `Dispense ${label}`;
+          btn.disabled = false;
+        }, 2500);
+      }
+    }
+  </script>
+</body>
+</html>

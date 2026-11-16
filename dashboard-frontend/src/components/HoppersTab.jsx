@@ -1,0 +1,202 @@
+import { useState, useEffect } from "react";
+import { API_BASE } from "../config.js";
+
+const HOPPER_THEMES = {
+  gypsum: {
+    bg: "bg-gradient-to-br from-blue-500 to-blue-600",
+    shadow: "shadow-blue-500/20",
+    btnBg: "bg-white text-blue-700 hover:bg-blue-50 dark:bg-slate-900 dark:text-blue-300 dark:hover:bg-slate-800",
+  },
+  clay: {
+    bg: "bg-gradient-to-br from-purple-500 to-purple-600",
+    shadow: "shadow-purple-500/20",
+    btnBg: "bg-white text-purple-700 hover:bg-purple-50 dark:bg-slate-900 dark:text-purple-300 dark:hover:bg-slate-800",
+  },
+  iron_ore: {
+    bg: "bg-gradient-to-br from-rose-500 to-rose-600",
+    shadow: "shadow-rose-500/20",
+    btnBg: "bg-white text-rose-700 hover:bg-rose-50 dark:bg-slate-900 dark:text-rose-300 dark:hover:bg-slate-800",
+  },
+  sand: {
+    bg: "bg-gradient-to-br from-orange-500 to-orange-600",
+    shadow: "shadow-orange-500/20",
+    btnBg: "bg-white text-orange-700 hover:bg-orange-50 dark:bg-slate-900 dark:text-orange-300 dark:hover:bg-slate-800",
+  },
+};
+
+const HOPPERS = [
+  { id: "gypsum", label: "Gypsum" },
+  { id: "clay", label: "Clay" },
+  { id: "iron_ore", label: "Iron Ore" },
+  { id: "sand", label: "Sand" },
+];
+
+export default function HoppersTab({ items }) {
+  const [targets, setTargets] = useState({
+    gypsum: 10,
+    clay: 10,
+    iron_ore: 10,
+    sand: 10,
+  });
+  const [sending, setSending] = useState({});
+  const [message, setMessage] = useState({});
+  const [gateSending, setGateSending] = useState(false);
+
+  function handleTargetChange(id, val) {
+    setTargets((prev) => ({ ...prev, [id]: val }));
+  }
+
+  async function dispense(id, label) {
+    setSending((prev) => ({ ...prev, [id]: true }));
+    try {
+      const res = await fetch(`${API_BASE}/api/item/${id}/target`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ target: Number(targets[id]) || 10 }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      setMessage((prev) => ({ ...prev, [id]: "Target Sent ✓" }));
+      setTimeout(() => setMessage((prev) => ({ ...prev, [id]: null })), 3000);
+    } catch (err) {
+      console.error(err);
+      setMessage((prev) => ({ ...prev, [id]: "Failed" }));
+      setTimeout(() => setMessage((prev) => ({ ...prev, [id]: null })), 3000);
+    } finally {
+      setSending((prev) => ({ ...prev, [id]: false }));
+    }
+  }
+
+  const gateState = items.lime_stone?.value;
+  const isGateOpen = gateState === "open";
+  const [localGateOpen, setLocalGateOpen] = useState(isGateOpen);
+
+  useEffect(() => {
+    setLocalGateOpen(gateState === "open");
+  }, [gateState]);
+
+  async function sendGateCommand(cmd) {
+    setGateSending(true);
+    setLocalGateOpen(cmd === "open");
+    try {
+      await fetch(`${API_BASE}/api/item/lime_stone/action`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ command: cmd }),
+      });
+    } catch (e) {
+      console.error(e);
+      setLocalGateOpen(gateState === "open");
+    } finally {
+      setGateSending(false);
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      {/* 4 Hoppers Dispenser Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+        {HOPPERS.map((h) => {
+          const val = items[h.id]?.value;
+          const displayWeight =
+            val !== null && val !== undefined
+              ? typeof val === "number"
+                ? val < 0
+                  ? 0
+                  : val.toFixed(1)
+                : val
+              : "--";
+
+          const theme = HOPPER_THEMES[h.id] || HOPPER_THEMES.gypsum;
+          const isBusy = sending[h.id];
+          const msg = message[h.id];
+
+          return (
+            <div
+              key={h.id}
+              className={`${theme.bg} rounded-2xl p-4 text-white shadow-md ${theme.shadow} flex flex-col justify-between`}
+            >
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider opacity-90">
+                    {h.label} Hopper
+                  </span>
+                  <span className="text-[10px] bg-white/20 font-bold px-2 py-0.2 rounded-full">
+                    ESP1
+                  </span>
+                </div>
+
+                <div className="my-2">
+                  <span className="text-3xl font-extrabold tracking-tight">
+                    {displayWeight}
+                  </span>
+                  <span className="text-sm font-semibold opacity-85 ml-1">g</span>
+                </div>
+              </div>
+
+              <div className="space-y-2 pt-2 border-t border-white/20">
+                <div className="flex items-center justify-between text-[11px] font-semibold opacity-90">
+                  <span>Dispense Target:</span>
+                  <div className="relative w-20">
+                    <input
+                      type="number"
+                      min="1"
+                      value={targets[h.id]}
+                      onChange={(e) => handleTargetChange(h.id, e.target.value)}
+                      className="w-full bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 font-bold text-xs rounded-lg px-2.5 py-1 focus:outline-none shadow-inner"
+                    />
+                    <span className="absolute right-2 top-1 text-[11px] text-gray-500 dark:text-gray-400 font-bold">
+                      g
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => dispense(h.id, h.label)}
+                  disabled={isBusy}
+                  className={`w-full ${theme.btnBg} font-bold text-xs py-2 rounded-xl shadow-sm transition-all active:scale-95 disabled:opacity-60 cursor-pointer`}
+                >
+                  {isBusy ? "Sending…" : msg ? msg : `Dispense ${h.label}`}
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Lime Stone Gate */}
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-4 py-3 shadow-sm flex items-center justify-between transition-colors">
+        <div className="flex items-center gap-3">
+          <span className="text-2xl">🚜</span>
+          <div>
+            <div className="flex items-center gap-2">
+              <h4 className="font-bold text-xs sm:text-sm text-slate-900 dark:text-slate-100">
+                Lime Stone Raw Material Gate
+              </h4>
+              <span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300">
+                GATE
+              </span>
+            </div>
+            <p className="text-[10px] text-slate-400 dark:text-slate-500">ESP1 Gate Servo</p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          role="switch"
+          aria-checked={localGateOpen}
+          disabled={gateSending}
+          onClick={() => sendGateCommand(localGateOpen ? "close" : "open")}
+          className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50 shadow-inner ${
+            localGateOpen ? "bg-green-500" : "bg-red-500"
+          }`}
+        >
+          <span
+            className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white dark:bg-slate-100 shadow transition-transform duration-200 ease-in-out ${
+              localGateOpen ? "translate-x-5" : "translate-x-0"
+            }`}
+          />
+        </button>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<!--
+  Part 1: Hopper Reading / Value Card
+  Matches the exact glassmorphic top portion of the card.
+  Usage: hopper-reading.html?id=clay (or sand, iron_ore, gypsum)
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hopper Reading</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      background: transparent !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    .container {
+      display: inline-flex;
+      padding: 6px;
+      background: transparent;
+    }
+
+    .card {
+      width: 270px;
+      border-radius: 18px;
+      padding: 16px;
+      color: #ffffff;
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35);
+      user-select: none;
+      transition: transform 0.15s ease;
+    }
+
+    /* Themes per material */
+    .card-clay {
+      background: rgba(109, 40, 217, 0.30);
+      border: 1px solid rgba(192, 132, 252, 0.45);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(168, 85, 247, 0.2);
+    }
+    .card-clay .card-title { color: #d8b4fe; }
+
+    .card-sand {
+      background: rgba(194, 65, 12, 0.30);
+      border: 1px solid rgba(251, 146, 60, 0.45);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(249, 115, 22, 0.2);
+    }
+    .card-sand .card-title { color: #fdba74; }
+
+    .card-iron_ore {
+      background: rgba(190, 18, 60, 0.30);
+      border: 1px solid rgba(251, 113, 133, 0.45);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(244, 63, 94, 0.2);
+    }
+    .card-iron_ore .card-title { color: #fda4af; }
+
+    .card-gypsum {
+      background: rgba(30, 64, 175, 0.30);
+      border: 1px solid rgba(147, 197, 253, 0.45);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(59, 130, 246, 0.2);
+    }
+    .card-gypsum .card-title { color: #93c5fd; }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-title {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95), 0 0 6px rgba(0, 0, 0, 0.7);
+    }
+    .card-badge {
+      font-size: 10px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 2px 8px;
+      border-radius: 9999px;
+      letter-spacing: 0.05em;
+      color: #ffffff;
+    }
+
+    .card-value-row {
+      margin-top: 10px;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .card-value {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      color: #ffffff !important;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 10px rgba(0, 0, 0, 0.8);
+    }
+    .card-unit {
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0.85;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card card-clay" id="card">
+      <div class="card-header">
+        <span class="card-title" id="title">CLAY HOPPER</span>
+      </div>
+      <div class="card-value-row">
+        <span class="card-value" id="val">--</span>
+        <span class="card-unit">g</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const DISPLAY_TITLES = {
+      clay: "CLAY HOPPER",
+      sand: "SAND HOPPER",
+      iron_ore: "IRON ORE HOPPER",
+      gypsum: "GYPSUM HOPPER",
+    };
+
+    const backendProtocol = window.location.protocol === "https:" ? "https:" : "http:";
+    const websocketProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const API_BASE = `${backendProtocol}//${window.location.hostname}:4000`;
+    const WS_URL = `${websocketProtocol}//${window.location.hostname}:4000/ws`;
+
+    const params = new URLSearchParams(window.location.search);
+    const pathParts = window.location.pathname.toLowerCase().split("/").filter(Boolean);
+    const pathMaterial = ["sand", "clay", "iron_ore", "gypsum"].find((m) => pathParts.includes(m));
+    const rawId = params.get("id") || pathMaterial || "clay";
+    const itemId = rawId.toLowerCase().trim();
+
+    const cardEl = document.getElementById("card");
+    const titleEl = document.getElementById("title");
+    const valEl = document.getElementById("val");
+
+    // Apply material title & style
+    titleEl.textContent = DISPLAY_TITLES[itemId] || `${itemId.toUpperCase()} HOPPER`;
+    cardEl.className = "card card-" + itemId;
+
+    function renderSensorValue(rawVal) {
+      if (rawVal === null || rawVal === undefined) {
+        valEl.textContent = "--";
+        return;
+      }
+      const num = Number(rawVal);
+      if (isNaN(num)) {
+        valEl.textContent = rawVal;
+        return;
+      }
+      const clamped = num < 0 ? 0 : num;
+      valEl.textContent = Number.isInteger(clamped) ? clamped : clamped.toFixed(1);
+    }
+
+    // 1. Initial snapshot from backend API
+    async function fetchSnapshot() {
+      try {
+        const res = await fetch(`${API_BASE}/api/item/${itemId}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.value !== undefined) {
+            renderSensorValue(data.value);
+          }
+        }
+      } catch (err) {}
+    }
+    fetchSnapshot();
+
+    // 2. Real-time direct sensor telemetry from ESP1 firmware via WebSocket
+    function connectSocket() {
+      try {
+        const ws = new WebSocket(WS_URL);
+        ws.onopen = () => {
+          ws.send(JSON.stringify({ type: "subscribe", item_id: itemId }));
+        };
+        ws.onmessage = (e) => {
+          try {
+            const msg = JSON.parse(e.data);
+            if (msg.type === "update" && (msg.item_id === itemId || !msg.item_id)) {
+              renderSensorValue(msg.value);
+            }
+          } catch (err) {}
+        };
+        ws.onclose = () => setTimeout(connectSocket, 2000);
+        ws.onerror = () => ws.close();
+      } catch (err) {
+        setTimeout(connectSocket, 2000);
+      }
+    }
+    connectSocket();
+  </script>
+</body>
+</html>
