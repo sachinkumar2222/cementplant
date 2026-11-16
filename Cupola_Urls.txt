@@ -23,6 +23,27 @@ Sand:
 http://10.10.12.65:4173/widget.html?id=sand
 
 
+==================================================
+ESP-1: HOPPER DISPENSE ONLY (TARGET WEIGHT + DISPENSE BUTTON):
+==================================================
+
+Iron Ore Dispense:
+http://10.10.12.65:4173/hopper-control.html?id=iron_ore
+(or http://10.10.12.65:4173/iron_ore/dispense)
+
+Gypsum Dispense:
+http://10.10.12.65:4173/hopper-control.html?id=gypsum
+(or http://10.10.12.65:4173/gypsum/dispense)
+
+Clay Dispense:
+http://10.10.12.65:4173/hopper-control.html?id=clay
+(or http://10.10.12.65:4173/clay/dispense)
+
+Sand Dispense:
+http://10.10.12.65:4173/hopper-control.html?id=sand
+(or http://10.10.12.65:4173/sand/dispense)
+
+
 Limestone Gate:
 
 OPEN:
