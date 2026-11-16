@@ -13,6 +13,7 @@
       &overload=20  (overload threshold, default 20)
       &underload=5  (underload threshold, default 5)
       &decimals=2   (decimal places, default 2)
+      &size=20px    (custom title size, default 20px)
       &view=compact (compact pill display mode)
 -->
 <html lang="en">
@@ -51,9 +52,9 @@
      * ========================================================================= */
     .load-card {
       position: relative;
-      width: 280px;
+      width: 290px;
       border-radius: 18px;
-      padding: 14px 16px 14px 16px;
+      padding: 16px 18px;
       color: #ffffff;
       backdrop-filter: blur(20px) saturate(190%);
       -webkit-backdrop-filter: blur(20px) saturate(190%);
@@ -62,110 +63,77 @@
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
 
     /* Material Specific Accents */
     /* 1. Iron Ore (Crimson / Ruby) */
     .theme-iron_ore {
-      background: radial-gradient(circle at 15% 15%, rgba(225, 29, 72, 0.35), rgba(15, 23, 42, 0.72) 80%);
+      background: radial-gradient(circle at 15% 15%, rgba(225, 29, 72, 0.38), rgba(15, 23, 42, 0.75) 85%);
       border-color: rgba(251, 113, 133, 0.45);
       box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(244, 63, 94, 0.2);
     }
     .theme-iron_ore .material-title { color: #fda4af; }
-    .theme-iron_ore .accent-meter-fill { background: linear-gradient(90deg, #fb7185, #e11d48); }
 
     /* 2. Clay (Purple / Violet) */
     .theme-clay {
-      background: radial-gradient(circle at 15% 15%, rgba(124, 58, 237, 0.35), rgba(15, 23, 42, 0.72) 80%);
+      background: radial-gradient(circle at 15% 15%, rgba(124, 58, 237, 0.38), rgba(15, 23, 42, 0.75) 85%);
       border-color: rgba(192, 132, 252, 0.45);
       box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(168, 85, 247, 0.2);
     }
     .theme-clay .material-title { color: #d8b4fe; }
-    .theme-clay .accent-meter-fill { background: linear-gradient(90deg, #c084fc, #9333ea); }
 
     /* 3. Sand (Amber / Gold) */
     .theme-sand {
-      background: radial-gradient(circle at 15% 15%, rgba(217, 119, 6, 0.35), rgba(15, 23, 42, 0.72) 80%);
+      background: radial-gradient(circle at 15% 15%, rgba(217, 119, 6, 0.38), rgba(15, 23, 42, 0.75) 85%);
       border-color: rgba(251, 146, 60, 0.45);
       box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(249, 115, 22, 0.2);
     }
     .theme-sand .material-title { color: #fdba74; }
-    .theme-sand .accent-meter-fill { background: linear-gradient(90deg, #fb923c, #ea580c); }
 
     /* 4. Gypsum (Royal Blue / Azure) */
     .theme-gypsum {
-      background: radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.35), rgba(15, 23, 42, 0.72) 80%);
+      background: radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.38), rgba(15, 23, 42, 0.75) 85%);
       border-color: rgba(147, 197, 253, 0.45);
       box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(59, 130, 246, 0.2);
     }
     .theme-gypsum .material-title { color: #93c5fd; }
-    .theme-gypsum .accent-meter-fill { background: linear-gradient(90deg, #60a5fa, #2563eb); }
 
     /* 5. General Sensors / Default (Cyan / Slate) */
     .theme-sensor {
-      background: radial-gradient(circle at 15% 15%, rgba(14, 165, 233, 0.35), rgba(15, 23, 42, 0.72) 80%);
+      background: radial-gradient(circle at 15% 15%, rgba(14, 165, 233, 0.38), rgba(15, 23, 42, 0.75) 85%);
       border-color: rgba(56, 189, 248, 0.45);
       box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(56, 189, 248, 0.2);
     }
     .theme-sensor .material-title { color: #7dd3fc; }
-    .theme-sensor .accent-meter-fill { background: linear-gradient(90deg, #38bdf8, #0284c7); }
 
     /* Header Bar */
     .card-header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 8px;
+      justify-content: flex-start;
+      gap: 10px;
     }
 
     .title-group {
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 8px;
     }
 
     .material-icon {
-      font-size: 16px;
+      font-size: 20px;
       line-height: 1;
       filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
     }
 
     .material-title {
-      font-size: 13px;
+      font-size: 20px !important;
       font-weight: 800;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
       text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
-    }
-
-    .live-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 3px 7px;
-      border-radius: 9999px;
-      background: rgba(16, 185, 129, 0.16);
-      border: 1px solid rgba(52, 211, 153, 0.38);
-      color: #34d399;
-    }
-
-    .live-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 8px #10b981;
-      animation: pulse-live 1.8s infinite;
-    }
-
-    @keyframes pulse-live {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.85); }
+      line-height: 1.2;
     }
 
     /* Value Display Area */
@@ -173,6 +141,7 @@
       display: flex;
       align-items: baseline;
       justify-content: space-between;
+      gap: 8px;
       padding: 2px 0;
     }
 
@@ -204,10 +173,10 @@
     .load-status-badge {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
+      gap: 6px;
+      padding: 5px 12px;
       border-radius: 9999px;
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 800;
       letter-spacing: 0.05em;
       text-transform: uppercase;
@@ -217,8 +186,8 @@
 
     /* State: NORMAL */
     .status-normal {
-      background: rgba(16, 185, 129, 0.18);
-      border: 1px solid rgba(52, 211, 153, 0.45);
+      background: rgba(16, 185, 129, 0.20);
+      border: 1px solid rgba(52, 211, 153, 0.5);
       color: #6ee7b7;
       box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
     }
@@ -229,10 +198,10 @@
 
     /* State: OVERLOAD */
     .status-overload {
-      background: rgba(239, 68, 68, 0.28);
-      border: 1.5px solid rgba(248, 113, 113, 0.7);
-      color: #fecaca;
-      box-shadow: 0 0 16px rgba(239, 68, 68, 0.5);
+      background: rgba(239, 68, 68, 0.32);
+      border: 1.5px solid rgba(248, 113, 113, 0.8);
+      color: #fee2e2;
+      box-shadow: 0 0 18px rgba(239, 68, 68, 0.55);
       animation: alert-pulse 1s infinite alternate;
     }
     .status-overload .status-dot {
@@ -242,11 +211,11 @@
 
     /* State: UNDERLOAD */
     .status-underload {
-      background: rgba(245, 158, 11, 0.25);
-      border: 1.5px solid rgba(251, 191, 36, 0.65);
-      color: #fef08a;
-      box-shadow: 0 0 14px rgba(245, 158, 11, 0.45);
-      animation: alert-pulse 1.3s infinite alternate;
+      background: rgba(245, 158, 11, 0.30);
+      border: 1.5px solid rgba(251, 191, 36, 0.75);
+      color: #fef9c3;
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.5);
+      animation: alert-pulse 1.2s infinite alternate;
     }
     .status-underload .status-dot {
       background: #f59e0b;
@@ -261,93 +230,8 @@
 
     @keyframes alert-pulse {
       0% { transform: scale(1); filter: brightness(1); }
-      100% { transform: scale(1.03); filter: brightness(1.22); }
+      100% { transform: scale(1.04); filter: brightness(1.25); }
     }
-
-    /* Overload / Underload Alert Banner */
-    .alert-banner {
-      display: none;
-      padding: 6px 10px;
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      align-items: center;
-      gap: 7px;
-      transition: all 0.25s ease;
-    }
-
-    .alert-banner.banner-overload {
-      display: flex;
-      background: rgba(220, 38, 38, 0.35);
-      border: 1px solid rgba(248, 113, 113, 0.6);
-      color: #fee2e2;
-      animation: banner-flash 0.9s infinite alternate;
-    }
-
-    .alert-banner.banner-underload {
-      display: flex;
-      background: rgba(217, 119, 6, 0.35);
-      border: 1px solid rgba(251, 191, 36, 0.6);
-      color: #fef9c3;
-    }
-
-    @keyframes banner-flash {
-      0% { background: rgba(220, 38, 38, 0.28); }
-      100% { background: rgba(220, 38, 38, 0.52); }
-    }
-
-    /* Load Level Gauge Meter */
-    .meter-container {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      padding-top: 2px;
-    }
-
-    .meter-track {
-      position: relative;
-      width: 100%;
-      height: 7px;
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 9999px;
-      overflow: hidden;
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
-    }
-
-    .meter-fill {
-      height: 100%;
-      width: 0%;
-      border-radius: 9999px;
-      transition: width 0.35s ease, background 0.35s ease;
-    }
-
-    .fill-underload {
-      background: linear-gradient(90deg, #f59e0b, #d97706) !important;
-      box-shadow: 0 0 8px rgba(245, 158, 11, 0.8);
-    }
-    .fill-normal {
-      background: linear-gradient(90deg, #10b981, #059669) !important;
-      box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
-    }
-    .fill-overload {
-      background: linear-gradient(90deg, #ef4444, #b91c1c) !important;
-      box-shadow: 0 0 10px rgba(239, 68, 68, 0.9);
-    }
-
-    .meter-labels {
-      display: flex;
-      justify-content: space-between;
-      font-size: 9px;
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.65);
-      letter-spacing: 0.02em;
-    }
-
-    .marker-under { color: #fbbf24; }
-    .marker-safe { color: #34d399; }
-    .marker-over { color: #f87171; }
 
     /* Compact Pill Mode (Activated via ?view=compact) */
     .load-card.compact-view {
@@ -357,10 +241,6 @@
       flex-direction: row;
       align-items: center;
       gap: 12px;
-    }
-    .load-card.compact-view .meter-container,
-    .load-card.compact-view .alert-banner {
-      display: none !important;
     }
     .load-card.compact-view .telemetry-val {
       font-size: 24px;
@@ -379,10 +259,6 @@
           <span class="material-icon" id="card-icon">🪨</span>
           <span class="material-title" id="card-title">IRON ORE HOPPER</span>
         </div>
-        <div class="live-badge">
-          <span class="live-dot"></span>
-          <span>LIVE</span>
-        </div>
       </div>
 
       <!-- Main Telemetry Value & Status Badge -->
@@ -393,25 +269,7 @@
         </div>
         <div class="load-status-badge status-normal" id="status-badge">
           <span class="status-dot"></span>
-          <span id="status-text">NORMAL</span>
-        </div>
-      </div>
-
-      <!-- Overload / Underload Active Alert Banner -->
-      <div class="alert-banner" id="alert-banner" role="alert" aria-live="assertive">
-        <span id="alert-icon">⚠️</span>
-        <span id="alert-message">OVERLOAD ALARM (>20g)</span>
-      </div>
-
-      <!-- Visual Load Gauge / Meter -->
-      <div class="meter-container" id="meter-container">
-        <div class="meter-track">
-          <div class="meter-fill fill-normal" id="meter-fill"></div>
-        </div>
-        <div class="meter-labels">
-          <span class="marker-under" id="marker-under">&lt;5g Underload</span>
-          <span class="marker-safe">5–20g Safe Load</span>
-          <span class="marker-over" id="marker-over">&gt;20g Overload</span>
+          <span id="status-text">NORMAL LOAD</span>
         </div>
       </div>
 
@@ -525,7 +383,6 @@
     // Thresholds
     const OVERLOAD_THRESHOLD = parseFloat(params.get("overload")) || 20.0;
     const UNDERLOAD_THRESHOLD = parseFloat(params.get("underload")) || 5.0;
-    const MAX_METER_SCALE = OVERLOAD_THRESHOLD * 1.25; // 25g scale
 
     // Formatting options
     const decimalsParam = params.get("decimals");
@@ -540,12 +397,6 @@
     const unitEl = document.getElementById("unit");
     const statusBadge = document.getElementById("status-badge");
     const statusText = document.getElementById("status-text");
-    const alertBanner = document.getElementById("alert-banner");
-    const alertMessage = document.getElementById("alert-message");
-    const meterContainer = document.getElementById("meter-container");
-    const meterFill = document.getElementById("meter-fill");
-    const markerUnder = document.getElementById("marker-under");
-    const markerOver = document.getElementById("marker-over");
 
     // Initialize Card Theme & Titles
     const cfg = MATERIAL_CONFIGS[itemId] || {
@@ -560,14 +411,9 @@
     titleEl.textContent = cfg.title;
     iconEl.textContent = cfg.icon;
     unitEl.textContent = cfg.defaultUnit;
-    markerUnder.textContent = `<${UNDERLOAD_THRESHOLD}g Underload`;
-    markerOver.textContent = `>${OVERLOAD_THRESHOLD}g Overload`;
 
     if (!cfg.isHopper) {
-      // General sensors do not have material load thresholds
-      meterContainer.style.display = "none";
       statusBadge.style.display = "none";
-      alertBanner.style.display = "none";
     }
 
     // Backend Protocols
@@ -585,8 +431,6 @@
         if (cfg.isHopper) {
           statusBadge.className = "load-status-badge status-normal";
           statusText.textContent = "WAITING";
-          meterFill.style.width = "0%";
-          alertBanner.style.display = "none";
         }
         return;
       }
@@ -603,34 +447,18 @@
 
       // Handle Hoppers: Overload & Underload Logic
       if (cfg.isHopper) {
-        // Meter gauge percentage
-        const pct = Math.min(100, Math.max(0, (clampedVal / MAX_METER_SCALE) * 100));
-        meterFill.style.width = `${pct}%`;
-
         if (clampedVal > OVERLOAD_THRESHOLD) {
           // 🔴 OVERLOAD STATE
           statusBadge.className = "load-status-badge status-overload";
-          statusText.textContent = "OVERLOAD";
-          meterFill.className = "meter-fill fill-overload";
-
-          alertBanner.className = "alert-banner banner-overload";
-          alertMessage.textContent = `OVERLOAD ALARM: ${clampedVal.toFixed(1)}g (Limit: ${OVERLOAD_THRESHOLD}g)`;
-          alertBanner.style.display = "flex";
+          statusText.textContent = "OVERLOAD ALARM";
         } else if (clampedVal < UNDERLOAD_THRESHOLD) {
           // 🟡 UNDERLOAD STATE
           statusBadge.className = "load-status-badge status-underload";
-          statusText.textContent = "UNDERLOAD";
-          meterFill.className = "meter-fill fill-underload";
-
-          alertBanner.className = "alert-banner banner-underload";
-          alertMessage.textContent = `UNDERLOAD ALARM: ${clampedVal.toFixed(1)}g (Min: ${UNDERLOAD_THRESHOLD}g)`;
-          alertBanner.style.display = "flex";
+          statusText.textContent = "UNDERLOAD ALARM";
         } else {
           // 🟢 NORMAL / SAFE LOAD STATE
           statusBadge.className = "load-status-badge status-normal";
           statusText.textContent = "NORMAL LOAD";
-          meterFill.className = "meter-fill fill-normal";
-          alertBanner.style.display = "none";
         }
       }
     }
