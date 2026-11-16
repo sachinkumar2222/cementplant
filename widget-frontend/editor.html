@@ -1067,40 +1067,105 @@
 
         let css = "";
         if (isHopper) {
+          const matClass = currentCardKey.replace("hopper_", "card-");
           css = `
-            html body .card, html body #card {
+            html body .card, html body #card, html body[data-card="hopper"] .card, html body[data-card="hopper"] .${matClass} {
               width: ${s.cardWidth || 270}px !important;
               padding: ${s.cardPaddingY || 16}px ${s.cardPaddingX || 16}px !important;
               border-radius: ${s.cardRadius || 18}px !important;
             }
-            html body .card-title, html body #title { font-size: ${s.titleFontSize || 11}px !important; }
-            html body .card-value, html body #val { font-size: ${s.sensorValueFontSize || 36}px !important; }
-            html body .card-unit { font-size: ${s.sensorUnitFontSize || 14}px !important; }
+            body[data-card="hopper"] .${matClass} .card-title,
+            body[data-card="hopper"] .${matClass} #title,
+            html body[data-card="hopper"] .${matClass} .card-title,
+            html body[data-card="hopper"] .card-title,
+            html body[data-card="hopper"] #title,
+            html body .card-title,
+            html body #title {
+              font-size: ${s.titleFontSize || 11}px !important;
+            }
+            body[data-card="hopper"] .${matClass} .card-value,
+            body[data-card="hopper"] .${matClass} #val,
+            html body[data-card="hopper"] .${matClass} .card-value,
+            html body[data-card="hopper"] .card-value,
+            html body[data-card="hopper"] #val,
+            html body .card-value,
+            html body #val {
+              font-size: ${s.sensorValueFontSize || 36}px !important;
+            }
+            body[data-card="hopper"] .${matClass} .card-unit,
+            html body[data-card="hopper"] .${matClass} .card-unit,
+            html body[data-card="hopper"] .card-unit,
+            html body .card-unit {
+              font-size: ${s.sensorUnitFontSize || 14}px !important;
+            }
           `;
         } else {
+          const cardType = currentCardKey;
           css = `
-            html body .card {
+            body[data-card="${cardType}"] .card,
+            html body[data-card="${cardType}"] .card,
+            html body .card,
+            html body #card {
               width: ${s.cardWidth || 310}px !important;
               padding: ${s.cardPaddingY || 13}px ${s.cardPaddingX || 15}px !important;
               border-radius: ${s.cardRadius || 18}px !important;
               gap: ${s.cardGap || 10}px !important;
             }
-            html body .card-header { padding-bottom: ${s.headerPaddingBottom || 8}px !important; }
-            html body .card-title, html body #title { font-size: ${s.titleFontSize || 20}px !important; }
-            html body .card-icon { font-size: ${s.iconFontSize || 20}px !important; }
+            body[data-card="${cardType}"] .card-header,
+            html body[data-card="${cardType}"] .card-header,
+            html body .card-header {
+              padding-bottom: ${s.headerPaddingBottom || 8}px !important;
+            }
+            body[data-card="${cardType}"] .card-title,
+            body[data-card="${cardType}"] #title,
+            html body[data-card="${cardType}"] .card-title,
+            html body[data-card="${cardType}"] #title,
+            html body .card-title,
+            html body #title {
+              font-size: ${s.titleFontSize || 20}px !important;
+            }
+            body[data-card="${cardType}"] .card-icon,
+            html body[data-card="${cardType}"] .card-icon,
+            html body .card-icon {
+              font-size: ${s.iconFontSize || 20}px !important;
+            }
+            body[data-card="${cardType}"] .sensor-box,
+            html body[data-card="${cardType}"] .sensor-box,
             html body .sensor-box {
               padding: ${s.sensorBoxPaddingY || 8}px ${s.sensorBoxPaddingX || 10}px !important;
               border-radius: ${s.sensorBoxRadius || 12}px !important;
             }
-            html body .sensor-label { font-size: ${s.sensorLabelFontSize || 18}px !important; }
-            html body .sensor-value, html body #val-temp, html body #val-hum { font-size: ${s.sensorValueFontSize || 30}px !important; }
-            html body .sensor-unit { font-size: ${s.sensorUnitFontSize || 17}px !important; }
+            body[data-card="${cardType}"] .sensor-label,
+            html body[data-card="${cardType}"] .sensor-label,
+            html body .sensor-label {
+              font-size: ${s.sensorLabelFontSize || 18}px !important;
+            }
+            body[data-card="${cardType}"] .sensor-value,
+            html body[data-card="${cardType}"] .sensor-value,
+            html body .sensor-value,
+            html body #val-temp,
+            html body #val-hum {
+              font-size: ${s.sensorValueFontSize || 30}px !important;
+            }
+            body[data-card="${cardType}"] .sensor-unit,
+            html body[data-card="${cardType}"] .sensor-unit,
+            html body .sensor-unit {
+              font-size: ${s.sensorUnitFontSize || 17}px !important;
+            }
+            body[data-card="${cardType}"] .control-row,
+            html body[data-card="${cardType}"] .control-row,
             html body .control-row {
               padding: ${s.controlPaddingY || 8}px ${s.controlPaddingX || 12}px !important;
               gap: ${s.controlGap || 8}px !important;
               border-radius: ${s.controlRadius || 10}px !important;
             }
-            html body .control-name { font-size: ${s.controlNameFontSize || 20}px !important; }
+            body[data-card="${cardType}"] .control-name,
+            html body[data-card="${cardType}"] .control-name,
+            html body .control-name {
+              font-size: ${s.controlNameFontSize || 20}px !important;
+            }
+            body[data-card="${cardType}"] .state-btn,
+            html body[data-card="${cardType}"] .state-btn,
             html body .state-btn {
               font-size: ${s.btnFontSize || 13}px !important;
               padding: ${s.btnPaddingY || 5}px ${s.btnPaddingX || 13}px !important;
@@ -1110,19 +1175,32 @@
         }
         styleTag.textContent = css;
 
-        // Direct DOM inline overrides for instant guarantee
-        const titleEl = frameDoc.querySelector(".card-title") || frameDoc.getElementById("title");
-        if (titleEl && s.titleFontSize) {
-          titleEl.style.setProperty("font-size", `${s.titleFontSize}px`, "important");
-        }
-        const valEl = frameDoc.querySelector(".sensor-value") || frameDoc.querySelector(".card-value") || frameDoc.getElementById("val");
-        if (valEl && s.sensorValueFontSize) {
-          valEl.style.setProperty("font-size", `${s.sensorValueFontSize}px`, "important");
-        }
-        const cardEl = frameDoc.querySelector(".card");
-        if (cardEl && s.cardWidth) {
-          cardEl.style.setProperty("width", `${s.cardWidth}px`, "important");
-        }
+        // Direct DOM inline overrides for instant zero-latency guarantee
+        frameDoc.querySelectorAll(".card-title, #title").forEach(el => {
+          if (s.titleFontSize) el.style.setProperty("font-size", `${s.titleFontSize}px`, "important");
+        });
+        frameDoc.querySelectorAll(".card-icon").forEach(el => {
+          if (s.iconFontSize) el.style.setProperty("font-size", `${s.iconFontSize}px`, "important");
+        });
+        frameDoc.querySelectorAll(".sensor-label").forEach(el => {
+          if (s.sensorLabelFontSize) el.style.setProperty("font-size", `${s.sensorLabelFontSize}px`, "important");
+        });
+        frameDoc.querySelectorAll(".sensor-value, .card-value, #val, #val-temp, #val-hum").forEach(el => {
+          if (s.sensorValueFontSize) el.style.setProperty("font-size", `${s.sensorValueFontSize}px`, "important");
+        });
+        frameDoc.querySelectorAll(".sensor-unit, .card-unit").forEach(el => {
+          if (s.sensorUnitFontSize) el.style.setProperty("font-size", `${s.sensorUnitFontSize}px`, "important");
+        });
+        frameDoc.querySelectorAll(".control-name").forEach(el => {
+          if (s.controlNameFontSize) el.style.setProperty("font-size", `${s.controlNameFontSize}px`, "important");
+        });
+        frameDoc.querySelectorAll(".card, #card").forEach(el => {
+          if (s.cardWidth) el.style.setProperty("width", `${s.cardWidth}px`, "important");
+          if (s.cardPaddingY || s.cardPaddingX) {
+            el.style.setProperty("padding", `${s.cardPaddingY || 16}px ${s.cardPaddingX || 16}px`, "important");
+          }
+          if (s.cardRadius) el.style.setProperty("border-radius", `${s.cardRadius}px`, "important");
+        });
 
         // Auto adjust iframe width
         previewFrame.style.width = `${(s.cardWidth || 310) + 50}px`;
@@ -1139,8 +1217,9 @@
         const s = stylesState[currentCardKey] || {};
 
         if (s.titleText) {
-          const titleEl = frameDoc.querySelector(".card-title");
-          if (titleEl) titleEl.textContent = s.titleText;
+          frameDoc.querySelectorAll(".card-title, #title").forEach(el => {
+            el.textContent = s.titleText;
+          });
         }
         if (s.iconText) {
           const iconEl = frameDoc.querySelector(".card-icon");
@@ -1180,6 +1259,10 @@
     previewFrame.addEventListener("load", () => {
       applyLiveStylesToPreview();
       applyLiveTextsToPreview();
+      setTimeout(() => {
+        applyLiveStylesToPreview();
+        applyLiveTextsToPreview();
+      }, 80);
     });
 
     // Background toggle
