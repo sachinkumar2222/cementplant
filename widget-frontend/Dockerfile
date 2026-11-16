@@ -9,6 +9,8 @@ RUN npm ci --omit=dev
 COPY server.js ./
 COPY *.html ./
 COPY js ./js
+COPY css ./css
+COPY custom-styles.json ./
 
 EXPOSE 4173
 CMD ["npm", "start"]

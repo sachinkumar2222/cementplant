@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Card Visual Styler & Theme Editor — Cement Plant</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    :root {
+      --bg-dark: #0b0f19;
+      --panel-bg: #111827;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --border-color: rgba(255, 255, 255, 0.12);
+      --accent-blue: #3b82f6;
+      --accent-green: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation Bar */
+    header {
+      height: 60px;
+      background: #0f172a;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      gap: 16px;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 17px;
+      font-weight: 800;
+      color: #60a5fa;
+      letter-spacing: -0.01em;
+    }
+    .card-select-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-select-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    select.card-dropdown {
+      background: #1e293b;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    select.card-dropdown:focus {
+      border-color: var(--accent-blue);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .btn-secondary {
+      background: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .btn-secondary:hover {
+      background: #334155;
+      color: #ffffff;
+    }
+    .btn-save {
+      background: #10b981;
+      color: #ffffff;
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.4);
+    }
+    .btn-save:hover {
+      background: #059669;
+      transform: translateY(-1px);
+    }
+
+    /* Main App Layout */
+    .app-main {
+      flex: 1;
+      display: flex;
+      height: calc(100vh - 60px);
+      overflow: hidden;
+    }
+
+    /* Left Panel: Preview Canvas */
+    .preview-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #060913;
+      border-right: 1px solid var(--border-color);
+      position: relative;
+    }
+    .preview-toolbar {
+      height: 44px;
+      background: rgba(15, 23, 42, 0.85);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .bg-toggle-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .bg-toggle-btn.active {
+      background: var(--accent-blue);
+      color: #ffffff;
+      border-color: #60a5fa;
+    }
+    .dim-tag {
+      font-family: monospace;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #38bdf8;
+      font-size: 11px;
+    }
+
+    .canvas-viewport {
+      flex: 1;
+      overflow: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      transition: background 0.3s ease;
+      background-size: cover;
+      background-position: center;
+    }
+    .canvas-viewport.bg-camera {
+      background: linear-gradient(rgba(10, 15, 30, 0.75), rgba(10, 15, 30, 0.85)),
+                  radial-gradient(ellipse at 30% 40%, rgba(45, 55, 72, 0.8), rgba(15, 23, 42, 0.95)),
+                  repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 20px);
+    }
+    .canvas-viewport.bg-dark {
+      background: #020617;
+    }
+    .canvas-viewport.bg-grid {
+      background-color: #0b0f19;
+      background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    .iframe-wrapper {
+      position: relative;
+      display: inline-flex;
+      border: 1px dashed rgba(59, 130, 246, 0.4);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.25);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+    iframe#card-preview-frame {
+      border: none;
+      background: transparent;
+      overflow: visible;
+      width: 380px;
+      height: 380px;
+      transition: width 0.15s ease, height 0.15s ease;
+    }
+
+    /* Right Panel: Controls Sidebar */
+    .controls-panel {
+      width: 440px;
+      background: var(--panel-bg);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      border-left: 1px solid var(--border-color);
+    }
+    .controls-header {
+      padding: 14px 18px;
+      background: #111827;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .controls-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Quick Preset Bar */
+    .presets-bar {
+      padding: 10px 18px;
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .preset-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .preset-pill {
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.08);
+      color: #93c5fd;
+      border: 1px solid rgba(147, 197, 253, 0.2);
+      padding: 4px 9px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .preset-pill:hover {
+      background: rgba(59, 130, 246, 0.25);
+      border-color: #60a5fa;
+      color: #ffffff;
+    }
+
+    /* Accordion Scroll Area */
+    .controls-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .controls-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .controls-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+    }
+
+    /* Component Section Block */
+    .section-card {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .section-card:hover {
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    .section-header {
+      padding: 10px 14px;
+      background: rgba(15, 23, 42, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-arrow {
+      font-size: 11px;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+    }
+    .section-card.collapsed .section-arrow {
+      transform: rotate(-90deg);
+    }
+    .section-card.collapsed .section-body {
+      display: none;
+    }
+    .section-body {
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Single Property Control Row */
+    .prop-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .prop-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .prop-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #cbd5e1;
+    }
+    .prop-value-badge {
+      font-family: monospace;
+      font-size: 11px;
+      font-weight: 800;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 2px 7px;
+      border-radius: 5px;
+      color: #38bdf8;
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .step-btn {
+      width: 26px;
+      height: 26px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 900;
+      transition: background 0.15s;
+    }
+    .step-btn:hover {
+      background: rgba(59, 130, 246, 0.4);
+      border-color: #60a5fa;
+    }
+    input[type="range"] {
+      flex: 1;
+      accent-color: #3b82f6;
+      cursor: pointer;
+      height: 4px;
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #10b981;
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top App Bar -->
+  <header>
+    <div class="brand">
+      <span>🎨</span>
+      <span>Card Visual Styler</span>
+    </div>
+
+    <!-- Card Selector -->
+    <div class="card-select-wrap">
+      <span class="card-select-label">Select Card:</span>
+      <select id="card-select" class="card-dropdown">
+        <option value="preheating">🗼 Preheating Tower</option>
+        <option value="kiln">🔥 Kiln (Cline) Zone</option>
+        <option value="cooler">❄️ Cooler Zone</option>
+        <option value="hopper">⚖️ Hopper Reading (Gypsum)</option>
+      </select>
+    </div>
+
+    <!-- Top Action Buttons -->
+    <div class="top-actions">
+      <button class="btn btn-secondary" id="btn-reset">↺ Reset</button>
+      <button class="btn btn-secondary" id="btn-copy-css">📋 Copy CSS</button>
+      <button class="btn btn-save" id="btn-save">💾 Save to Server</button>
+    </div>
+  </header>
+
+  <!-- Main Body -->
+  <div class="app-main">
+    
+    <!-- Left: Preview Canvas -->
+    <div class="preview-panel">
+      <div class="preview-toolbar">
+        <div class="toolbar-group">
+          <span>Background:</span>
+          <button class="bg-toggle-btn active" data-bg="camera">🎥 Camera Backdrop</button>
+          <button class="bg-toggle-btn" data-bg="grid">⬛ Dark Grid</button>
+          <button class="bg-toggle-btn" data-bg="dark">⚫ Solid Dark</button>
+        </div>
+        <div class="toolbar-group">
+          <span class="dim-tag" id="dim-indicator">Width: 310px</span>
+        </div>
+      </div>
+
+      <div class="canvas-viewport bg-camera" id="canvas-viewport">
+        <div class="iframe-wrapper">
+          <iframe id="card-preview-frame" src="/preheating-tower.html"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Controls Sidebar -->
+    <div class="controls-panel">
+      <div class="controls-header">
+        <div class="controls-title">
+          <span>🛠️</span>
+          <span id="active-card-name">Preheating Tower Controls</span>
+        </div>
+      </div>
+
+      <!-- Quick Presets -->
+      <div class="presets-bar">
+        <span class="preset-label">Presets:</span>
+        <button class="preset-pill" onclick="applyPreset('compact')">Compact (Default)</button>
+        <button class="preset-pill" onclick="applyPreset('large')">Large Font (TV Screen)</button>
+        <button class="preset-pill" onclick="applyPreset('tight')">Extra Compact</button>
+      </div>
+
+      <!-- Controls Accordion -->
+      <div class="controls-scroll" id="controls-container">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Toast -->
+  <div id="toast">✅ Styles saved successfully!</div>
+
+  <script>
+    // Master State for all cards
+    const DEFAULT_CONFIGS = {
+      preheating: {
+        cardWidth: 310,
+        cardPaddingY: 13,
+        cardPaddingX: 15,
+        cardRadius: 18,
+        cardGap: 10,
+        headerPaddingBottom: 8,
+        titleFontSize: 20,
+        iconFontSize: 20,
+        sensorBoxPaddingY: 8,
+        sensorBoxPaddingX: 10,
+        sensorBoxRadius: 12,
+        sensorLabelFontSize: 18,
+        sensorValueFontSize: 30,
+        sensorUnitFontSize: 17,
+        controlPaddingY: 8,
+        controlPaddingX: 12,
+        controlGap: 8,
+        controlRadius: 10,
+        controlNameFontSize: 20,
+        btnFontSize: 13,
+        btnPaddingY: 5,
+        btnPaddingX: 13,
+        btnRadius: 8
+      },
+      kiln: {
+        cardWidth: 310,
+        cardPaddingY: 13,
+        cardPaddingX: 15,
+        cardRadius: 18,
+        cardGap: 10,
+        headerPaddingBottom: 8,
+        titleFontSize: 20,
+        iconFontSize: 20,
+        sensorBoxPaddingY: 8,
+        sensorBoxPaddingX: 10,
+        sensorBoxRadius: 12,
+        sensorLabelFontSize: 18,
+        sensorValueFontSize: 30,
+        sensorUnitFontSize: 17,
+        controlPaddingY: 8,
+        controlPaddingX: 12,
+        controlGap: 8,
+        controlRadius: 10,
+        controlNameFontSize: 20,
+        btnFontSize: 13,
+        btnPaddingY: 5,
+        btnPaddingX: 13,
+        btnRadius: 8
+      },
+      cooler: {
+        cardWidth: 310,
+        cardPaddingY: 13,
+        cardPaddingX: 15,
+        cardRadius: 18,
+        cardGap: 10,
+        headerPaddingBottom: 8,
+        titleFontSize: 20,
+        iconFontSize: 20,
+        sensorBoxPaddingY: 8,
+        sensorBoxPaddingX: 10,
+        sensorBoxRadius: 12,
+        sensorLabelFontSize: 18,
+        sensorValueFontSize: 30,
+        sensorUnitFontSize: 17,
+        controlPaddingY: 8,
+        controlPaddingX: 12,
+        controlGap: 8,
+        controlRadius: 10,
+        controlNameFontSize: 20,
+        btnFontSize: 13,
+        btnPaddingY: 5,
+        btnPaddingX: 13,
+        btnRadius: 8
+      },
+      hopper: {
+        cardWidth: 270,
+        cardPaddingY: 16,
+        cardPaddingX: 16,
+        cardRadius: 18,
+        titleFontSize: 11,
+        sensorValueFontSize: 36,
+        sensorUnitFontSize: 14
+      }
+    };
+
+    let stylesState = JSON.parse(JSON.stringify(DEFAULT_CONFIGS));
+    let currentCardKey = "preheating";
+
+    const CARD_URLS = {
+      preheating: "/preheating-tower.html",
+      kiln: "/kiln.html",
+      cooler: "/cooler.html",
+      hopper: "/hopper-reading.html?id=gypsum"
+    };
+
+    // Components schema definition
+    const STANDARD_COMPONENTS = [
+      {
+        title: "🗂️ Card Container",
+        props: [
+          { key: "cardWidth", label: "Card Width", min: 200, max: 480, unit: "px" },
+          { key: "cardPaddingY", label: "Padding Top/Bottom", min: 4, max: 35, unit: "px" },
+          { key: "cardPaddingX", label: "Padding Left/Right", min: 4, max: 35, unit: "px" },
+          { key: "cardRadius", label: "Corner Radius", min: 0, max: 32, unit: "px" },
+          { key: "cardGap", label: "Vertical Spacing (Gap)", min: 4, max: 28, unit: "px" }
+        ]
+      },
+      {
+        title: "🏷️ Header & Title",
+        props: [
+          { key: "titleFontSize", label: "Title Font Size", min: 12, max: 32, unit: "px" },
+          { key: "iconFontSize", label: "Header Icon Size", min: 12, max: 36, unit: "px" },
+          { key: "headerPaddingBottom", label: "Header Bottom Padding", min: 0, max: 24, unit: "px" }
+        ]
+      },
+      {
+        title: "🌡️ Sensor Boxes",
+        props: [
+          { key: "sensorBoxPaddingY", label: "Box Padding Y", min: 2, max: 24, unit: "px" },
+          { key: "sensorBoxPaddingX", label: "Box Padding X", min: 4, max: 24, unit: "px" },
+          { key: "sensorBoxRadius", label: "Box Corner Radius", min: 0, max: 24, unit: "px" }
+        ]
+      },
+      {
+        title: "📝 Sensor Labels (Temp & Humidity)",
+        props: [
+          { key: "sensorLabelFontSize", label: "Label Font Size", min: 10, max: 26, unit: "px" }
+        ]
+      },
+      {
+        title: "🔢 Sensor Value & Unit",
+        props: [
+          { key: "sensorValueFontSize", label: "Value (Number) Font Size", min: 18, max: 48, unit: "px" },
+          { key: "sensorUnitFontSize", label: "Unit (°C / %) Font Size", min: 10, max: 26, unit: "px" }
+        ]
+      },
+      {
+        title: "🕹️ Control Rows (Heater / Fan / Motor)",
+        props: [
+          { key: "controlPaddingY", label: "Row Padding Y", min: 2, max: 20, unit: "px" },
+          { key: "controlPaddingX", label: "Row Padding X", min: 4, max: 24, unit: "px" },
+          { key: "controlGap", label: "Row Gap", min: 2, max: 20, unit: "px" },
+          { key: "controlRadius", label: "Row Corner Radius", min: 0, max: 20, unit: "px" },
+          { key: "controlNameFontSize", label: "Device Name Font Size", min: 12, max: 28, unit: "px" }
+        ]
+      },
+      {
+        title: "🔘 ON / OFF Buttons",
+        props: [
+          { key: "btnFontSize", label: "Button Font Size", min: 10, max: 22, unit: "px" },
+          { key: "btnPaddingY", label: "Button Padding Y", min: 2, max: 16, unit: "px" },
+          { key: "btnPaddingX", label: "Button Padding X", min: 4, max: 28, unit: "px" },
+          { key: "btnRadius", label: "Button Corner Radius", min: 0, max: 20, unit: "px" }
+        ]
+      }
+    ];
+
+    const HOPPER_COMPONENTS = [
+      {
+        title: "🗂️ Hopper Card Container",
+        props: [
+          { key: "cardWidth", label: "Card Width", min: 180, max: 400, unit: "px" },
+          { key: "cardPaddingY", label: "Padding Y", min: 6, max: 30, unit: "px" },
+          { key: "cardPaddingX", label: "Padding X", min: 6, max: 30, unit: "px" },
+          { key: "cardRadius", label: "Corner Radius", min: 0, max: 30, unit: "px" }
+        ]
+      },
+      {
+        title: "📝 Titles & Values",
+        props: [
+          { key: "titleFontSize", label: "Title Font Size", min: 9, max: 24, unit: "px" },
+          { key: "sensorValueFontSize", label: "Weight Number Font Size", min: 18, max: 54, unit: "px" },
+          { key: "sensorUnitFontSize", label: "Unit (g) Font Size", min: 10, max: 24, unit: "px" }
+        ]
+      }
+    ];
+
+    // Elements
+    const cardSelect = document.getElementById("card-select");
+    const previewFrame = document.getElementById("card-preview-frame");
+    const controlsContainer = document.getElementById("controls-container");
+    const dimIndicator = document.getElementById("dim-indicator");
+    const activeCardName = document.getElementById("active-card-name");
+    const toast = document.getElementById("toast");
+
+    // Fetch saved styles from server on load
+    async function loadServerStyles() {
+      try {
+        const res = await fetch("/api/card-styles");
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.styles && Object.keys(data.styles).length > 0) {
+            stylesState = { ...stylesState, ...data.styles };
+          }
+        }
+      } catch (e) {
+        console.warn("Could not load styles from server, using local defaults:", e);
+      }
+      renderControls();
+      applyStylesToPreview();
+    }
+
+    // Render Controls Sidebar
+    function renderControls() {
+      const isHopper = currentCardKey === "hopper";
+      const schema = isHopper ? HOPPER_COMPONENTS : STANDARD_COMPONENTS;
+      const currentConfig = stylesState[currentCardKey] || {};
+
+      activeCardName.textContent = cardSelect.options[cardSelect.selectedIndex].text + " Controls";
+
+      let html = "";
+      schema.forEach((sec, sIdx) => {
+        html += `
+          <div class="section-card" id="sec-${sIdx}">
+            <div class="section-header" onclick="toggleSection(${sIdx})">
+              <span class="section-title">${sec.title}</span>
+              <span class="section-arrow">▼</span>
+            </div>
+            <div class="section-body">
+        `;
+
+        sec.props.forEach(p => {
+          const val = currentConfig[p.key] !== undefined ? currentConfig[p.key] : p.min;
+          html += `
+            <div class="prop-row">
+              <div class="prop-info">
+                <span class="prop-label">${p.label}</span>
+                <span class="prop-value-badge" id="badge-${p.key}">${val}${p.unit}</span>
+              </div>
+              <div class="slider-row">
+                <button class="step-btn" onclick="stepValue('${p.key}', -1, ${p.min}, ${p.max})">−</button>
+                <input type="range" 
+                  id="range-${p.key}" 
+                  min="${p.min}" 
+                  max="${p.max}" 
+                  value="${val}" 
+                  oninput="onSliderChange('${p.key}', this.value, '${p.unit}')"
+                />
+                <button class="step-btn" onclick="stepValue('${p.key}', 1, ${p.min}, ${p.max})">+</button>
+              </div>
+            </div>
+          `;
+        });
+
+        html += `
+            </div>
+          </div>
+        `;
+      });
+
+      controlsContainer.innerHTML = html;
+      updateDimIndicator();
+    }
+
+    function toggleSection(idx) {
+      const sec = document.getElementById(`sec-${idx}`);
+      if (sec) sec.classList.toggle("collapsed");
+    }
+
+    function onSliderChange(key, value, unit = "px") {
+      const num = parseInt(value, 10);
+      stylesState[currentCardKey][key] = num;
+      const badge = document.getElementById(`badge-${key}`);
+      if (badge) badge.textContent = `${num}${unit}`;
+      updateDimIndicator();
+      applyStylesToPreview();
+    }
+
+    function stepValue(key, delta, min, max) {
+      const slider = document.getElementById(`range-${key}`);
+      if (!slider) return;
+      let curr = parseInt(slider.value, 10) + delta;
+      if (curr < min) curr = min;
+      if (curr > max) curr = max;
+      slider.value = curr;
+      onSliderChange(key, curr);
+    }
+
+    function updateDimIndicator() {
+      const w = stylesState[currentCardKey].cardWidth || 310;
+      dimIndicator.textContent = `Card Width: ${w}px`;
+      if (previewFrame) {
+        previewFrame.style.width = `${w + 40}px`;
+      }
+    }
+
+    // Injects generated CSS directly into iframe without reloading!
+    function applyStylesToPreview() {
+      try {
+        const frameDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+        if (!frameDoc) return;
+
+        let styleTag = frameDoc.getElementById("live-custom-css");
+        if (!styleTag) {
+          styleTag = frameDoc.createElement("style");
+          styleTag.id = "live-custom-css";
+          frameDoc.head.appendChild(styleTag);
+        }
+
+        const css = generateSingleCardCss(currentCardKey, stylesState[currentCardKey]);
+        styleTag.textContent = css;
+      } catch (err) {
+        console.warn("Could not inject CSS to preview iframe:", err);
+      }
+    }
+
+    function generateSingleCardCss(cardKey, s) {
+      if (!s) return "";
+      let css = "";
+      const isHopper = cardKey === "hopper";
+
+      if (isHopper) {
+        css += `
+          .card {
+            width: ${s.cardWidth}px !important;
+            padding: ${s.cardPaddingY}px ${s.cardPaddingX}px !important;
+            border-radius: ${s.cardRadius}px !important;
+          }
+          .card-title { font-size: ${s.titleFontSize}px !important; }
+          .card-value { font-size: ${s.sensorValueFontSize}px !important; }
+          .card-unit { font-size: ${s.sensorUnitFontSize}px !important; }
+        `;
+        return css;
+      }
+
+      css += `
+        .card {
+          width: ${s.cardWidth}px !important;
+          padding: ${s.cardPaddingY}px ${s.cardPaddingX}px !important;
+          border-radius: ${s.cardRadius}px !important;
+          gap: ${s.cardGap}px !important;
+        }
+        .card-header { padding-bottom: ${s.headerPaddingBottom}px !important; }
+        .card-title { font-size: ${s.titleFontSize}px !important; }
+        .card-icon { font-size: ${s.iconFontSize}px !important; }
+        .sensor-box {
+          padding: ${s.sensorBoxPaddingY}px ${s.sensorBoxPaddingX}px !important;
+          border-radius: ${s.sensorBoxRadius}px !important;
+        }
+        .sensor-label { font-size: ${s.sensorLabelFontSize}px !important; }
+        .sensor-value { font-size: ${s.sensorValueFontSize}px !important; }
+        .sensor-unit { font-size: ${s.sensorUnitFontSize}px !important; }
+        .control-row {
+          padding: ${s.controlPaddingY}px ${s.controlPaddingX}px !important;
+          gap: ${s.controlGap}px !important;
+          border-radius: ${s.controlRadius}px !important;
+        }
+        .control-name { font-size: ${s.controlNameFontSize}px !important; }
+        .state-btn {
+          font-size: ${s.btnFontSize}px !important;
+          padding: ${s.btnPaddingY}px ${s.btnPaddingX}px !important;
+          border-radius: ${s.btnRadius}px !important;
+        }
+      `;
+      return css;
+    }
+
+    // Save to server
+    document.getElementById("btn-save").addEventListener("click", async () => {
+      try {
+        const res = await fetch("/api/card-styles", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(stylesState)
+        });
+        if (res.ok) {
+          showToast("Saved to custom-cards.css! Cupola widgets updated.");
+        } else {
+          showToast("❌ Error saving styles to server");
+        }
+      } catch (err) {
+        showToast("❌ Network error saving styles");
+      }
+    });
+
+    // Reset button
+    document.getElementById("btn-reset").addEventListener("click", () => {
+      stylesState[currentCardKey] = JSON.parse(JSON.stringify(DEFAULT_CONFIGS[currentCardKey]));
+      renderControls();
+      applyStylesToPreview();
+      showToast("Reset to default dimensions");
+    });
+
+    // Copy CSS button
+    document.getElementById("btn-copy-css").addEventListener("click", () => {
+      const css = generateSingleCardCss(currentCardKey, stylesState[currentCardKey]);
+      navigator.clipboard.writeText(css).then(() => {
+        showToast("CSS copied to clipboard!");
+      });
+    });
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2800);
+    }
+
+    // Card switcher
+    cardSelect.addEventListener("change", (e) => {
+      currentCardKey = e.target.value;
+      previewFrame.src = CARD_URLS[currentCardKey];
+      renderControls();
+    });
+
+    // Handle iframe load
+    previewFrame.addEventListener("load", () => {
+      applyStylesToPreview();
+    });
+
+    // Background toggle
+    document.querySelectorAll(".bg-toggle-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".bg-toggle-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const mode = btn.dataset.bg;
+        const vp = document.getElementById("canvas-viewport");
+        vp.className = `canvas-viewport bg-${mode}`;
+      });
+    });
+
+    // Presets
+    function applyPreset(name) {
+      if (currentCardKey === "hopper") {
+        if (name === "large") {
+          stylesState.hopper.cardWidth = 320;
+          stylesState.hopper.titleFontSize = 14;
+          stylesState.hopper.sensorValueFontSize = 44;
+        } else if (name === "tight") {
+          stylesState.hopper.cardWidth = 240;
+          stylesState.hopper.titleFontSize = 10;
+          stylesState.hopper.sensorValueFontSize = 28;
+        } else {
+          stylesState.hopper = JSON.parse(JSON.stringify(DEFAULT_CONFIGS.hopper));
+        }
+      } else {
+        if (name === "large") {
+          stylesState[currentCardKey].cardWidth = 350;
+          stylesState[currentCardKey].titleFontSize = 24;
+          stylesState[currentCardKey].sensorLabelFontSize = 20;
+          stylesState[currentCardKey].sensorValueFontSize = 36;
+          stylesState[currentCardKey].controlNameFontSize = 24;
+          stylesState[currentCardKey].btnFontSize = 15;
+        } else if (name === "tight") {
+          stylesState[currentCardKey].cardWidth = 270;
+          stylesState[currentCardKey].titleFontSize = 16;
+          stylesState[currentCardKey].sensorLabelFontSize = 14;
+          stylesState[currentCardKey].sensorValueFontSize = 24;
+          stylesState[currentCardKey].controlNameFontSize = 16;
+          stylesState[currentCardKey].btnFontSize = 11;
+        } else {
+          stylesState[currentCardKey] = JSON.parse(JSON.stringify(DEFAULT_CONFIGS[currentCardKey]));
+        }
+      }
+      renderControls();
+      applyStylesToPreview();
+      showToast(`Applied preset: ${name}`);
+    }
+
+    // Start
+    loadServerStyles();
+  </script>
+</body>
+</html>
