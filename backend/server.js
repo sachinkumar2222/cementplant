@@ -119,14 +119,14 @@ app.post(["/api/card-styles", "/api/styles"], (req, res) => {
     standardCards.forEach(({ key, selector }) => {
       const s = styles[key];
       if (!s) return;
-      css += `${selector} .card {\n`;
+      css += `${selector} .card, html ${selector} .card {\n`;
       if (s.cardWidth) css += `  width: ${s.cardWidth}px !important;\n`;
       if (s.cardPaddingY || s.cardPaddingX) css += `  padding: ${s.cardPaddingY || 13}px ${s.cardPaddingX || 15}px !important;\n`;
       if (s.cardRadius) css += `  border-radius: ${s.cardRadius}px !important;\n`;
       if (s.cardGap) css += `  gap: ${s.cardGap}px !important;\n`;
       css += `}\n`;
       if (s.headerPaddingBottom) css += `${selector} .card-header {\n  padding-bottom: ${s.headerPaddingBottom}px !important;\n}\n`;
-      if (s.titleFontSize) css += `${selector} .card-title {\n  font-size: ${s.titleFontSize}px !important;\n}\n`;
+      if (s.titleFontSize) css += `${selector} .card-title, ${selector} #title, html ${selector} .card-title {\n  font-size: ${s.titleFontSize}px !important;\n}\n`;
       if (s.iconFontSize) css += `${selector} .card-icon {\n  font-size: ${s.iconFontSize}px !important;\n}\n`;
       if (s.sensorBoxPaddingY || s.sensorBoxPaddingX || s.sensorBoxRadius) {
         css += `${selector} .sensor-box {\n`;
@@ -155,16 +155,49 @@ app.post(["/api/card-styles", "/api/styles"], (req, res) => {
       css += `\n`;
     });
 
-    if (styles.hopper) {
-      const s = styles.hopper;
-      css += `body[data-card="hopper"] .card {\n`;
+    // Hoppers
+    const hopperCards = [
+      { key: "hopper_gypsum", classSel: ".card-gypsum" },
+      { key: "hopper_clay", classSel: ".card-clay" },
+      { key: "hopper_sand", classSel: ".card-sand" },
+      { key: "hopper_iron_ore", classSel: ".card-iron_ore" }
+    ];
+
+    hopperCards.forEach(({ key, classSel }) => {
+      const s = styles[key] || styles.hopper;
+      if (!s) return;
+      css += `body[data-card="hopper"] ${classSel}, html body[data-card="hopper"] ${classSel} {\n`;
       if (s.cardWidth) css += `  width: ${s.cardWidth}px !important;\n`;
       if (s.cardPaddingY || s.cardPaddingX) css += `  padding: ${s.cardPaddingY || 16}px ${s.cardPaddingX || 16}px !important;\n`;
       if (s.cardRadius) css += `  border-radius: ${s.cardRadius}px !important;\n`;
       css += `}\n`;
-      if (s.titleFontSize) css += `body[data-card="hopper"] .card-title {\n  font-size: ${s.titleFontSize}px !important;\n}\n`;
-      if (s.sensorValueFontSize) css += `body[data-card="hopper"] .card-value {\n  font-size: ${s.sensorValueFontSize}px !important;\n}\n`;
-      if (s.sensorUnitFontSize) css += `body[data-card="hopper"] .card-unit {\n  font-size: ${s.sensorUnitFontSize}px !important;\n}\n`;
+      if (s.titleFontSize) {
+        css += `body[data-card="hopper"] ${classSel} .card-title, body[data-card="hopper"] ${classSel} #title, html body[data-card="hopper"] ${classSel} .card-title {\n  font-size: ${s.titleFontSize}px !important;\n}\n`;
+      }
+      if (s.sensorValueFontSize) {
+        css += `body[data-card="hopper"] ${classSel} .card-value, body[data-card="hopper"] ${classSel} #val {\n  font-size: ${s.sensorValueFontSize}px !important;\n}\n`;
+      }
+      if (s.sensorUnitFontSize) {
+        css += `body[data-card="hopper"] ${classSel} .card-unit {\n  font-size: ${s.sensorUnitFontSize}px !important;\n}\n`;
+      }
+    });
+
+    const h = styles.hopper || styles.hopper_gypsum;
+    if (h) {
+      css += `body[data-card="hopper"] .card, html body[data-card="hopper"] .card {\n`;
+      if (h.cardWidth) css += `  width: ${h.cardWidth}px !important;\n`;
+      if (h.cardPaddingY || h.cardPaddingX) css += `  padding: ${h.cardPaddingY || 16}px ${h.cardPaddingX || 16}px !important;\n`;
+      if (h.cardRadius) css += `  border-radius: ${h.cardRadius}px !important;\n`;
+      css += `}\n`;
+      if (h.titleFontSize) {
+        css += `body[data-card="hopper"] .card-title, body[data-card="hopper"] #title, html body[data-card="hopper"] .card-title {\n  font-size: ${h.titleFontSize}px !important;\n}\n`;
+      }
+      if (h.sensorValueFontSize) {
+        css += `body[data-card="hopper"] .card-value, body[data-card="hopper"] #val {\n  font-size: ${h.sensorValueFontSize}px !important;\n}\n`;
+      }
+      if (h.sensorUnitFontSize) {
+        css += `body[data-card="hopper"] .card-unit {\n  font-size: ${h.sensorUnitFontSize}px !important;\n}\n`;
+      }
     }
 
     if (!fs.existsSync(path.join(widgetDir, "css"))) {

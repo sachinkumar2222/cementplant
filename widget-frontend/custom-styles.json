@@ -82,5 +82,41 @@
     "titleFontSize": 11,
     "sensorValueFontSize": 36,
     "sensorUnitFontSize": 14
+  },
+  "hopper_gypsum": {
+    "cardWidth": 270,
+    "cardPaddingY": 16,
+    "cardPaddingX": 16,
+    "cardRadius": 18,
+    "titleFontSize": 11,
+    "sensorValueFontSize": 36,
+    "sensorUnitFontSize": 14
+  },
+  "hopper_clay": {
+    "cardWidth": 270,
+    "cardPaddingY": 16,
+    "cardPaddingX": 16,
+    "cardRadius": 18,
+    "titleFontSize": 11,
+    "sensorValueFontSize": 36,
+    "sensorUnitFontSize": 14
+  },
+  "hopper_sand": {
+    "cardWidth": 270,
+    "cardPaddingY": 16,
+    "cardPaddingX": 16,
+    "cardRadius": 18,
+    "titleFontSize": 11,
+    "sensorValueFontSize": 36,
+    "sensorUnitFontSize": 14
+  },
+  "hopper_iron_ore": {
+    "cardWidth": 270,
+    "cardPaddingY": 16,
+    "cardPaddingX": 16,
+    "cardRadius": 18,
+    "titleFontSize": 11,
+    "sensorValueFontSize": 36,
+    "sensorUnitFontSize": 14
   }
 }

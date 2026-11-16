@@ -1050,7 +1050,7 @@
       } catch (e) {}
     }
 
-    // Apply live styles via injected style tag
+    // Apply live styles via injected style tag AND direct DOM inline properties
     function applyLiveStylesToPreview() {
       try {
         const frameDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
@@ -1068,40 +1068,40 @@
         let css = "";
         if (isHopper) {
           css = `
-            .card {
+            html body .card, html body #card {
               width: ${s.cardWidth || 270}px !important;
               padding: ${s.cardPaddingY || 16}px ${s.cardPaddingX || 16}px !important;
               border-radius: ${s.cardRadius || 18}px !important;
             }
-            .card-title { font-size: ${s.titleFontSize || 11}px !important; }
-            .card-value { font-size: ${s.sensorValueFontSize || 36}px !important; }
-            .card-unit { font-size: ${s.sensorUnitFontSize || 14}px !important; }
+            html body .card-title, html body #title { font-size: ${s.titleFontSize || 11}px !important; }
+            html body .card-value, html body #val { font-size: ${s.sensorValueFontSize || 36}px !important; }
+            html body .card-unit { font-size: ${s.sensorUnitFontSize || 14}px !important; }
           `;
         } else {
           css = `
-            .card {
+            html body .card {
               width: ${s.cardWidth || 310}px !important;
               padding: ${s.cardPaddingY || 13}px ${s.cardPaddingX || 15}px !important;
               border-radius: ${s.cardRadius || 18}px !important;
               gap: ${s.cardGap || 10}px !important;
             }
-            .card-header { padding-bottom: ${s.headerPaddingBottom || 8}px !important; }
-            .card-title { font-size: ${s.titleFontSize || 20}px !important; }
-            .card-icon { font-size: ${s.iconFontSize || 20}px !important; }
-            .sensor-box {
+            html body .card-header { padding-bottom: ${s.headerPaddingBottom || 8}px !important; }
+            html body .card-title, html body #title { font-size: ${s.titleFontSize || 20}px !important; }
+            html body .card-icon { font-size: ${s.iconFontSize || 20}px !important; }
+            html body .sensor-box {
               padding: ${s.sensorBoxPaddingY || 8}px ${s.sensorBoxPaddingX || 10}px !important;
               border-radius: ${s.sensorBoxRadius || 12}px !important;
             }
-            .sensor-label { font-size: ${s.sensorLabelFontSize || 18}px !important; }
-            .sensor-value { font-size: ${s.sensorValueFontSize || 30}px !important; }
-            .sensor-unit { font-size: ${s.sensorUnitFontSize || 17}px !important; }
-            .control-row {
+            html body .sensor-label { font-size: ${s.sensorLabelFontSize || 18}px !important; }
+            html body .sensor-value, html body #val-temp, html body #val-hum { font-size: ${s.sensorValueFontSize || 30}px !important; }
+            html body .sensor-unit { font-size: ${s.sensorUnitFontSize || 17}px !important; }
+            html body .control-row {
               padding: ${s.controlPaddingY || 8}px ${s.controlPaddingX || 12}px !important;
               gap: ${s.controlGap || 8}px !important;
               border-radius: ${s.controlRadius || 10}px !important;
             }
-            .control-name { font-size: ${s.controlNameFontSize || 20}px !important; }
-            .state-btn {
+            html body .control-name { font-size: ${s.controlNameFontSize || 20}px !important; }
+            html body .state-btn {
               font-size: ${s.btnFontSize || 13}px !important;
               padding: ${s.btnPaddingY || 5}px ${s.btnPaddingX || 13}px !important;
               border-radius: ${s.btnRadius || 8}px !important;
@@ -1109,6 +1109,20 @@
           `;
         }
         styleTag.textContent = css;
+
+        // Direct DOM inline overrides for instant guarantee
+        const titleEl = frameDoc.querySelector(".card-title") || frameDoc.getElementById("title");
+        if (titleEl && s.titleFontSize) {
+          titleEl.style.setProperty("font-size", `${s.titleFontSize}px`, "important");
+        }
+        const valEl = frameDoc.querySelector(".sensor-value") || frameDoc.querySelector(".card-value") || frameDoc.getElementById("val");
+        if (valEl && s.sensorValueFontSize) {
+          valEl.style.setProperty("font-size", `${s.sensorValueFontSize}px`, "important");
+        }
+        const cardEl = frameDoc.querySelector(".card");
+        if (cardEl && s.cardWidth) {
+          cardEl.style.setProperty("width", `${s.cardWidth}px`, "important");
+        }
 
         // Auto adjust iframe width
         previewFrame.style.width = `${(s.cardWidth || 310) + 50}px`;
