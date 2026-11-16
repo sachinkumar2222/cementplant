@@ -48,7 +48,7 @@
     }
 
     /* =========================================================================
-     * 🌟 GLASSMORPHIC INDUSTRIAL LOAD CARD
+     * 🌟 GLASSMORPHIC INDUSTRIAL LOAD CARD (Matches other-three & gypsum transparency)
      * ========================================================================= */
     .load-card {
       position: relative;
@@ -56,54 +56,53 @@
       border-radius: 18px;
       padding: 16px 18px;
       color: #ffffff;
-      backdrop-filter: blur(20px) saturate(190%);
-      -webkit-backdrop-filter: blur(20px) saturate(190%);
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
 
-    /* Material Specific Accents */
-    /* 1. Iron Ore (Crimson / Ruby) */
+    /* Material Specific Accents — Identical transparent glass as dispense cards */
+    /* 1. Iron Ore (Crimson / Rose) */
     .theme-iron_ore {
-      background: radial-gradient(circle at 15% 15%, rgba(225, 29, 72, 0.38), rgba(15, 23, 42, 0.75) 85%);
-      border-color: rgba(251, 113, 133, 0.45);
-      box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(244, 63, 94, 0.2);
+      background: rgba(190, 18, 60, 0.30);
+      border: 1px solid rgba(251, 113, 133, 0.45);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(244, 63, 94, 0.2);
     }
     .theme-iron_ore .material-title { color: #fda4af; }
 
     /* 2. Clay (Purple / Violet) */
     .theme-clay {
-      background: radial-gradient(circle at 15% 15%, rgba(124, 58, 237, 0.38), rgba(15, 23, 42, 0.75) 85%);
-      border-color: rgba(192, 132, 252, 0.45);
-      box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(168, 85, 247, 0.2);
+      background: rgba(109, 40, 217, 0.30);
+      border: 1px solid rgba(192, 132, 252, 0.45);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(168, 85, 247, 0.2);
     }
     .theme-clay .material-title { color: #d8b4fe; }
 
-    /* 3. Sand (Amber / Gold) */
+    /* 3. Sand (Amber / Orange) */
     .theme-sand {
-      background: radial-gradient(circle at 15% 15%, rgba(217, 119, 6, 0.38), rgba(15, 23, 42, 0.75) 85%);
-      border-color: rgba(251, 146, 60, 0.45);
-      box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(249, 115, 22, 0.2);
+      background: rgba(194, 65, 12, 0.30);
+      border: 1px solid rgba(251, 146, 60, 0.45);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(249, 115, 22, 0.2);
     }
     .theme-sand .material-title { color: #fdba74; }
 
-    /* 4. Gypsum (Royal Blue / Azure) */
+    /* 4. Gypsum (Royal Blue) */
     .theme-gypsum {
-      background: radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.38), rgba(15, 23, 42, 0.75) 85%);
-      border-color: rgba(147, 197, 253, 0.45);
-      box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(59, 130, 246, 0.2);
+      background: rgba(30, 64, 175, 0.30);
+      border: 1px solid rgba(147, 197, 253, 0.45);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(59, 130, 246, 0.2);
     }
     .theme-gypsum .material-title { color: #93c5fd; }
 
     /* 5. General Sensors / Default (Cyan / Slate) */
     .theme-sensor {
-      background: radial-gradient(circle at 15% 15%, rgba(14, 165, 233, 0.38), rgba(15, 23, 42, 0.75) 85%);
-      border-color: rgba(56, 189, 248, 0.45);
-      box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(56, 189, 248, 0.2);
+      background: rgba(15, 23, 42, 0.35);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(56, 189, 248, 0.2);
     }
     .theme-sensor .material-title { color: #7dd3fc; }
 
