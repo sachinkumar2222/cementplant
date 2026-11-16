@@ -1,194 +1,521 @@
 <!DOCTYPE html>
 <!--
-  Widget page - Architecture v5, Feature A ("Cupola-Native Inline Value Overlay")
-
-  Usage: widget.html?id=iron_ore
+  Widget Page - Architecture v5 & Cupola360 Glassmorphic Card
+  Usage:
+    widget.html?id=iron_ore
+    widget.html?id=sand
+    widget.html?id=clay
+    widget.html?id=gypsum
+    widget.html?id=vibration_sensor
+    widget.html?id=cooler_dht_temp
+    Optional params:
+      &controls=true (show dispense controls for hoppers)
+      &view=compact (compact pill mode)
 -->
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <title>Widget</title>
+  <title>Material & Sensor Widget</title>
   <style>
-    html,
-    body {
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      background: transparent;
-      overflow: hidden;
+    }
+    html, body {
+      background: transparent !important;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
     }
     ::-webkit-scrollbar {
       display: none;
     }
 
-    .widget-container {
+    .container {
       display: inline-flex;
+      padding: 6px;
+      background: transparent;
+    }
+
+    /* Glassmorphic Base Card */
+    .card {
+      width: 270px;
+      border-radius: 18px;
+      padding: 16px;
+      color: #ffffff;
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
+      user-select: none;
+      transition: transform 0.15s ease, box-shadow 0.2s ease, width 0.15s ease;
+      display: flex;
       flex-direction: column;
-      align-items: flex-start;
-      gap: 3px;
-      padding: 2px;
+      gap: 6px;
     }
 
-    #label {
-      display: inline-block;
-      background: #c03413;
-      color: #ffffff;
+    /* 1. Iron Ore Theme (Rose / Crimson) */
+    .card-iron_ore {
+      background: rgba(190, 18, 60, 0.32);
+      border: 1px solid rgba(251, 113, 133, 0.45);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(244, 63, 94, 0.22);
+    }
+    .card-iron_ore .card-title { color: #fda4af; }
+    .card-iron_ore .card-value {
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 12px rgba(244, 63, 94, 0.75);
+    }
+
+    /* 2. Sand Theme (Amber / Orange) */
+    .card-sand {
+      background: rgba(194, 65, 12, 0.32);
+      border: 1px solid rgba(251, 146, 60, 0.45);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(249, 115, 22, 0.22);
+    }
+    .card-sand .card-title { color: #fdba74; }
+    .card-sand .card-value {
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 12px rgba(249, 115, 22, 0.75);
+    }
+
+    /* 3. Clay Theme (Purple / Violet) */
+    .card-clay {
+      background: rgba(109, 40, 217, 0.32);
+      border: 1px solid rgba(192, 132, 252, 0.45);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(168, 85, 247, 0.22);
+    }
+    .card-clay .card-title { color: #d8b4fe; }
+    .card-clay .card-value {
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 12px rgba(168, 85, 247, 0.75);
+    }
+
+    /* 4. Gypsum Theme (Blue) */
+    .card-gypsum {
+      background: rgba(30, 64, 175, 0.32);
+      border: 1px solid rgba(147, 197, 253, 0.45);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(59, 130, 246, 0.22);
+    }
+    .card-gypsum .card-title { color: #93c5fd; }
+    .card-gypsum .card-value {
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 12px rgba(59, 130, 246, 0.75);
+    }
+
+    /* 5. General Sensors (Cyan / Slate) */
+    .card-sensor {
+      background: rgba(15, 23, 42, 0.55);
+      border: 1px solid rgba(56, 189, 248, 0.42);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(56, 189, 248, 0.18);
+    }
+    .card-sensor .card-title { color: #38bdf8; }
+    .card-sensor .card-value {
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 12px rgba(56, 189, 248, 0.75);
+    }
+
+    /* Card Header */
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .card-title {
+      font-size: 11px;
       font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95), 0 0 6px rgba(0, 0, 0, 0.7);
       white-space: nowrap;
-      padding: 3px 8px;
-      border-radius: 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .card-badge {
+      font-size: 10px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 2px 7px;
+      border-radius: 9999px;
+      letter-spacing: 0.05em;
+      color: #ffffff;
+    }
+    .btn-toggle-ctrl {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      line-height: 1;
+    }
+    .btn-toggle-ctrl:hover {
+      background: rgba(255, 255, 255, 0.25);
     }
 
-    #alarm {
+    /* Card Value Row */
+    .card-value-row {
+      margin-top: 6px;
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+    }
+    .card-value {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      color: #ffffff !important;
+    }
+    .card-unit {
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0.85;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Alarms */
+    .alarm-pill {
       display: none;
-      background: #c03413;
-      color: #ffffff;
+      margin-top: 4px;
+      font-size: 10px;
       font-weight: 800;
-      white-space: nowrap;
+      background: rgba(239, 68, 68, 0.35);
+      border: 1px solid rgba(248, 113, 113, 0.65);
+      color: #fca5a5;
       padding: 3px 8px;
-      border-radius: 2px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-align: center;
+      animation: alarmPulse 1.4s infinite;
     }
-  </style>
-</head>
+    @keyframes alarmPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(0.98); }
+    }
 
-<body>
-  <div class="widget-container">
-    <div id="label">--</div>
-    <div id="alarm" role="status" aria-live="polite"></div>
+    /* Optional Dispense Controls */
+    .card-controls {
+      display: none;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+      flex-direction: column;
+      gap: 8px;
+      animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .target-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.95);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    }
+    .target-input-wrap {
+      position: relative;
+      width: 78px;
+    }
+    .target-input {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.55);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 12px;
+      border-radius: 6px;
+      padding: 4px 20px 4px 6px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      outline: none;
+    }
+    .target-input:focus {
+      border-color: #60a5fa;
+      background: rgba(15, 23, 42, 0.75);
+    }
+    .target-unit {
+      position: absolute;
+      right: 6px;
+      top: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.75);
+      pointer-events: none;
+    }
+    .dispense-btn {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.20);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 11px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.38);
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+      transition: all 0.15s ease;
+    }
+    .dispense-btn:hover {
+      background: rgba(255, 255, 255, 0.32);
+      border-color: rgba(255, 255, 255, 0.6);
+      transform: translateY(-1px);
+    }
+    .dispense-btn:active {
+      transform: scale(0.98);
+    }
+    .dispense-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    /* Compact View Mode (Optional) */
+    .card.compact {
+      width: auto !important;
+      padding: 6px 12px !important;
+      border-radius: 12px !important;
+      gap: 2px;
+    }
+    .card.compact .card-header { display: none; }
+    .card.compact .card-controls { display: none !important; }
+    .card.compact .card-value-row { margin-top: 0; }
+    .card.compact .card-value { font-size: 20px !important; }
+    .card.compact .card-unit { font-size: 12px !important; }
+  </style>
+  <!-- Global Visual Styler CSS (Live persistence from /editor) -->
+  <link rel="stylesheet" href="/css/custom-cards.css" />
+</head>
+<body data-card="hopper">
+  <div class="container">
+    <div class="card card-iron_ore" id="card">
+      <div class="card-header">
+        <span class="card-title" id="title">IRON ORE HOPPER</span>
+        <div class="header-actions">
+          <span class="card-badge" id="badge">ESP1</span>
+          <button class="btn-toggle-ctrl" id="btn-toggle" title="Toggle Controls" style="display: none;" onclick="toggleControls()">⚙️</button>
+        </div>
+      </div>
+      <div class="card-value-row" id="label">
+        <span class="card-value" id="val">--</span>
+        <span class="card-unit" id="unit">g</span>
+      </div>
+      <div class="alarm-pill" id="alarm">OVERLOAD ALARM</div>
+
+      <!-- Dispense section (toggleable or enabled via ?controls=true) -->
+      <div class="card-controls" id="card-controls">
+        <div class="target-row">
+          <span>Target Dispense:</span>
+          <div class="target-input-wrap">
+            <input type="number" min="1" value="10" id="target-input" class="target-input" />
+            <span class="target-unit" id="target-unit">g</span>
+          </div>
+        </div>
+        <button class="dispense-btn" id="btn-dispense" onclick="dispenseCurrentItem()">
+          Dispense Now
+        </button>
+      </div>
+    </div>
   </div>
 
   <script src="js/ws-client.js"></script>
   <script>
-    /* =========================================================================
-     * 🎛️ DEFAULT CONFIGURATION — CHANGE STYLING HERE IN ONE SINGLE LOCATION:
-     * ========================================================================= */
-    const DEFAULT_CONFIG = {
-      color: "#ffffff",      // Text color (pure white)
-      bg: "#c03413",         // Background color (solid red/orange-red)
-      size: "20px",          // Text font size (e.g. "20px", "24px")
-      fontWeight: "800",     // Text weight ("700", "800", "bold")
-      alarmColor: "#ffffff", // Alarm text color
-      alarmBg: "#c03413",    // Alarm background color
-      alarmSize: "18px",     // Alarm font size
-      decimals: 2,           // Default decimal places for numbers (e.g. 7.82 g)
+    const DISPLAY_TITLES = {
+      gypsum: "GYPSUM HOPPER",
+      clay: "CLAY HOPPER",
+      iron_ore: "IRON ORE HOPPER",
+      sand: "SAND HOPPER",
+      limestone: "LIMESTONE GATE",
+      lime_stone: "LIMESTONE GATE",
+      klin_dht_temp: "KILN TEMP",
+      klin_dht_humidity: "KILN HUMIDITY",
+      cooler_dht_temp: "COOLER TEMP",
+      cooler_dht_humidity: "COOLER HUMIDITY",
+      preheating_tower_dht_temp: "PREHEAT TEMP",
+      preheating_tower_dht_humidity: "PREHEAT HUMIDITY",
+      vibration_sensor: "VIBRATION SENSOR",
     };
-    /* ========================================================================= */
 
-    // Use the host serving this widget, so remote devices reach the backend.
+    const DEFAULT_UNITS = {
+      gypsum: "g",
+      clay: "g",
+      iron_ore: "g",
+      sand: "g",
+      limestone: "",
+      lime_stone: "",
+      klin_dht_temp: "°C",
+      klin_dht_humidity: "%",
+      cooler_dht_temp: "°C",
+      cooler_dht_humidity: "%",
+      preheating_tower_dht_temp: "°C",
+      preheating_tower_dht_humidity: "%",
+      vibration_sensor: "mm/s",
+    };
+
+    const MATERIAL_IDS = ["iron_ore", "sand", "clay", "gypsum"];
+
+    // Network protocols
     const backendProtocol = window.location.protocol === "https:" ? "https:" : "http:";
     const websocketProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const API_BASE = `${backendProtocol}//${window.location.hostname}:4000`;
     const WS_URL = `${websocketProtocol}//${window.location.hostname}:4000/ws`;
 
+    // Query params
     const params = new URLSearchParams(window.location.search);
-    const itemId = params.get("id");
-    const customColor = params.get("color");
-    const customBg = params.get("bg");
-    const customSize = params.get("size");
-    const decimalsParam = params.get("decimals");
-    const numDecimals = decimalsParam !== null && !isNaN(decimalsParam) ? parseInt(decimalsParam, 10) : DEFAULT_CONFIG.decimals;
-    const valueOnly = params.get("valueOnly") === "true" || params.get("label") === "false";
+    const pathParts = window.location.pathname.toLowerCase().split("/").filter(Boolean);
+    const pathMaterial = MATERIAL_IDS.find(m => pathParts.includes(m));
+    const rawId = params.get("id") || pathMaterial || "iron_ore";
+    const itemId = rawId.toLowerCase().trim();
+
+    const isCompact = params.get("view") === "compact" || params.get("valueOnly") === "true";
+    const forceControls = params.get("controls") === "true" || params.get("dispense") === "true";
     const hideAlarm = params.get("hideAlarm") === "true" || params.get("alarm") === "false";
 
-    const labelEl = document.getElementById("label");
+    // DOM Elements
+    const cardEl = document.getElementById("card");
+    const titleEl = document.getElementById("title");
+    const badgeEl = document.getElementById("badge");
+    const valEl = document.getElementById("val");
+    const unitEl = document.getElementById("unit");
     const alarmEl = document.getElementById("alarm");
+    const btnToggle = document.getElementById("btn-toggle");
+    const controlsWrap = document.getElementById("card-controls");
+    const targetInput = document.getElementById("target-input");
+    const btnDispense = document.getElementById("btn-dispense");
 
-    // Resolve color, bg & size: URL parameter takes priority, otherwise uses DEFAULT_CONFIG
-    const resolvedColor = customColor
-      ? (/^[0-9a-fA-F]{3,8}$/.test(customColor) ? `#${customColor}` : customColor)
-      : DEFAULT_CONFIG.color;
+    const isMaterial = MATERIAL_IDS.includes(itemId);
 
-    const resolvedBg = customBg
-      ? (/^[0-9a-fA-F]{3,8}$/.test(customBg) ? `#${customBg}` : customBg)
-      : DEFAULT_CONFIG.bg;
-
-    const resolvedSize = customSize
-      ? (isNaN(customSize) ? customSize : `${customSize}px`)
-      : (typeof DEFAULT_CONFIG.size === "number" ? `${DEFAULT_CONFIG.size}px` : DEFAULT_CONFIG.size);
-
-    // Apply styles to elements
-    labelEl.style.color = resolvedColor;
-    labelEl.style.background = resolvedBg;
-    labelEl.style.fontSize = resolvedSize;
-    labelEl.style.fontWeight = DEFAULT_CONFIG.fontWeight;
-
-    alarmEl.style.color = DEFAULT_CONFIG.alarmColor;
-    alarmEl.style.background = DEFAULT_CONFIG.alarmBg;
-    alarmEl.style.fontSize = DEFAULT_CONFIG.alarmSize;
-    alarmEl.style.fontWeight = DEFAULT_CONFIG.fontWeight;
-    if (hideAlarm) {
-      alarmEl.style.display = "none";
+    // Apply proper card theme class & title
+    if (isMaterial) {
+      document.body.setAttribute("data-card", "hopper");
+      cardEl.className = `card card-${itemId}${isCompact ? " compact" : ""}`;
+      badgeEl.textContent = "ESP1";
+      btnToggle.style.display = isCompact ? "none" : "inline-block";
+    } else {
+      document.body.setAttribute("data-card", "sensor");
+      cardEl.className = `card card-sensor${isCompact ? " compact" : ""}`;
+      badgeEl.textContent = itemId.includes("klin") || itemId.includes("cooler") || itemId.includes("preheating") ? "ESP2" : "SENSOR";
+      btnToggle.style.display = "none";
     }
 
-    const HOPPER_MATERIALS = ["gypsum", "clay", "iron_ore", "sand", "limestone", "lime_stone"];
-    const DISPLAY_LABELS = {
-      gypsum: "Gypsum",
-      clay: "Clay",
-      iron_ore: "Iron Ore",
-      sand: "Sand",
-      limestone: "Limestone",
-      lime_stone: "Limestone Gate",
-      klin_dht_temp: "Kiln Temp",
-      klin_dht_humidity: "Kiln Humidity",
-      cooler_dht_temp: "Cooler Temp",
-      cooler_dht_humidity: "Cooler Humidity",
-      preheating_tower_dht_temp: "Preheat Temp",
-      preheating_tower_dht_humidity: "Preheat Humidity",
-      vibration_sensor: "Vibration Value",
-    };
+    titleEl.textContent = DISPLAY_TITLES[itemId] || `${itemId.replace(/_/g, " ").toUpperCase()}`;
+    unitEl.textContent = DEFAULT_UNITS[itemId] || "";
 
-    function render(itemId, value, unit) {
-      let shown = value === null || value === undefined ? "--" : value;
-      if (typeof shown === "number") {
-        if (shown < 0) shown = 0;
-        if (!Number.isInteger(shown)) {
-          shown = shown.toFixed(numDecimals);
-        }
+    if (forceControls && isMaterial) {
+      controlsWrap.style.display = "flex";
+    }
+
+    function toggleControls() {
+      const isHidden = controlsWrap.style.display === "none" || !controlsWrap.style.display;
+      controlsWrap.style.display = isHidden ? "flex" : "none";
+    }
+
+    function renderSensorValue(rawVal, serverUnit) {
+      if (serverUnit) unitEl.textContent = serverUnit;
+      if (rawVal === null || rawVal === undefined) {
+        valEl.textContent = "--";
+        alarmEl.style.display = "none";
+        return;
       }
-      const label = DISPLAY_LABELS[itemId] || itemId;
-      labelEl.textContent = valueOnly
-        ? `${shown}${unit ? " " + unit : ""}`
-        : `${label}: ${shown}${unit ? " " + unit : ""}`;
 
-      const weight = Number(value);
-      const isHopper = HOPPER_MATERIALS.includes(itemId);
+      const num = Number(rawVal);
+      if (isNaN(num)) {
+        valEl.textContent = rawVal;
+        alarmEl.style.display = "none";
+        return;
+      }
 
-      if (!hideAlarm && isHopper && value !== null && value !== undefined && value !== "" && Number.isFinite(weight)) {
-        if (weight > 20) {
-          alarmEl.textContent = "OVERLOAD ALARM";
-          alarmEl.style.display = "inline-block";
-        } else if (weight < 5) {
-          alarmEl.textContent = "UNDER WEIGHT ALARM";
-          alarmEl.style.display = "inline-block";
-        } else {
-          alarmEl.textContent = "";
-          alarmEl.style.display = "none";
-        }
+      const clamped = num < 0 ? 0 : num;
+      valEl.textContent = Number.isInteger(clamped) ? clamped : clamped.toFixed(1);
+
+      // Overload check for material hoppers (> 20kg/g)
+      if (!hideAlarm && isMaterial && clamped > 20) {
+        alarmEl.textContent = "⚠️ OVERLOAD ALARM";
+        alarmEl.style.display = "block";
       } else {
-        alarmEl.textContent = "";
         alarmEl.style.display = "none";
       }
     }
 
-    if (!itemId) {
-      labelEl.textContent = "missing ?id=";
-    } else {
-      // Initial snapshot so the label isn't blank before the first WS message.
-      fetch(`${API_BASE}/api/item/${itemId}`)
-        .then((r) => r.json())
-        .then((data) => render(itemId, data.value, data.unit))
-        .catch(() => { });
+    // 1. Initial snapshot from backend REST API
+    async function fetchSnapshot() {
+      try {
+        const res = await fetch(`${API_BASE}/api/item/${itemId}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.value !== undefined) {
+            renderSensorValue(data.value, data.unit);
+          }
+        }
+      } catch (err) {}
+    }
+    fetchSnapshot();
 
-      // Live updates, scoped to just this item (Architecture v5, Section 4.2).
+    // 2. Real-time direct WebSocket subscription
+    if (typeof connectWidgetSocket === "function") {
       connectWidgetSocket(WS_URL, itemId, (data) => {
-        render(itemId, data.value, data.unit);
+        if (data && data.value !== undefined) {
+          renderSensorValue(data.value, data.unit);
+        }
       });
+    } else {
+      function fallbackConnect() {
+        try {
+          const ws = new WebSocket(WS_URL);
+          ws.onopen = () => ws.send(JSON.stringify({ type: "subscribe", item_id: itemId }));
+          ws.onmessage = (e) => {
+            try {
+              const msg = JSON.parse(e.data);
+              if (msg.type === "update" && (msg.item_id === itemId || !msg.item_id)) {
+                renderSensorValue(msg.value, msg.unit);
+              }
+            } catch (err) {}
+          };
+          ws.onclose = () => setTimeout(fallbackConnect, 2000);
+          ws.onerror = () => ws.close();
+        } catch (err) {
+          setTimeout(fallbackConnect, 2000);
+        }
+      }
+      fallbackConnect();
+    }
+
+    // 3. Dispense function
+    async function dispenseCurrentItem() {
+      if (!isMaterial) return;
+      const targetVal = Number(targetInput.value) || 10;
+      btnDispense.disabled = true;
+      btnDispense.textContent = "Sending...";
+
+      try {
+        const res = await fetch(`${API_BASE}/api/item/${itemId}/target`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ target: targetVal }),
+        });
+        if (!res.ok) throw new Error("Failed");
+        btnDispense.textContent = "Target Sent ✓";
+        setTimeout(() => {
+          btnDispense.textContent = "Dispense Now";
+          btnDispense.disabled = false;
+        }, 2200);
+      } catch (e) {
+        btnDispense.textContent = "Failed";
+        setTimeout(() => {
+          btnDispense.textContent = "Dispense Now";
+          btnDispense.disabled = false;
+        }, 2200);
+      }
     }
   </script>
 </body>
-
 </html>

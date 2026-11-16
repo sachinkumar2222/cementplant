@@ -1,5 +1,6 @@
 /* Custom Dynamic Styles */
 
+/* PREHEATING */
 body[data-card="preheating"] .card, html body[data-card="preheating"] .card {
   width: 310px !important;
   padding: 13px 15px !important;
@@ -42,6 +43,7 @@ body[data-card="preheating"] .state-btn {
   border-radius: 8px !important;
 }
 
+/* KILN */
 body[data-card="kiln"] .card, html body[data-card="kiln"] .card {
   width: 310px !important;
   padding: 13px 15px !important;
@@ -84,6 +86,7 @@ body[data-card="kiln"] .state-btn {
   border-radius: 8px !important;
 }
 
+/* COOLER */
 body[data-card="cooler"] .card, html body[data-card="cooler"] .card {
   width: 310px !important;
   padding: 13px 15px !important;
@@ -127,12 +130,12 @@ body[data-card="cooler"] .state-btn {
 }
 
 body[data-card="hopper"] .card-gypsum, html body[data-card="hopper"] .card-gypsum {
-  width: 270px !important;
-  padding: 16px 16px !important;
+  width: 268px !important;
+  padding: 12px 16px !important;
   border-radius: 18px !important;
 }
 body[data-card="hopper"] .card-gypsum .card-title, body[data-card="hopper"] .card-gypsum #title, html body[data-card="hopper"] .card-gypsum .card-title {
-  font-size: 11px !important;
+  font-size: 18px !important;
 }
 body[data-card="hopper"] .card-gypsum .card-value, body[data-card="hopper"] .card-gypsum #val {
   font-size: 36px !important;
