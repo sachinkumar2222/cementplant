@@ -282,6 +282,94 @@ function generateCssFromStyles(styles) {
     }
   }
 
+  // Telemetry Cards (widget.html)
+  const telemetryKeys = Object.keys(styles).filter(k => k.startsWith("telemetry_") || k === "telemetry");
+  if (telemetryKeys.length > 0) {
+    const t = styles.telemetry_iron_ore || styles.telemetry || styles[telemetryKeys[0]];
+    if (t) {
+      css += `/* TELEMETRY WIDGETS */\n`;
+      css += `body[data-card="telemetry"] .load-card, html body[data-card="telemetry"] .load-card {\n`;
+      if (t.cardWidth) css += `  width: ${t.cardWidth}px !important;\n`;
+      if (t.cardPaddingY || t.cardPaddingX) css += `  padding: ${t.cardPaddingY || 16}px ${t.cardPaddingX || 18}px !important;\n`;
+      if (t.cardRadius) css += `  border-radius: ${t.cardRadius}px !important;\n`;
+      if (t.cardGap) css += `  gap: ${t.cardGap}px !important;\n`;
+      css += `}\n`;
+      if (t.titleFontSize) {
+        css += `body[data-card="telemetry"] .material-title, html body[data-card="telemetry"] .material-title {\n  font-size: ${t.titleFontSize}px !important;\n}\n`;
+      }
+      if (t.iconFontSize) {
+        css += `body[data-card="telemetry"] .material-icon, html body[data-card="telemetry"] .material-icon {\n  font-size: ${t.iconFontSize}px !important;\n}\n`;
+      }
+      if (t.sensorValueFontSize) {
+        css += `body[data-card="telemetry"] .telemetry-val, html body[data-card="telemetry"] .telemetry-val {\n  font-size: ${t.sensorValueFontSize}px !important;\n}\n`;
+      }
+      if (t.sensorUnitFontSize) {
+        css += `body[data-card="telemetry"] .telemetry-unit, html body[data-card="telemetry"] .telemetry-unit {\n  font-size: ${t.sensorUnitFontSize}px !important;\n}\n`;
+      }
+      if (t.btnFontSize || t.btnPaddingY || t.btnPaddingX) {
+        css += `body[data-card="telemetry"] .load-status-badge, html body[data-card="telemetry"] .load-status-badge {\n`;
+        if (t.btnFontSize) css += `  font-size: ${t.btnFontSize}px !important;\n`;
+        if (t.btnPaddingY || t.btnPaddingX) css += `  padding: ${t.btnPaddingY || 5}px ${t.btnPaddingX || 12}px !important;\n`;
+        css += `}\n`;
+      }
+      css += `\n`;
+    }
+  }
+
+  // Hopper Dispenser Controllers (hopper-control.html)
+  const dispenseKeys = Object.keys(styles).filter(k => k.startsWith("ctrl_dispense_") || k === "dispenser");
+  if (dispenseKeys.length > 0) {
+    const d = styles.ctrl_dispense_iron_ore || styles.dispenser || styles[dispenseKeys[0]];
+    if (d) {
+      css += `/* DISPENSE CONTROLS */\n`;
+      css += `body[data-card="dispenser"] .card, html body[data-card="dispenser"] .card {\n`;
+      if (d.cardWidth) css += `  width: ${d.cardWidth}px !important;\n`;
+      if (d.cardPaddingY || d.cardPaddingX) css += `  padding: ${d.cardPaddingY || 16}px ${d.cardPaddingX || 16}px !important;\n`;
+      if (d.cardRadius) css += `  border-radius: ${d.cardRadius}px !important;\n`;
+      if (d.cardGap) css += `  gap: ${d.cardGap}px !important;\n`;
+      css += `}\n`;
+      if (d.controlNameFontSize || d.titleFontSize) {
+        css += `body[data-card="dispenser"] .target-row, html body[data-card="dispenser"] .target-row {\n  font-size: ${d.controlNameFontSize || d.titleFontSize || 16}px !important;\n}\n`;
+      }
+      if (d.sensorValueFontSize) {
+        css += `body[data-card="dispenser"] .target-input, html body[data-card="dispenser"] .target-input {\n  font-size: ${d.sensorValueFontSize}px !important;\n}\n`;
+      }
+      if (d.btnFontSize || d.btnPaddingY || d.btnPaddingX || d.btnRadius) {
+        css += `body[data-card="dispenser"] .dispense-btn, html body[data-card="dispenser"] .dispense-btn {\n`;
+        if (d.btnFontSize) css += `  font-size: ${d.btnFontSize}px !important;\n`;
+        if (d.btnPaddingY || d.btnPaddingX) css += `  padding: ${d.btnPaddingY || 9}px ${d.btnPaddingX || 12}px !important;\n`;
+        if (d.btnRadius) css += `  border-radius: ${d.btnRadius}px !important;\n`;
+        css += `}\n`;
+      }
+      css += `\n`;
+    }
+  }
+
+  // Actuator Power Controllers (control.html)
+  const ctrlKeys = Object.keys(styles).filter(k => (k.startsWith("ctrl_") && !k.startsWith("ctrl_dispense_")) || k === "control");
+  if (ctrlKeys.length > 0) {
+    const c = styles.ctrl_crusher || styles.control || styles[ctrlKeys[0]];
+    if (c) {
+      css += `/* ACTUATOR CONTROLS */\n`;
+      if (c.controlGap) {
+        css += `body[data-card="control"] #buttons, html body[data-card="control"] #buttons {\n  gap: ${c.controlGap}px !important;\n}\n`;
+      }
+      if (c.cardWidth) {
+        const btnDim = Math.min(Math.max(c.cardWidth, 36), 84);
+        css += `body[data-card="control"] .power-btn, html body[data-card="control"] .power-btn {\n  width: ${btnDim}px !important;\n  height: ${btnDim}px !important;\n`;
+        if (c.btnRadius !== undefined) css += `  border-radius: ${c.btnRadius}% !important;\n`;
+        css += `}\n`;
+      }
+      if (c.iconFontSize) {
+        css += `body[data-card="control"] .power-btn svg, html body[data-card="control"] .power-btn svg {\n  width: ${c.iconFontSize}px !important;\n  height: ${c.iconFontSize}px !important;\n}\n`;
+      }
+      if (c.titleFontSize) {
+        css += `body[data-card="control"] #label, html body[data-card="control"] #label {\n  font-size: ${c.titleFontSize}px !important;\n}\n`;
+      }
+      css += `\n`;
+    }
+  }
+
   return css;
 }
 

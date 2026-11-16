@@ -532,12 +532,44 @@
     <div class="card-select-wrap">
       <span class="card-select-label">Active Card:</span>
       <select id="card-select" class="card-dropdown">
-        <optgroup label="ESP-2 Glassmorphic Cards">
+        <optgroup label="🏭 ESP-2 Plant Zone Cards">
           <option value="cooler">❄️ Cooler Zone (/cooler/editor)</option>
           <option value="preheating">🗼 Preheating Tower (/preheating-tower/editor)</option>
           <option value="kiln">🔥 Kiln (Cline) Zone (/kiln/editor)</option>
         </optgroup>
-        <optgroup label="ESP-1 Materials (Load Cells)">
+        <optgroup label="📊 Telemetry & Load Cards (widget.html)">
+          <option value="telemetry_iron_ore">🪨 Iron Ore Telemetry (/iron_ore/editor)</option>
+          <option value="telemetry_gypsum">🧱 Gypsum Telemetry (/gypsum/editor)</option>
+          <option value="telemetry_clay">🏺 Clay Telemetry (/clay/editor)</option>
+          <option value="telemetry_sand">⏳ Sand Telemetry (/sand/editor)</option>
+          <option value="telemetry_vibration">⚡ Vibration Sensor Telemetry</option>
+          <option value="telemetry_kiln_temp">🔥 Kiln Temperature</option>
+          <option value="telemetry_cooler_temp">❄️ Cooler Temperature</option>
+          <option value="telemetry_preheat_temp">🗼 Preheating Tower Temp</option>
+        </optgroup>
+        <optgroup label="🎯 Hopper Dispense Controllers (hopper-control.html)">
+          <option value="ctrl_dispense_iron_ore">🪨 Iron Ore Dispenser (/dispense/iron_ore/editor)</option>
+          <option value="ctrl_dispense_gypsum">🧱 Gypsum Dispenser (/dispense/gypsum/editor)</option>
+          <option value="ctrl_dispense_clay">🏺 Clay Dispenser (/dispense/clay/editor)</option>
+          <option value="ctrl_dispense_sand">⏳ Sand Dispenser (/dispense/sand/editor)</option>
+        </optgroup>
+        <optgroup label="🕹️ Actuator Power Controllers (control.html)">
+          <option value="ctrl_crusher">⚙️ Crusher Controller (/crusher/editor)</option>
+          <option value="ctrl_conveyor_1">🔄 Conveyor 1 Controller</option>
+          <option value="ctrl_conveyor_2">🔄 Conveyor 2 Controller</option>
+          <option value="ctrl_conveyor_3">🔄 Conveyor 3 Controller</option>
+          <option value="ctrl_conveyor_4">🔄 Conveyor 4 Controller</option>
+          <option value="ctrl_klin">🔥 Kiln Motor Controller</option>
+          <option value="ctrl_klin_heater">♨️ Kiln Heater Controller</option>
+          <option value="ctrl_heat_blower">💨 Heat Blower Controller</option>
+          <option value="ctrl_tower_fan">🌀 Tower Fan Controller</option>
+          <option value="ctrl_tower_heater">🔥 Tower Heater Controller</option>
+          <option value="ctrl_vibration_motor">📳 Vibration Motor Controller</option>
+          <option value="ctrl_ball_mill_1">⚪ Ball Mill 1 Controller</option>
+          <option value="ctrl_ball_mill_2">⚪ Ball Mill 2 Controller</option>
+          <option value="ctrl_limestone">🚪 Limestone Gate Controller</option>
+        </optgroup>
+        <optgroup label="⚖️ Hopper Reading Cards (hopper-reading.html)">
           <option value="hopper_gypsum">⚖️ Gypsum Hopper Reading</option>
           <option value="hopper_clay">⚖️ Clay Hopper Reading</option>
           <option value="hopper_sand">⚖️ Sand Hopper Reading</option>
@@ -800,6 +832,7 @@
     };
 
     const DEFAULT_CONFIGS = {
+      // 🏭 ESP-2 Plant Zone Cards
       cooler: {
         cardWidth: 310, cardPaddingY: 13, cardPaddingX: 15, cardRadius: 18, cardGap: 10,
         titleFontSize: 20, iconFontSize: 20, headerPaddingBottom: 8,
@@ -830,6 +863,96 @@
         titleText: "Kiln (Cline) Zone", iconText: "🔥", sensor1Label: "Temperature", sensor2Label: "Humidity",
         control1Name: "Kiln Motor", control2Name: "Kiln Heater"
       },
+
+      // 📊 Telemetry Cards (widget.html)
+      telemetry_iron_ore: {
+        cardWidth: 290, cardPaddingY: 16, cardPaddingX: 18, cardRadius: 18, cardGap: 12,
+        titleFontSize: 20, iconFontSize: 20, sensorValueFontSize: 38, sensorUnitFontSize: 17,
+        btnFontSize: 11, btnPaddingY: 5, btnPaddingX: 12, btnRadius: 9999,
+        titleText: "IRON ORE HOPPER", iconText: "🪨"
+      },
+      telemetry_gypsum: {
+        cardWidth: 290, cardPaddingY: 16, cardPaddingX: 18, cardRadius: 18, cardGap: 12,
+        titleFontSize: 20, iconFontSize: 20, sensorValueFontSize: 38, sensorUnitFontSize: 17,
+        btnFontSize: 11, btnPaddingY: 5, btnPaddingX: 12, btnRadius: 9999,
+        titleText: "GYPSUM HOPPER", iconText: "🧱"
+      },
+      telemetry_clay: {
+        cardWidth: 290, cardPaddingY: 16, cardPaddingX: 18, cardRadius: 18, cardGap: 12,
+        titleFontSize: 20, iconFontSize: 20, sensorValueFontSize: 38, sensorUnitFontSize: 17,
+        btnFontSize: 11, btnPaddingY: 5, btnPaddingX: 12, btnRadius: 9999,
+        titleText: "CLAY HOPPER", iconText: "🏺"
+      },
+      telemetry_sand: {
+        cardWidth: 290, cardPaddingY: 16, cardPaddingX: 18, cardRadius: 18, cardGap: 12,
+        titleFontSize: 20, iconFontSize: 20, sensorValueFontSize: 38, sensorUnitFontSize: 17,
+        btnFontSize: 11, btnPaddingY: 5, btnPaddingX: 12, btnRadius: 9999,
+        titleText: "SAND HOPPER", iconText: "⏳"
+      },
+      telemetry_vibration: {
+        cardWidth: 290, cardPaddingY: 16, cardPaddingX: 18, cardRadius: 18, cardGap: 12,
+        titleFontSize: 20, iconFontSize: 20, sensorValueFontSize: 38, sensorUnitFontSize: 17,
+        titleText: "VIBRATION SENSOR", iconText: "⚡"
+      },
+      telemetry_kiln_temp: {
+        cardWidth: 290, cardPaddingY: 16, cardPaddingX: 18, cardRadius: 18, cardGap: 12,
+        titleFontSize: 20, iconFontSize: 20, sensorValueFontSize: 38, sensorUnitFontSize: 17,
+        titleText: "KILN TEMPERATURE", iconText: "🔥"
+      },
+      telemetry_cooler_temp: {
+        cardWidth: 290, cardPaddingY: 16, cardPaddingX: 18, cardRadius: 18, cardGap: 12,
+        titleFontSize: 20, iconFontSize: 20, sensorValueFontSize: 38, sensorUnitFontSize: 17,
+        titleText: "COOLER TEMPERATURE", iconText: "❄️"
+      },
+      telemetry_preheat_temp: {
+        cardWidth: 290, cardPaddingY: 16, cardPaddingX: 18, cardRadius: 18, cardGap: 12,
+        titleFontSize: 20, iconFontSize: 20, sensorValueFontSize: 38, sensorUnitFontSize: 17,
+        titleText: "PREHEAT TOWER TEMP", iconText: "🗼"
+      },
+
+      // 🎯 Hopper Dispense Controllers (hopper-control.html)
+      ctrl_dispense_iron_ore: {
+        cardWidth: 250, cardPaddingY: 16, cardPaddingX: 16, cardRadius: 18, cardGap: 12,
+        controlNameFontSize: 16, sensorValueFontSize: 16, sensorUnitFontSize: 16,
+        btnFontSize: 16, btnPaddingY: 9, btnPaddingX: 12, btnRadius: 12,
+        titleText: "Dispense Iron Ore"
+      },
+      ctrl_dispense_gypsum: {
+        cardWidth: 250, cardPaddingY: 16, cardPaddingX: 16, cardRadius: 18, cardGap: 12,
+        controlNameFontSize: 16, sensorValueFontSize: 16, sensorUnitFontSize: 16,
+        btnFontSize: 16, btnPaddingY: 9, btnPaddingX: 12, btnRadius: 12,
+        titleText: "Dispense Gypsum"
+      },
+      ctrl_dispense_clay: {
+        cardWidth: 250, cardPaddingY: 16, cardPaddingX: 16, cardRadius: 18, cardGap: 12,
+        controlNameFontSize: 16, sensorValueFontSize: 16, sensorUnitFontSize: 16,
+        btnFontSize: 16, btnPaddingY: 9, btnPaddingX: 12, btnRadius: 12,
+        titleText: "Dispense Clay"
+      },
+      ctrl_dispense_sand: {
+        cardWidth: 250, cardPaddingY: 16, cardPaddingX: 16, cardRadius: 18, cardGap: 12,
+        controlNameFontSize: 16, sensorValueFontSize: 16, sensorUnitFontSize: 16,
+        btnFontSize: 16, btnPaddingY: 9, btnPaddingX: 12, btnRadius: 12,
+        titleText: "Dispense Sand"
+      },
+
+      // 🕹️ Actuator Power Controllers (control.html)
+      ctrl_crusher: { cardWidth: 80, controlGap: 10, iconFontSize: 22, titleFontSize: 11, btnRadius: 50, titleText: "Crusher" },
+      ctrl_conveyor_1: { cardWidth: 80, controlGap: 10, iconFontSize: 22, titleFontSize: 11, btnRadius: 50, titleText: "Conveyor 1" },
+      ctrl_conveyor_2: { cardWidth: 80, controlGap: 10, iconFontSize: 22, titleFontSize: 11, btnRadius: 50, titleText: "Conveyor 2" },
+      ctrl_conveyor_3: { cardWidth: 80, controlGap: 10, iconFontSize: 22, titleFontSize: 11, btnRadius: 50, titleText: "Conveyor 3" },
+      ctrl_conveyor_4: { cardWidth: 80, controlGap: 10, iconFontSize: 22, titleFontSize: 11, btnRadius: 50, titleText: "Conveyor 4" },
+      ctrl_klin: { cardWidth: 80, controlGap: 10, iconFontSize: 22, titleFontSize: 11, btnRadius: 50, titleText: "Kiln" },
+      ctrl_klin_heater: { cardWidth: 80, controlGap: 10, iconFontSize: 22, titleFontSize: 11, btnRadius: 50, titleText: "Kiln Heater" },
+      ctrl_heat_blower: { cardWidth: 80, controlGap: 10, iconFontSize: 22, titleFontSize: 11, btnRadius: 50, titleText: "Heat Blower" },
+      ctrl_tower_fan: { cardWidth: 80, controlGap: 10, iconFontSize: 22, titleFontSize: 11, btnRadius: 50, titleText: "Tower Fan" },
+      ctrl_tower_heater: { cardWidth: 80, controlGap: 10, iconFontSize: 22, titleFontSize: 11, btnRadius: 50, titleText: "Tower Heater" },
+      ctrl_vibration_motor: { cardWidth: 80, controlGap: 10, iconFontSize: 22, titleFontSize: 11, btnRadius: 50, titleText: "Vibration Motor" },
+      ctrl_ball_mill_1: { cardWidth: 80, controlGap: 10, iconFontSize: 22, titleFontSize: 11, btnRadius: 50, titleText: "Ball Mill 1" },
+      ctrl_ball_mill_2: { cardWidth: 80, controlGap: 10, iconFontSize: 22, titleFontSize: 11, btnRadius: 50, titleText: "Ball Mill 2" },
+      ctrl_limestone: { cardWidth: 80, controlGap: 10, iconFontSize: 22, titleFontSize: 11, btnRadius: 50, titleText: "Limestone Gate" },
+
+      // ⚖️ Hopper Reading Cards (hopper-reading.html)
       hopper_gypsum: {
         cardWidth: 270, cardPaddingY: 16, cardPaddingX: 16, cardRadius: 18,
         titleFontSize: 11, sensorValueFontSize: 36, sensorUnitFontSize: 14,
@@ -853,9 +976,44 @@
     };
 
     const CARD_URL_MAP = {
+      // Zone Cards
       cooler: "/cooler.html",
       preheating: "/preheating-tower.html",
       kiln: "/kiln.html",
+
+      // Telemetry Cards
+      telemetry_iron_ore: "/widget.html?id=iron_ore",
+      telemetry_gypsum: "/widget.html?id=gypsum",
+      telemetry_clay: "/widget.html?id=clay",
+      telemetry_sand: "/widget.html?id=sand",
+      telemetry_vibration: "/widget.html?id=vibration_sensor",
+      telemetry_kiln_temp: "/widget.html?id=klin_dht_temp",
+      telemetry_cooler_temp: "/widget.html?id=cooler_dht_temp",
+      telemetry_preheat_temp: "/widget.html?id=preheating_tower_dht_temp",
+
+      // Dispense Controllers
+      ctrl_dispense_iron_ore: "/hopper-control.html?id=iron_ore",
+      ctrl_dispense_gypsum: "/hopper-control.html?id=gypsum",
+      ctrl_dispense_clay: "/hopper-control.html?id=clay",
+      ctrl_dispense_sand: "/hopper-control.html?id=sand",
+
+      // Actuator Controllers
+      ctrl_crusher: "/control.html?id=crusher",
+      ctrl_conveyor_1: "/control.html?id=conveyor_1",
+      ctrl_conveyor_2: "/control.html?id=conveyor_2",
+      ctrl_conveyor_3: "/control.html?id=conveyor_3",
+      ctrl_conveyor_4: "/control.html?id=conveyor_4",
+      ctrl_klin: "/control.html?id=klin",
+      ctrl_klin_heater: "/control.html?id=klin_heater",
+      ctrl_heat_blower: "/control.html?id=heat_blower",
+      ctrl_tower_fan: "/control.html?id=preheating_tower_fan",
+      ctrl_tower_heater: "/control.html?id=preheating_tower_heater",
+      ctrl_vibration_motor: "/control.html?id=vibration_motor",
+      ctrl_ball_mill_1: "/control.html?id=ball_mill_1",
+      ctrl_ball_mill_2: "/control.html?id=ball_mill_2",
+      ctrl_limestone: "/control.html?id=lime_stone",
+
+      // Hopper Reading Cards
       hopper_gypsum: "/hopper-reading.html?id=gypsum",
       hopper_clay: "/hopper-reading.html?id=clay",
       hopper_sand: "/hopper-reading.html?id=sand",
@@ -865,32 +1023,47 @@
     let stylesState = JSON.parse(JSON.stringify(DEFAULT_CONFIGS));
     let currentCardKey = "cooler";
 
-    // Determine card from URL path (e.g. /cooler/editor or /preheating-tower/editor)
+    // Determine card from URL path or query params
     function detectInitialCard() {
+      const params = new URLSearchParams(window.location.search);
+      const qCard = params.get("card");
+      const qId = params.get("id");
+      const qType = params.get("type");
+
+      if (qCard && CARD_URL_MAP[qCard]) return qCard;
+
+      if (qId) {
+        if (qType === "dispense" || window.location.pathname.includes("dispense")) {
+          const k = "ctrl_dispense_" + qId;
+          if (CARD_URL_MAP[k]) return k;
+        }
+        if (qType === "control" || window.location.pathname.includes("control")) {
+          const k = "ctrl_" + qId;
+          if (CARD_URL_MAP[k]) return k;
+        }
+        const telKey = "telemetry_" + qId;
+        if (CARD_URL_MAP[telKey]) return telKey;
+        const hopKey = "hopper_" + qId;
+        if (CARD_URL_MAP[hopKey]) return hopKey;
+        const ctrlKey = "ctrl_" + qId;
+        if (CARD_URL_MAP[ctrlKey]) return ctrlKey;
+      }
+
       const parts = window.location.pathname.split("/").filter(Boolean);
-      let found = "cooler";
       if (parts.length >= 2 && (parts[1] === "editor" || parts[1] === "editor.html" || parts[1] === "styler")) {
         const raw = parts[0].toLowerCase().replace(".html", "");
-        if (raw === "cooler") found = "cooler";
-        else if (raw === "preheating-tower" || raw === "preheating" || raw === "preheat") found = "preheating";
-        else if (raw === "kiln" || raw === "cline" || raw === "klin") found = "kiln";
-        else if (raw === "gypsum") found = "hopper_gypsum";
-        else if (raw === "clay") found = "hopper_clay";
-        else if (raw === "sand") found = "hopper_sand";
-        else if (raw === "iron_ore" || raw === "iron-ore") found = "hopper_iron_ore";
-      } else {
-        const p = new URLSearchParams(window.location.search).get("card") || new URLSearchParams(window.location.search).get("id");
-        if (p) {
-          if (p === "cooler") found = "cooler";
-          else if (p.includes("preheat")) found = "preheating";
-          else if (p === "kiln" || p === "cline" || p === "klin") found = "kiln";
-          else if (p === "gypsum") found = "hopper_gypsum";
-          else if (p === "clay") found = "hopper_clay";
-          else if (p === "sand") found = "hopper_sand";
-          else if (p === "iron_ore" || p === "iron-ore") found = "hopper_iron_ore";
-        }
+        if (CARD_URL_MAP[raw]) return raw;
+        if (raw === "cooler") return "cooler";
+        if (raw === "preheating-tower" || raw === "preheating" || raw === "preheat") return "preheating";
+        if (raw === "kiln" || raw === "cline" || raw === "klin") return "kiln";
+        if (raw === "iron_ore" || raw === "iron-ore") return "telemetry_iron_ore";
+        if (raw === "gypsum") return "telemetry_gypsum";
+        if (raw === "clay") return "telemetry_clay";
+        if (raw === "sand") return "telemetry_sand";
+        if (raw === "crusher") return "ctrl_crusher";
       }
-      return found;
+
+      return "cooler";
     }
 
     currentCardKey = detectInitialCard();
@@ -912,13 +1085,8 @@
     }
 
     function updateDirectUrlDisplay() {
-      let slug = currentCardKey;
-      if (currentCardKey === "preheating") slug = "preheating-tower";
-      else if (currentCardKey === "hopper_gypsum") slug = "gypsum";
-      else if (currentCardKey === "hopper_clay") slug = "clay";
-      else if (currentCardKey === "hopper_sand") slug = "sand";
-      else if (currentCardKey === "hopper_iron_ore") slug = "iron_ore";
-      directUrlText.textContent = `/${slug}/editor`;
+      const targetUrl = CARD_URL_MAP[currentCardKey] || "/cooler.html";
+      directUrlText.textContent = `URL: ${targetUrl}`;
     }
 
     // Build sliders for every property
@@ -944,16 +1112,22 @@
         `;
       });
 
-      // Show/hide sections for hopper vs regular cards
-      const isHopper = currentCardKey.startsWith("hopper");
-      document.getElementById("group-actuators").style.display = isHopper ? "none" : "block";
-      document.getElementById("wrap-ctrl1").style.display = isHopper ? "none" : "block";
-      document.getElementById("wrap-ctrl2").style.display = (currentCardKey === "cooler" || isHopper) ? "none" : "block";
-      document.getElementById("sim-row-weight").style.display = isHopper ? "flex" : "none";
-      document.getElementById("sim-row-temp").style.display = isHopper ? "none" : "flex";
-      document.getElementById("sim-row-hum").style.display = isHopper ? "none" : "flex";
-      document.getElementById("sim-row-act1").style.display = isHopper ? "none" : "flex";
-      document.getElementById("sim-row-act2").style.display = (currentCardKey === "cooler" || isHopper) ? "none" : "flex";
+      // Show/hide sections for each category
+      const isHopper = currentCardKey.startsWith("hopper_");
+      const isTelemetry = currentCardKey.startsWith("telemetry_");
+      const isDispense = currentCardKey.startsWith("ctrl_dispense_");
+      const isActuatorCtrl = currentCardKey.startsWith("ctrl_") && !isDispense;
+      const isZoneCard = ["cooler", "preheating", "kiln"].includes(currentCardKey);
+
+      document.getElementById("group-actuators").style.display = (isZoneCard || isDispense || isActuatorCtrl) ? "block" : "none";
+      document.getElementById("wrap-ctrl1").style.display = isZoneCard ? "block" : "none";
+      document.getElementById("wrap-ctrl2").style.display = (isZoneCard && currentCardKey !== "cooler") ? "block" : "none";
+
+      document.getElementById("sim-row-weight").style.display = (isHopper || isTelemetry) ? "flex" : "none";
+      document.getElementById("sim-row-temp").style.display = isZoneCard ? "flex" : "none";
+      document.getElementById("sim-row-hum").style.display = isZoneCard ? "flex" : "none";
+      document.getElementById("sim-row-act1").style.display = isZoneCard ? "flex" : "none";
+      document.getElementById("sim-row-act2").style.display = (isZoneCard && currentCardKey !== "cooler") ? "flex" : "none";
     }
 
     function onPropChange(key, val) {
@@ -1063,10 +1237,79 @@
         }
 
         const s = stylesState[currentCardKey] || {};
-        const isHopper = currentCardKey.startsWith("hopper");
+        const isHopper = currentCardKey.startsWith("hopper_");
+        const isTelemetry = currentCardKey.startsWith("telemetry_");
+        const isDispense = currentCardKey.startsWith("ctrl_dispense_");
+        const isActuatorCtrl = currentCardKey.startsWith("ctrl_") && !isDispense;
 
         let css = "";
-        if (isHopper) {
+        if (isTelemetry) {
+          css = `
+            html body .load-card, html body #main-card, body[data-card="telemetry"] .load-card {
+              width: ${s.cardWidth || 290}px !important;
+              padding: ${s.cardPaddingY || 16}px ${s.cardPaddingX || 18}px !important;
+              border-radius: ${s.cardRadius || 18}px !important;
+              gap: ${s.cardGap || 12}px !important;
+            }
+            html body .material-title, html body #card-title, body[data-card="telemetry"] .material-title {
+              font-size: ${s.titleFontSize || 20}px !important;
+            }
+            html body .material-icon, html body #card-icon, body[data-card="telemetry"] .material-icon {
+              font-size: ${s.iconFontSize || 20}px !important;
+            }
+            html body .telemetry-val, html body #val, body[data-card="telemetry"] .telemetry-val {
+              font-size: ${s.sensorValueFontSize || 38}px !important;
+            }
+            html body .telemetry-unit, html body #unit, body[data-card="telemetry"] .telemetry-unit {
+              font-size: ${s.sensorUnitFontSize || 17}px !important;
+            }
+            html body .load-status-badge, html body #status-badge, body[data-card="telemetry"] .load-status-badge {
+              font-size: ${s.btnFontSize || 11}px !important;
+              padding: ${s.btnPaddingY || 5}px ${s.btnPaddingX || 12}px !important;
+            }
+          `;
+        } else if (isDispense) {
+          css = `
+            html body .card, html body #card, body[data-card="dispenser"] .card {
+              width: ${s.cardWidth || 250}px !important;
+              padding: ${s.cardPaddingY || 16}px ${s.cardPaddingX || 16}px !important;
+              border-radius: ${s.cardRadius || 18}px !important;
+              gap: ${s.cardGap || 12}px !important;
+            }
+            html body .target-row, body[data-card="dispenser"] .target-row {
+              font-size: ${s.controlNameFontSize || 16}px !important;
+            }
+            html body .target-input, html body #targetInput, body[data-card="dispenser"] .target-input {
+              font-size: ${s.sensorValueFontSize || 16}px !important;
+            }
+            html body .target-unit, body[data-card="dispenser"] .target-unit {
+              font-size: ${s.sensorUnitFontSize || 16}px !important;
+            }
+            html body .dispense-btn, html body #dispenseBtn, body[data-card="dispenser"] .dispense-btn {
+              font-size: ${s.btnFontSize || 16}px !important;
+              padding: ${s.btnPaddingY || 9}px ${s.btnPaddingX || 12}px !important;
+              border-radius: ${s.btnRadius || 12}px !important;
+            }
+          `;
+        } else if (isActuatorCtrl) {
+          css = `
+            html body #buttons, body[data-card="control"] #buttons {
+              gap: ${s.controlGap || 10}px !important;
+            }
+            html body .power-btn, body[data-card="control"] .power-btn {
+              width: ${s.cardWidth ? Math.min(Math.max(s.cardWidth, 36), 84) : 48}px !important;
+              height: ${s.cardWidth ? Math.min(Math.max(s.cardWidth, 36), 84) : 48}px !important;
+              border-radius: ${s.btnRadius !== undefined ? s.btnRadius : 50}% !important;
+            }
+            html body .power-btn svg, body[data-card="control"] .power-btn svg {
+              width: ${s.iconFontSize || 22}px !important;
+              height: ${s.iconFontSize || 22}px !important;
+            }
+            html body #label, body[data-card="control"] #label {
+              font-size: ${s.titleFontSize || 11}px !important;
+            }
+          `;
+        } else if (isHopper) {
           const matClass = currentCardKey.replace("hopper_", "card-");
           css = `
             html body .card, html body #card, html body[data-card="hopper"] .card, html body[data-card="hopper"] .${matClass} {
@@ -1176,25 +1419,51 @@
         styleTag.textContent = css;
 
         // Direct DOM inline overrides for instant zero-latency guarantee
-        frameDoc.querySelectorAll(".card-title, #title").forEach(el => {
+        frameDoc.querySelectorAll(".material-title, .card-title, #title, #card-title").forEach(el => {
           if (s.titleFontSize) el.style.setProperty("font-size", `${s.titleFontSize}px`, "important");
         });
-        frameDoc.querySelectorAll(".card-icon").forEach(el => {
+        frameDoc.querySelectorAll(".material-icon, .card-icon, #card-icon").forEach(el => {
           if (s.iconFontSize) el.style.setProperty("font-size", `${s.iconFontSize}px`, "important");
         });
         frameDoc.querySelectorAll(".sensor-label").forEach(el => {
           if (s.sensorLabelFontSize) el.style.setProperty("font-size", `${s.sensorLabelFontSize}px`, "important");
         });
-        frameDoc.querySelectorAll(".sensor-value, .card-value, #val, #val-temp, #val-hum").forEach(el => {
+        frameDoc.querySelectorAll(".telemetry-val, .sensor-value, .card-value, #val, #val-temp, #val-hum").forEach(el => {
           if (s.sensorValueFontSize) el.style.setProperty("font-size", `${s.sensorValueFontSize}px`, "important");
         });
-        frameDoc.querySelectorAll(".sensor-unit, .card-unit").forEach(el => {
+        frameDoc.querySelectorAll(".telemetry-unit, .sensor-unit, .card-unit, #unit").forEach(el => {
           if (s.sensorUnitFontSize) el.style.setProperty("font-size", `${s.sensorUnitFontSize}px`, "important");
         });
-        frameDoc.querySelectorAll(".control-name").forEach(el => {
+        frameDoc.querySelectorAll(".control-name, .target-row").forEach(el => {
           if (s.controlNameFontSize) el.style.setProperty("font-size", `${s.controlNameFontSize}px`, "important");
         });
-        frameDoc.querySelectorAll(".card, #card").forEach(el => {
+        frameDoc.querySelectorAll(".load-status-badge, #status-badge").forEach(el => {
+          if (s.btnFontSize) el.style.setProperty("font-size", `${s.btnFontSize}px`, "important");
+          if (s.btnPaddingY || s.btnPaddingX) el.style.setProperty("padding", `${s.btnPaddingY || 5}px ${s.btnPaddingX || 12}px`, "important");
+        });
+        frameDoc.querySelectorAll(".dispense-btn, #dispenseBtn").forEach(el => {
+          if (s.btnFontSize) el.style.setProperty("font-size", `${s.btnFontSize}px`, "important");
+          if (s.btnPaddingY || s.btnPaddingX) el.style.setProperty("padding", `${s.btnPaddingY || 9}px ${s.btnPaddingX || 12}px`, "important");
+          if (s.btnRadius) el.style.setProperty("border-radius", `${s.btnRadius}px`, "important");
+        });
+        frameDoc.querySelectorAll(".power-btn").forEach(el => {
+          if (s.cardWidth) {
+            const dim = Math.min(Math.max(s.cardWidth, 36), 84);
+            el.style.setProperty("width", `${dim}px`, "important");
+            el.style.setProperty("height", `${dim}px`, "important");
+          }
+          if (s.btnRadius !== undefined) el.style.setProperty("border-radius", `${s.btnRadius}%`, "important");
+        });
+        frameDoc.querySelectorAll(".power-btn svg").forEach(el => {
+          if (s.iconFontSize) {
+            el.style.setProperty("width", `${s.iconFontSize}px`, "important");
+            el.style.setProperty("height", `${s.iconFontSize}px`, "important");
+          }
+        });
+        frameDoc.querySelectorAll("#label").forEach(el => {
+          if (s.titleFontSize) el.style.setProperty("font-size", `${s.titleFontSize}px`, "important");
+        });
+        frameDoc.querySelectorAll(".load-card, .card, #main-card, #card").forEach(el => {
           if (s.cardWidth) el.style.setProperty("width", `${s.cardWidth}px`, "important");
           if (s.cardPaddingY || s.cardPaddingX) {
             el.style.setProperty("padding", `${s.cardPaddingY || 16}px ${s.cardPaddingX || 16}px`, "important");
