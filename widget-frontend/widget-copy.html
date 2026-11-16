@@ -1,7 +1,19 @@
 <!DOCTYPE html>
 <!--
-  Widget Copy - Architecture v5 & Cupola360 Glassmorphic Card
-  Direct Live Firmware Readings (No artificial simulation)
+  Industrial Load Cell & Sensor Telemetry Card (Architecture v5)
+  Specialized for Real-Time Weight Monitoring & Overload / Underload Alarms
+  
+  Usage:
+    widget.html?id=iron_ore
+    widget.html?id=gypsum
+    widget.html?id=clay
+    widget.html?id=sand
+    widget.html?id=vibration_sensor
+    Optional parameters:
+      &overload=20  (overload threshold, default 20)
+      &underload=5  (underload threshold, default 5)
+      &decimals=2   (decimal places, default 2)
+      &view=compact (compact pill display mode)
 -->
 <html lang="en">
 <head>
@@ -9,503 +21,663 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <title>Material & Sensor Widget</title>
+  <title>Material Load & Sensor Telemetry</title>
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
+
     html, body {
       background: transparent !important;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      user-select: none;
     }
+
     ::-webkit-scrollbar {
       display: none;
     }
 
-    .container {
+    .widget-root {
       display: inline-flex;
       padding: 6px;
       background: transparent;
     }
 
-    /* Glassmorphic Base Card */
-    .card {
-      width: 270px;
+    /* =========================================================================
+     * 🌟 GLASSMORPHIC INDUSTRIAL LOAD CARD
+     * ========================================================================= */
+    .load-card {
+      position: relative;
+      width: 280px;
       border-radius: 18px;
-      padding: 16px;
+      padding: 14px 16px 14px 16px;
       color: #ffffff;
-      backdrop-filter: blur(16px) saturate(180%);
-      -webkit-backdrop-filter: blur(16px) saturate(180%);
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
-      user-select: none;
-      transition: transform 0.15s ease, box-shadow 0.2s ease, width 0.15s ease;
+      backdrop-filter: blur(20px) saturate(190%);
+      -webkit-backdrop-filter: blur(20px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 10px;
     }
 
-    /* 1. Iron Ore Theme (Rose / Crimson) */
-    .card-iron_ore {
-      background: rgba(190, 18, 60, 0.32);
-      border: 1px solid rgba(251, 113, 133, 0.45);
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(244, 63, 94, 0.22);
+    /* Material Specific Accents */
+    /* 1. Iron Ore (Crimson / Ruby) */
+    .theme-iron_ore {
+      background: radial-gradient(circle at 15% 15%, rgba(225, 29, 72, 0.35), rgba(15, 23, 42, 0.72) 80%);
+      border-color: rgba(251, 113, 133, 0.45);
+      box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(244, 63, 94, 0.2);
     }
-    .card-iron_ore .card-title { color: #fda4af; }
-    .card-iron_ore .card-value {
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 12px rgba(244, 63, 94, 0.75);
-    }
+    .theme-iron_ore .material-title { color: #fda4af; }
+    .theme-iron_ore .accent-meter-fill { background: linear-gradient(90deg, #fb7185, #e11d48); }
 
-    /* 2. Sand Theme (Amber / Orange) */
-    .card-sand {
-      background: rgba(194, 65, 12, 0.32);
-      border: 1px solid rgba(251, 146, 60, 0.45);
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(249, 115, 22, 0.22);
+    /* 2. Clay (Purple / Violet) */
+    .theme-clay {
+      background: radial-gradient(circle at 15% 15%, rgba(124, 58, 237, 0.35), rgba(15, 23, 42, 0.72) 80%);
+      border-color: rgba(192, 132, 252, 0.45);
+      box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(168, 85, 247, 0.2);
     }
-    .card-sand .card-title { color: #fdba74; }
-    .card-sand .card-value {
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 12px rgba(249, 115, 22, 0.75);
-    }
+    .theme-clay .material-title { color: #d8b4fe; }
+    .theme-clay .accent-meter-fill { background: linear-gradient(90deg, #c084fc, #9333ea); }
 
-    /* 3. Clay Theme (Purple / Violet) */
-    .card-clay {
-      background: rgba(109, 40, 217, 0.32);
-      border: 1px solid rgba(192, 132, 252, 0.45);
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(168, 85, 247, 0.22);
+    /* 3. Sand (Amber / Gold) */
+    .theme-sand {
+      background: radial-gradient(circle at 15% 15%, rgba(217, 119, 6, 0.35), rgba(15, 23, 42, 0.72) 80%);
+      border-color: rgba(251, 146, 60, 0.45);
+      box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(249, 115, 22, 0.2);
     }
-    .card-clay .card-title { color: #d8b4fe; }
-    .card-clay .card-value {
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 12px rgba(168, 85, 247, 0.75);
-    }
+    .theme-sand .material-title { color: #fdba74; }
+    .theme-sand .accent-meter-fill { background: linear-gradient(90deg, #fb923c, #ea580c); }
 
-    /* 4. Gypsum Theme (Blue) */
-    .card-gypsum {
-      background: rgba(30, 64, 175, 0.32);
-      border: 1px solid rgba(147, 197, 253, 0.45);
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(59, 130, 246, 0.22);
+    /* 4. Gypsum (Royal Blue / Azure) */
+    .theme-gypsum {
+      background: radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.35), rgba(15, 23, 42, 0.72) 80%);
+      border-color: rgba(147, 197, 253, 0.45);
+      box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(59, 130, 246, 0.2);
     }
-    .card-gypsum .card-title { color: #93c5fd; }
-    .card-gypsum .card-value {
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 12px rgba(59, 130, 246, 0.75);
-    }
+    .theme-gypsum .material-title { color: #93c5fd; }
+    .theme-gypsum .accent-meter-fill { background: linear-gradient(90deg, #60a5fa, #2563eb); }
 
-    /* 5. General Sensors (Cyan / Slate) */
-    .card-sensor {
-      background: rgba(15, 23, 42, 0.55);
-      border: 1px solid rgba(56, 189, 248, 0.42);
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(56, 189, 248, 0.18);
+    /* 5. General Sensors / Default (Cyan / Slate) */
+    .theme-sensor {
+      background: radial-gradient(circle at 15% 15%, rgba(14, 165, 233, 0.35), rgba(15, 23, 42, 0.72) 80%);
+      border-color: rgba(56, 189, 248, 0.45);
+      box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(56, 189, 248, 0.2);
     }
-    .card-sensor .card-title { color: #38bdf8; }
-    .card-sensor .card-value {
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 12px rgba(56, 189, 248, 0.75);
-    }
+    .theme-sensor .material-title { color: #7dd3fc; }
+    .theme-sensor .accent-meter-fill { background: linear-gradient(90deg, #38bdf8, #0284c7); }
 
-    /* Card Header */
+    /* Header Bar */
     .card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
     }
-    .card-title {
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95), 0 0 6px rgba(0, 0, 0, 0.7);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .header-actions {
+
+    .title-group {
       display: flex;
       align-items: center;
-      gap: 5px;
-    }
-    .card-badge {
-      font-size: 10px;
-      font-weight: 700;
-      background: rgba(255, 255, 255, 0.16);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      padding: 2px 7px;
-      border-radius: 9999px;
-      letter-spacing: 0.05em;
-      color: #ffffff;
-    }
-    .btn-toggle-ctrl {
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      color: #ffffff;
-      border-radius: 6px;
-      padding: 2px 6px;
-      font-size: 11px;
-      cursor: pointer;
-      transition: background 0.15s ease;
-      line-height: 1;
-    }
-    .btn-toggle-ctrl:hover {
-      background: rgba(255, 255, 255, 0.25);
+      gap: 7px;
     }
 
-    /* Card Value Row */
-    .card-value-row {
-      margin-top: 6px;
+    .material-icon {
+      font-size: 16px;
+      line-height: 1;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+    }
+
+    .material-title {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
+    }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 7px;
+      border-radius: 9999px;
+      background: rgba(16, 185, 129, 0.16);
+      border: 1px solid rgba(52, 211, 153, 0.38);
+      color: #34d399;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulse-live 1.8s infinite;
+    }
+
+    @keyframes pulse-live {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* Value Display Area */
+    .value-display-row {
       display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 2px 0;
+    }
+
+    .value-group {
+      display: inline-flex;
       align-items: baseline;
       gap: 5px;
     }
-    .card-value {
-      font-size: 36px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
+
+    .telemetry-val {
+      font-size: 38px;
+      font-weight: 900;
       line-height: 1;
-      color: #ffffff !important;
-    }
-    .card-unit {
-      font-size: 14px;
-      font-weight: 600;
-      opacity: 0.85;
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.95), 0 0 16px rgba(255, 255, 255, 0.3);
+      font-variant-numeric: tabular-nums;
     }
 
-    /* Alarms */
-    .alarm-pill {
-      display: none;
-      margin-top: 4px;
+    .telemetry-unit {
+      font-size: 17px;
+      font-weight: 700;
+      opacity: 0.88;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+      letter-spacing: -0.01em;
+    }
+
+    /* Load Status Indicator Pill */
+    .load-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 9999px;
       font-size: 10px;
       font-weight: 800;
-      background: rgba(239, 68, 68, 0.35);
-      border: 1px solid rgba(248, 113, 113, 0.65);
-      color: #fca5a5;
-      padding: 3px 8px;
-      border-radius: 6px;
-      text-transform: uppercase;
       letter-spacing: 0.05em;
-      text-align: center;
-      animation: alarmPulse 1.4s infinite;
-    }
-    @keyframes alarmPulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.7; transform: scale(0.98); }
+      text-transform: uppercase;
+      white-space: nowrap;
+      transition: all 0.25s ease;
     }
 
-    /* Optional Dispense Controls */
-    .card-controls {
+    /* State: NORMAL */
+    .status-normal {
+      background: rgba(16, 185, 129, 0.18);
+      border: 1px solid rgba(52, 211, 153, 0.45);
+      color: #6ee7b7;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+    }
+    .status-normal .status-dot {
+      background: #10b981;
+      box-shadow: 0 0 6px #10b981;
+    }
+
+    /* State: OVERLOAD */
+    .status-overload {
+      background: rgba(239, 68, 68, 0.28);
+      border: 1.5px solid rgba(248, 113, 113, 0.7);
+      color: #fecaca;
+      box-shadow: 0 0 16px rgba(239, 68, 68, 0.5);
+      animation: alert-pulse 1s infinite alternate;
+    }
+    .status-overload .status-dot {
+      background: #ef4444;
+      box-shadow: 0 0 8px #ef4444;
+    }
+
+    /* State: UNDERLOAD */
+    .status-underload {
+      background: rgba(245, 158, 11, 0.25);
+      border: 1.5px solid rgba(251, 191, 36, 0.65);
+      color: #fef08a;
+      box-shadow: 0 0 14px rgba(245, 158, 11, 0.45);
+      animation: alert-pulse 1.3s infinite alternate;
+    }
+    .status-underload .status-dot {
+      background: #f59e0b;
+      box-shadow: 0 0 8px #f59e0b;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+    }
+
+    @keyframes alert-pulse {
+      0% { transform: scale(1); filter: brightness(1); }
+      100% { transform: scale(1.03); filter: brightness(1.22); }
+    }
+
+    /* Overload / Underload Alert Banner */
+    .alert-banner {
       display: none;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid rgba(255, 255, 255, 0.18);
-      flex-direction: column;
-      gap: 8px;
-      animation: fadeIn 0.2s ease;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .target-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 11px;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.95);
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
-    }
-    .target-input-wrap {
-      position: relative;
-      width: 78px;
-    }
-    .target-input {
-      width: 100%;
-      background: rgba(15, 23, 42, 0.55);
-      color: #ffffff;
-      font-weight: 700;
-      font-size: 12px;
-      border-radius: 6px;
-      padding: 4px 20px 4px 6px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      outline: none;
-    }
-    .target-input:focus {
-      border-color: #60a5fa;
-      background: rgba(15, 23, 42, 0.75);
-    }
-    .target-unit {
-      position: absolute;
-      right: 6px;
-      top: 4px;
-      font-size: 11px;
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.75);
-      pointer-events: none;
-    }
-    .dispense-btn {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.20);
-      color: #ffffff;
-      font-weight: 700;
-      font-size: 11px;
-      padding: 7px 10px;
+      padding: 6px 10px;
       border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.38);
-      cursor: pointer;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
-      transition: all 0.15s ease;
-    }
-    .dispense-btn:hover {
-      background: rgba(255, 255, 255, 0.32);
-      border-color: rgba(255, 255, 255, 0.6);
-      transform: translateY(-1px);
-    }
-    .dispense-btn:active {
-      transform: scale(0.98);
-    }
-    .dispense-btn:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.25s ease;
     }
 
-    /* Compact View Mode (Optional) */
-    .card.compact {
-      width: auto !important;
-      padding: 6px 12px !important;
-      border-radius: 12px !important;
-      gap: 2px;
+    .alert-banner.banner-overload {
+      display: flex;
+      background: rgba(220, 38, 38, 0.35);
+      border: 1px solid rgba(248, 113, 113, 0.6);
+      color: #fee2e2;
+      animation: banner-flash 0.9s infinite alternate;
     }
-    .card.compact .card-header { display: none; }
-    .card.compact .card-controls { display: none !important; }
-    .card.compact .card-value-row { margin-top: 0; }
-    .card.compact .card-value { font-size: 20px !important; }
-    .card.compact .card-unit { font-size: 12px !important; }
+
+    .alert-banner.banner-underload {
+      display: flex;
+      background: rgba(217, 119, 6, 0.35);
+      border: 1px solid rgba(251, 191, 36, 0.6);
+      color: #fef9c3;
+    }
+
+    @keyframes banner-flash {
+      0% { background: rgba(220, 38, 38, 0.28); }
+      100% { background: rgba(220, 38, 38, 0.52); }
+    }
+
+    /* Load Level Gauge Meter */
+    .meter-container {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding-top: 2px;
+    }
+
+    .meter-track {
+      position: relative;
+      width: 100%;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 9999px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+
+    .meter-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 9999px;
+      transition: width 0.35s ease, background 0.35s ease;
+    }
+
+    .fill-underload {
+      background: linear-gradient(90deg, #f59e0b, #d97706) !important;
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.8);
+    }
+    .fill-normal {
+      background: linear-gradient(90deg, #10b981, #059669) !important;
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
+    }
+    .fill-overload {
+      background: linear-gradient(90deg, #ef4444, #b91c1c) !important;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.9);
+    }
+
+    .meter-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.65);
+      letter-spacing: 0.02em;
+    }
+
+    .marker-under { color: #fbbf24; }
+    .marker-safe { color: #34d399; }
+    .marker-over { color: #f87171; }
+
+    /* Compact Pill Mode (Activated via ?view=compact) */
+    .load-card.compact-view {
+      width: auto;
+      border-radius: 12px;
+      padding: 8px 14px;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+    }
+    .load-card.compact-view .meter-container,
+    .load-card.compact-view .alert-banner {
+      display: none !important;
+    }
+    .load-card.compact-view .telemetry-val {
+      font-size: 24px;
+    }
   </style>
-  <!-- Global Visual Styler CSS (Live persistence from /editor) -->
   <link rel="stylesheet" href="/css/custom-cards.css" />
 </head>
-<body data-card="hopper">
-  <div class="container">
-    <div class="card card-iron_ore" id="card">
-      <div class="card-header">
-        <span class="card-title" id="title">IRON ORE HOPPER</span>
-        <div class="header-actions">
-          <span class="card-badge" id="badge">ESP1</span>
-          <button class="btn-toggle-ctrl" id="btn-toggle" title="Toggle Controls" style="display: none;" onclick="toggleControls()">⚙️</button>
-        </div>
-      </div>
-      <div class="card-value-row" id="label">
-        <span class="card-value" id="val">--</span>
-        <span class="card-unit" id="unit">g</span>
-      </div>
-      <div class="alarm-pill" id="alarm">OVERLOAD ALARM</div>
 
-      <!-- Dispense section (toggleable or enabled via ?controls=true) -->
-      <div class="card-controls" id="card-controls">
-        <div class="target-row">
-          <span>Target Dispense:</span>
-          <div class="target-input-wrap">
-            <input type="number" min="1" value="10" id="target-input" class="target-input" />
-            <span class="target-unit" id="target-unit">g</span>
-          </div>
+<body>
+  <div class="widget-root">
+    <div class="load-card theme-iron_ore" id="main-card">
+      
+      <!-- Top Header Row -->
+      <div class="card-header">
+        <div class="title-group">
+          <span class="material-icon" id="card-icon">🪨</span>
+          <span class="material-title" id="card-title">IRON ORE HOPPER</span>
         </div>
-        <button class="dispense-btn" id="btn-dispense" onclick="dispenseCurrentItem()">
-          Dispense Now
-        </button>
+        <div class="live-badge">
+          <span class="live-dot"></span>
+          <span>LIVE</span>
+        </div>
       </div>
+
+      <!-- Main Telemetry Value & Status Badge -->
+      <div class="value-display-row">
+        <div class="value-group">
+          <span class="telemetry-val" id="val">--</span>
+          <span class="telemetry-unit" id="unit">g</span>
+        </div>
+        <div class="load-status-badge status-normal" id="status-badge">
+          <span class="status-dot"></span>
+          <span id="status-text">NORMAL</span>
+        </div>
+      </div>
+
+      <!-- Overload / Underload Active Alert Banner -->
+      <div class="alert-banner" id="alert-banner" role="alert" aria-live="assertive">
+        <span id="alert-icon">⚠️</span>
+        <span id="alert-message">OVERLOAD ALARM (>20g)</span>
+      </div>
+
+      <!-- Visual Load Gauge / Meter -->
+      <div class="meter-container" id="meter-container">
+        <div class="meter-track">
+          <div class="meter-fill fill-normal" id="meter-fill"></div>
+        </div>
+        <div class="meter-labels">
+          <span class="marker-under" id="marker-under">&lt;5g Underload</span>
+          <span class="marker-safe">5–20g Safe Load</span>
+          <span class="marker-over" id="marker-over">&gt;20g Overload</span>
+        </div>
+      </div>
+
     </div>
   </div>
 
   <script src="js/ws-client.js"></script>
   <script>
-    const DISPLAY_TITLES = {
-      gypsum: "GYPSUM HOPPER",
-      clay: "CLAY HOPPER",
-      iron_ore: "IRON ORE HOPPER",
-      sand: "SAND HOPPER",
-      limestone: "LIMESTONE GATE",
-      lime_stone: "LIMESTONE GATE",
-      klin_dht_temp: "KILN TEMP",
-      klin_dht_humidity: "KILN HUMIDITY",
-      cooler_dht_temp: "COOLER TEMP",
-      cooler_dht_humidity: "COOLER HUMIDITY",
-      preheating_tower_dht_temp: "PREHEAT TEMP",
-      preheating_tower_dht_humidity: "PREHEAT HUMIDITY",
-      vibration_sensor: "VIBRATION SENSOR",
+    /* =========================================================================
+     * 🎛️ CONFIGURATION & MATERIAL DEFINITIONS
+     * ========================================================================= */
+    const MATERIAL_CONFIGS = {
+      iron_ore: {
+        title: "IRON ORE HOPPER",
+        icon: "🪨",
+        theme: "theme-iron_ore",
+        defaultUnit: "g",
+        isHopper: true,
+      },
+      clay: {
+        title: "CLAY HOPPER",
+        icon: "🏺",
+        theme: "theme-clay",
+        defaultUnit: "g",
+        isHopper: true,
+      },
+      sand: {
+        title: "SAND HOPPER",
+        icon: "⏳",
+        theme: "theme-sand",
+        defaultUnit: "g",
+        isHopper: true,
+      },
+      gypsum: {
+        title: "GYPSUM HOPPER",
+        icon: "🧱",
+        theme: "theme-gypsum",
+        defaultUnit: "g",
+        isHopper: true,
+      },
+      limestone: {
+        title: "LIMESTONE GATE",
+        icon: "⛰️",
+        theme: "theme-sensor",
+        defaultUnit: "",
+        isHopper: false,
+      },
+      lime_stone: {
+        title: "LIMESTONE GATE",
+        icon: "⛰️",
+        theme: "theme-sensor",
+        defaultUnit: "",
+        isHopper: false,
+      },
+      vibration_sensor: {
+        title: "VIBRATION SENSOR",
+        icon: "⚡",
+        theme: "theme-sensor",
+        defaultUnit: "",
+        isHopper: false,
+      },
+      klin_dht_temp: {
+        title: "KILN TEMPERATURE",
+        icon: "🔥",
+        theme: "theme-iron_ore",
+        defaultUnit: "°C",
+        isHopper: false,
+      },
+      klin_dht_humidity: {
+        title: "KILN HUMIDITY",
+        icon: "💧",
+        theme: "theme-clay",
+        defaultUnit: "%",
+        isHopper: false,
+      },
+      cooler_dht_temp: {
+        title: "COOLER TEMPERATURE",
+        icon: "❄️",
+        theme: "theme-gypsum",
+        defaultUnit: "°C",
+        isHopper: false,
+      },
+      cooler_dht_humidity: {
+        title: "COOLER HUMIDITY",
+        icon: "💧",
+        theme: "theme-sand",
+        defaultUnit: "%",
+        isHopper: false,
+      },
+      preheating_tower_dht_temp: {
+        title: "PREHEAT TOWER TEMP",
+        icon: "🗼",
+        theme: "theme-iron_ore",
+        defaultUnit: "°C",
+        isHopper: false,
+      },
+      preheating_tower_dht_humidity: {
+        title: "PREHEAT TOWER HUMIDITY",
+        icon: "💧",
+        theme: "theme-clay",
+        defaultUnit: "%",
+        isHopper: false,
+      }
     };
 
-    const DEFAULT_UNITS = {
-      gypsum: "g",
-      clay: "g",
-      iron_ore: "g",
-      sand: "g",
-      limestone: "",
-      lime_stone: "",
-      klin_dht_temp: "°C",
-      klin_dht_humidity: "%",
-      cooler_dht_temp: "°C",
-      cooler_dht_humidity: "%",
-      preheating_tower_dht_temp: "°C",
-      preheating_tower_dht_humidity: "%",
-      vibration_sensor: "mm/s",
+    // Parse URL Parameters
+    const params = new URLSearchParams(window.location.search);
+    const rawId = params.get("id") || "iron_ore";
+    const itemId = rawId.toLowerCase().trim();
+
+    // Thresholds
+    const OVERLOAD_THRESHOLD = parseFloat(params.get("overload")) || 20.0;
+    const UNDERLOAD_THRESHOLD = parseFloat(params.get("underload")) || 5.0;
+    const MAX_METER_SCALE = OVERLOAD_THRESHOLD * 1.25; // 25g scale
+
+    // Formatting options
+    const decimalsParam = params.get("decimals");
+    const numDecimals = decimalsParam !== null && !isNaN(decimalsParam) ? parseInt(decimalsParam, 10) : 2;
+    const isCompact = params.get("view") === "compact" || params.get("compact") === "true";
+
+    // DOM Elements
+    const cardEl = document.getElementById("main-card");
+    const titleEl = document.getElementById("card-title");
+    const iconEl = document.getElementById("card-icon");
+    const valEl = document.getElementById("val");
+    const unitEl = document.getElementById("unit");
+    const statusBadge = document.getElementById("status-badge");
+    const statusText = document.getElementById("status-text");
+    const alertBanner = document.getElementById("alert-banner");
+    const alertMessage = document.getElementById("alert-message");
+    const meterContainer = document.getElementById("meter-container");
+    const meterFill = document.getElementById("meter-fill");
+    const markerUnder = document.getElementById("marker-under");
+    const markerOver = document.getElementById("marker-over");
+
+    // Initialize Card Theme & Titles
+    const cfg = MATERIAL_CONFIGS[itemId] || {
+      title: `${itemId.replace(/_/g, " ").toUpperCase()}`,
+      icon: "📊",
+      theme: "theme-sensor",
+      defaultUnit: "",
+      isHopper: false,
     };
 
-    const MATERIAL_IDS = ["iron_ore", "sand", "clay", "gypsum"];
+    cardEl.className = `load-card ${cfg.theme} ${isCompact ? "compact-view" : ""}`;
+    titleEl.textContent = cfg.title;
+    iconEl.textContent = cfg.icon;
+    unitEl.textContent = cfg.defaultUnit;
+    markerUnder.textContent = `<${UNDERLOAD_THRESHOLD}g Underload`;
+    markerOver.textContent = `>${OVERLOAD_THRESHOLD}g Overload`;
 
-    // Network protocols
+    if (!cfg.isHopper) {
+      // General sensors do not have material load thresholds
+      meterContainer.style.display = "none";
+      statusBadge.style.display = "none";
+      alertBanner.style.display = "none";
+    }
+
+    // Backend Protocols
     const backendProtocol = window.location.protocol === "https:" ? "https:" : "http:";
     const websocketProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const API_BASE = `${backendProtocol}//${window.location.hostname}:4000`;
     const WS_URL = `${websocketProtocol}//${window.location.hostname}:4000/ws`;
 
-    // Query params
-    const params = new URLSearchParams(window.location.search);
-    const pathParts = window.location.pathname.toLowerCase().split("/").filter(Boolean);
-    const pathMaterial = MATERIAL_IDS.find(m => pathParts.includes(m));
-    const rawId = params.get("id") || pathMaterial || "iron_ore";
-    const itemId = rawId.toLowerCase().trim();
-
-    const isCompact = params.get("view") === "compact" || params.get("valueOnly") === "true";
-    const forceControls = params.get("controls") === "true" || params.get("dispense") === "true";
-    const hideAlarm = params.get("hideAlarm") === "true" || params.get("alarm") === "false";
-
-    // DOM Elements
-    const cardEl = document.getElementById("card");
-    const titleEl = document.getElementById("title");
-    const badgeEl = document.getElementById("badge");
-    const valEl = document.getElementById("val");
-    const unitEl = document.getElementById("unit");
-    const alarmEl = document.getElementById("alarm");
-    const btnToggle = document.getElementById("btn-toggle");
-    const controlsWrap = document.getElementById("card-controls");
-    const targetInput = document.getElementById("target-input");
-    const btnDispense = document.getElementById("btn-dispense");
-
-    const isMaterial = MATERIAL_IDS.includes(itemId);
-
-    // Apply proper card theme class & title
-    if (isMaterial) {
-      document.body.setAttribute("data-card", "hopper");
-      cardEl.className = `card card-${itemId}${isCompact ? " compact" : ""}`;
-      badgeEl.textContent = "ESP1";
-      btnToggle.style.display = isCompact ? "none" : "inline-block";
-    } else {
-      document.body.setAttribute("data-card", "sensor");
-      cardEl.className = `card card-sensor${isCompact ? " compact" : ""}`;
-      badgeEl.textContent = itemId.includes("klin") || itemId.includes("cooler") || itemId.includes("preheating") ? "ESP2" : "SENSOR";
-      btnToggle.style.display = "none";
-    }
-
-    titleEl.textContent = DISPLAY_TITLES[itemId] || `${itemId.replace(/_/g, " ").toUpperCase()}`;
-    unitEl.textContent = DEFAULT_UNITS[itemId] || "";
-
-    if (forceControls && isMaterial) {
-      controlsWrap.style.display = "flex";
-    }
-
-    function toggleControls() {
-      const isHidden = controlsWrap.style.display === "none" || !controlsWrap.style.display;
-      controlsWrap.style.display = isHidden ? "flex" : "none";
-    }
-
-    function renderSensorValue(rawVal, serverUnit) {
-      if (serverUnit) unitEl.textContent = serverUnit;
-      if (rawVal === null || rawVal === undefined) {
+    /* =========================================================================
+     * 📊 TELEMETRY & LOAD STATUS RENDERER
+     * ========================================================================= */
+    function renderTelemetry(value, unit) {
+      if (value === null || value === undefined || value === "") {
         valEl.textContent = "--";
-        alarmEl.style.display = "none";
-        return;
-      }
-
-      const num = Number(rawVal);
-      if (isNaN(num)) {
-        valEl.textContent = rawVal;
-        alarmEl.style.display = "none";
-        return;
-      }
-
-      const clamped = num < 0 ? 0 : num;
-      valEl.textContent = Number.isInteger(clamped) ? clamped : clamped.toFixed(1);
-
-      // Overload check for material hoppers (> 20kg/g)
-      if (!hideAlarm && isMaterial && clamped > 20) {
-        alarmEl.textContent = "⚠️ OVERLOAD ALARM";
-        alarmEl.style.display = "block";
-      } else {
-        alarmEl.style.display = "none";
-      }
-    }
-
-    // 1. Initial snapshot from backend REST API
-    async function fetchSnapshot() {
-      try {
-        const res = await fetch(`${API_BASE}/api/item/${itemId}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.value !== undefined) {
-            renderSensorValue(data.value, data.unit);
-          }
+        if (cfg.isHopper) {
+          statusBadge.className = "load-status-badge status-normal";
+          statusText.textContent = "WAITING";
+          meterFill.style.width = "0%";
+          alertBanner.style.display = "none";
         }
-      } catch (err) {}
-    }
-    fetchSnapshot();
+        return;
+      }
 
-    // 2. Real-time direct WebSocket subscription
+      const numVal = parseFloat(value);
+      if (isNaN(numVal)) {
+        valEl.textContent = value;
+        return;
+      }
+
+      const clampedVal = numVal < 0 ? 0 : numVal;
+      valEl.textContent = clampedVal.toFixed(numDecimals);
+      if (unit) unitEl.textContent = unit;
+
+      // Handle Hoppers: Overload & Underload Logic
+      if (cfg.isHopper) {
+        // Meter gauge percentage
+        const pct = Math.min(100, Math.max(0, (clampedVal / MAX_METER_SCALE) * 100));
+        meterFill.style.width = `${pct}%`;
+
+        if (clampedVal > OVERLOAD_THRESHOLD) {
+          // 🔴 OVERLOAD STATE
+          statusBadge.className = "load-status-badge status-overload";
+          statusText.textContent = "OVERLOAD";
+          meterFill.className = "meter-fill fill-overload";
+
+          alertBanner.className = "alert-banner banner-overload";
+          alertMessage.textContent = `OVERLOAD ALARM: ${clampedVal.toFixed(1)}g (Limit: ${OVERLOAD_THRESHOLD}g)`;
+          alertBanner.style.display = "flex";
+        } else if (clampedVal < UNDERLOAD_THRESHOLD) {
+          // 🟡 UNDERLOAD STATE
+          statusBadge.className = "load-status-badge status-underload";
+          statusText.textContent = "UNDERLOAD";
+          meterFill.className = "meter-fill fill-underload";
+
+          alertBanner.className = "alert-banner banner-underload";
+          alertMessage.textContent = `UNDERLOAD ALARM: ${clampedVal.toFixed(1)}g (Min: ${UNDERLOAD_THRESHOLD}g)`;
+          alertBanner.style.display = "flex";
+        } else {
+          // 🟢 NORMAL / SAFE LOAD STATE
+          statusBadge.className = "load-status-badge status-normal";
+          statusText.textContent = "NORMAL LOAD";
+          meterFill.className = "meter-fill fill-normal";
+          alertBanner.style.display = "none";
+        }
+      }
+    }
+
+    /* =========================================================================
+     * 🌐 NETWORK CONNECTION (HTTP SNAPSHOT + REALTIME WEBSOCKET)
+     * ========================================================================= */
+    // 1. Initial REST snapshot for instant zero-delay render
+    fetch(`${API_BASE}/api/item/${itemId}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && data.value !== undefined) {
+          renderTelemetry(data.value, data.unit || cfg.defaultUnit);
+        }
+      })
+      .catch(() => {});
+
+    // 2. Real-time WebSocket Subscription via ws-client.js
     if (typeof connectWidgetSocket === "function") {
       connectWidgetSocket(WS_URL, itemId, (data) => {
         if (data && data.value !== undefined) {
-          renderSensorValue(data.value, data.unit);
+          renderTelemetry(data.value, data.unit || cfg.defaultUnit);
         }
       });
     } else {
-      function fallbackConnect() {
+      // Robust Fallback WebSocket connection
+      function connectFallbackWS() {
         try {
           const ws = new WebSocket(WS_URL);
-          ws.onopen = () => ws.send(JSON.stringify({ type: "subscribe", item_id: itemId }));
-          ws.onmessage = (e) => {
-            try {
-              const msg = JSON.parse(e.data);
-              if (msg.type === "update" && (msg.item_id === itemId || !msg.item_id)) {
-                renderSensorValue(msg.value, msg.unit);
-              }
-            } catch (err) {}
+          ws.onopen = () => {
+            ws.send(JSON.stringify({ type: "subscribe", item_id: itemId }));
           };
-          ws.onclose = () => setTimeout(fallbackConnect, 2000);
+          ws.onmessage = (event) => {
+            try {
+              const msg = JSON.parse(event.data);
+              if (msg.type === "update" && (msg.item_id === itemId || !msg.item_id)) {
+                renderTelemetry(msg.value, msg.unit || cfg.defaultUnit);
+              }
+            } catch (e) {}
+          };
+          ws.onclose = () => setTimeout(connectFallbackWS, 2000);
           ws.onerror = () => ws.close();
-        } catch (err) {
-          setTimeout(fallbackConnect, 2000);
+        } catch (e) {
+          setTimeout(connectFallbackWS, 2000);
         }
       }
-      fallbackConnect();
-    }
-
-    // 3. Dispense function
-    async function dispenseCurrentItem() {
-      if (!isMaterial) return;
-      const targetVal = Number(targetInput.value) || 10;
-      btnDispense.disabled = true;
-      btnDispense.textContent = "Sending...";
-
-      try {
-        const res = await fetch(`${API_BASE}/api/item/${itemId}/target`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ target: targetVal }),
-        });
-        if (!res.ok) throw new Error("Failed");
-        btnDispense.textContent = "Target Sent ✓";
-        setTimeout(() => {
-          btnDispense.textContent = "Dispense Now";
-          btnDispense.disabled = false;
-        }, 2200);
-      } catch (e) {
-        btnDispense.textContent = "Failed";
-        setTimeout(() => {
-          btnDispense.textContent = "Dispense Now";
-          btnDispense.disabled = false;
-        }, 2200);
-      }
+      connectFallbackWS();
     }
   </script>
 </body>
