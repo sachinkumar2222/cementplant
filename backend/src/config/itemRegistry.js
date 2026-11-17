@@ -51,6 +51,7 @@ const ITEM_REGISTRY = [
   { id: "esp2_status",                    type: "sensor", source: "esp2", unit: "" },
   { id: "klin_manual_override",         type: "sensor", source: "esp2", unit: "" },
   { id: "klin_heater_manual_override",  type: "sensor", source: "esp2", unit: "" },
+  { id: "klin_auto_temp_trigger",       type: "actuator", source: "backend", unit: "on/off" },
 ];
 
 function findItem(id) {

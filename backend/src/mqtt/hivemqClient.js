@@ -280,16 +280,35 @@ function evaluateKilnTempThreshold() {
   }
   const rawTemp = store.get("klin_dht_temp")?.value;
   if (rawTemp === null || rawTemp === undefined || isNaN(rawTemp)) return;
-  const isBelowSetpoint = Number(rawTemp) < 35;
+
+  const tempNum = Number(rawTemp);
+  const isBelowSetpoint = tempNum < 35;
+  const isAtOrAbove35 = tempNum >= 35;
 
   const heaterOverride = store.get("klin_heater_manual_override")?.value === true;
   if (!heaterOverride) {
     setAutomaticState("klin_heater", isBelowSetpoint ? "on" : "off");
     setAutomaticState("heat_blower", isBelowSetpoint ? "on" : "off");
   }
-  const klinOverride = store.get("klin_manual_override")?.value === true;
-  if (!klinOverride) {
-    setAutomaticState("klin", isBelowSetpoint ? "off" : "on");
+
+  // Kiln Motor Auto-Start Trigger (when button is ON in dashboard)
+  if (store.isKilnAutoTempStartEnabled()) {
+    if (isAtOrAbove35) {
+      if (store.get("klin")?.value !== "on") {
+        console.log(`[HiveMQ KILN AUTO-TRIGGER] Kiln temp ${tempNum}°C reached/exceeded 35°C -> Starting kiln motor (klin ON)!`);
+        setAutomaticState("klin", "on");
+      }
+    } else {
+      if (store.get("klin")?.value === "on") {
+        console.log(`[HiveMQ KILN AUTO-TRIGGER] Kiln temp ${tempNum}°C < 35°C -> Kiln motor OFF (waiting for 35°C).`);
+        setAutomaticState("klin", "off");
+      }
+    }
+  } else {
+    const klinOverride = store.get("klin_manual_override")?.value === true;
+    if (!klinOverride) {
+      setAutomaticState("klin", isBelowSetpoint ? "off" : "on");
+    }
   }
 }
 
@@ -475,4 +494,5 @@ module.exports = {
   publishCommand, publishMasterCommand,
   publishResumeAuto, publishTarget,
   publishOtaCommand, publishRebootCommand,
+  evaluateKilnTempThreshold,
 };

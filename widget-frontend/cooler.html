@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -13,11 +14,14 @@
       margin: 0;
       padding: 0;
     }
-    html, body {
+
+    html,
+    body {
       background: transparent !important;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       overflow: hidden;
     }
+
     ::-webkit-scrollbar {
       display: none;
     }
@@ -45,6 +49,7 @@
       user-select: none;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
+
     .card:hover {
       box-shadow: 0 14px 36px -5px rgba(0, 0, 0, 0.55), inset 0 0 25px rgba(20, 184, 166, 0.35);
     }
@@ -57,15 +62,18 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.16);
       padding-bottom: 8px;
     }
+
     .card-title-wrap {
       display: flex;
       align-items: center;
       gap: 8px;
     }
+
     .card-icon {
       font-size: 20px;
       line-height: 1;
     }
+
     .card-title {
       font-size: 20px;
       font-weight: 800;
@@ -81,6 +89,7 @@
       grid-template-columns: 1fr 1fr;
       gap: 8px;
     }
+
     .sensor-box {
       background: rgba(15, 23, 42, 0.42);
       border: 1px solid rgba(255, 255, 255, 0.16);
@@ -91,6 +100,7 @@
       gap: 2px;
       backdrop-filter: blur(8px);
     }
+
     .sensor-label {
       font-size: 18px;
       font-weight: 700;
@@ -99,12 +109,14 @@
       display: flex;
       align-items: center;
     }
+
     .sensor-value-row {
       display: flex;
       align-items: baseline;
       gap: 4px;
       margin-top: 2px;
     }
+
     .sensor-value {
       font-size: 30px;
       font-weight: 800;
@@ -113,6 +125,7 @@
       line-height: 1.1;
       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 0 10px rgba(45, 212, 191, 0.5);
     }
+
     .sensor-unit {
       font-size: 17px;
       font-weight: 700;
@@ -127,6 +140,7 @@
       border-top: 1px solid rgba(255, 255, 255, 0.16);
       padding-top: 9px;
     }
+
     .control-row {
       display: flex;
       align-items: center;
@@ -137,17 +151,20 @@
       padding: 8px 12px;
       gap: 8px;
     }
+
     .control-info {
       display: flex;
       flex-direction: column;
       gap: 1px;
     }
+
     .control-name {
       font-size: 20px;
       font-weight: 700;
       color: #ffffff;
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
     }
+
     .control-status-text {
       display: none;
     }
@@ -157,6 +174,7 @@
       display: flex;
       gap: 6px;
     }
+
     .state-btn {
       font-size: 13px;
       font-weight: 800;
@@ -172,14 +190,17 @@
       backdrop-filter: blur(6px);
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
     }
+
     .state-btn:hover:not(:disabled) {
       background: rgba(255, 255, 255, 0.20);
       color: #ffffff;
       transform: translateY(-1px);
     }
+
     .state-btn:active:not(:disabled) {
       transform: scale(0.96);
     }
+
     .state-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
@@ -192,6 +213,7 @@
       color: #ffffff;
       box-shadow: 0 0 12px rgba(34, 197, 94, 0.65);
     }
+
     .state-btn.off.active {
       background: #dc2626;
       border-color: #f87171;
@@ -201,6 +223,7 @@
   </style>
   <link rel="stylesheet" href="/css/custom-cards.css" />
 </head>
+
 <body data-card="cooler">
   <div class="container">
     <div class="card">
@@ -237,12 +260,14 @@
       <div class="controls-section">
         <div class="control-row">
           <div class="control-info">
-            <span class="control-name">Heat Blower</span>
+            <span class="control-name">Cooler</span>
             <span class="control-status-text" id="status-blower">OFF</span>
           </div>
           <div class="btn-group">
-            <button class="state-btn on" id="btn-blower-on" onclick="sendActuatorCommand('heat_blower', 'on')">ON</button>
-            <button class="state-btn off active" id="btn-blower-off" onclick="sendActuatorCommand('heat_blower', 'off')">OFF</button>
+            <button class="state-btn on" id="btn-blower-on"
+              onclick="sendActuatorCommand('heat_blower', 'on')">ON</button>
+            <button class="state-btn off active" id="btn-blower-off"
+              onclick="sendActuatorCommand('heat_blower', 'off')">OFF</button>
           </div>
         </div>
       </div>
@@ -253,7 +278,7 @@
     const backendProtocol = window.location.protocol === "https:" ? "https:" : "http:";
     const websocketProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const API_BASE = `${backendProtocol}//${window.location.hostname}:4000`;
-    const WS_URL   = `${websocketProtocol}//${window.location.hostname}:4000/ws`;
+    const WS_URL = `${websocketProtocol}//${window.location.hostname}:4000/ws`;
 
     const tempEl = document.getElementById("val-temp");
     const humEl = document.getElementById("val-hum");
@@ -316,7 +341,7 @@
             const data = await res.json();
             handleDataUpdate(id, data.value);
           }
-        } catch (e) {}
+        } catch (e) { }
       }
     }
     fetchInitialSnapshots();
@@ -346,7 +371,7 @@
           if (msg.type === "update" && msg.item_id) {
             handleDataUpdate(msg.item_id, msg.value);
           }
-        } catch (err) {}
+        } catch (err) { }
       };
       ws.onclose = () => setTimeout(connectSocket, 2000);
       ws.onerror = () => ws.close();
@@ -354,4 +379,5 @@
     connectSocket();
   </script>
 </body>
+
 </html>

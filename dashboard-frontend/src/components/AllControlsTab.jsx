@@ -1,5 +1,6 @@
 import ActuatorControl from "./ActuatorControl.jsx";
 import MasterSwitch from "./MasterSwitch.jsx";
+import KilnAutoTriggerCard from "./KilnAutoTriggerCard.jsx";
 
 const ACTUATORS = [
   { id: "lime_stone", label: "Lime Stone Gate", commands: ["open", "close"], tag: "GATE", tagColor: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300" },
@@ -24,6 +25,9 @@ export default function AllControlsTab({ items, manualOverrides }) {
     <div className="flex flex-col gap-3 h-full">
       {/* Master Relay Controller */}
       <MasterSwitch items={items} />
+
+      {/* Kiln 35°C Auto-Start Trigger Controller */}
+      <KilnAutoTriggerCard items={items} />
 
       {/* 13 Relay Matrix Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">

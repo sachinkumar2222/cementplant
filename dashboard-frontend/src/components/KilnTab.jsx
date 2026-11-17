@@ -1,4 +1,5 @@
 import ActuatorControl from "./ActuatorControl.jsx";
+import KilnAutoTriggerCard from "./KilnAutoTriggerCard.jsx";
 
 const ZONES = [
   {
@@ -48,6 +49,9 @@ export default function KilnTab({
 
   return (
     <div className="flex flex-col gap-3">
+      {/* Kiln 35°C Auto-Start Trigger Controller */}
+      <KilnAutoTriggerCard items={items} />
+
       {/* 3 Temperature Tracking Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
         {/* Starting Temp */}

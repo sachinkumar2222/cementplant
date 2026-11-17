@@ -12,7 +12,7 @@ const lastRejectedMaterialLog = new Map();
 // Pre-populate every registered item so /api/items always returns a full
 // snapshot, even before the first MQTT message arrives.
 allItemIds().forEach((id) => {
-  state.set(id, { value: null, unit: null, ts: null });
+  state.set(id, { value: id === "klin_auto_temp_trigger" ? "off" : null, unit: id === "klin_auto_temp_trigger" ? "on/off" : null, ts: null });
 });
 
 function setValue(item_id, value, unit) {
@@ -123,6 +123,23 @@ function isMasterOverrideActive() {
   return masterOverrideActive;
 }
 
+// ---- Kiln Motor Auto-Start Trigger (at >= 35°C) -----------------------------
+let kilnAutoTempStartEnabled = false;
+
+function setKilnAutoTempStartEnabled(enabled) {
+  kilnAutoTempStartEnabled = !!enabled;
+  setValue("klin_auto_temp_trigger", kilnAutoTempStartEnabled ? "on" : "off", "on/off");
+  if (kilnAutoTempStartEnabled) {
+    // Clear manual override for kiln motor so automatic start is active
+    setValue("klin_manual_override", false, "");
+  }
+  return kilnAutoTempStartEnabled;
+}
+
+function isKilnAutoTempStartEnabled() {
+  return kilnAutoTempStartEnabled;
+}
+
 // ---- OTA Firmware & System Reboot State Storage -----------------------------
 const otaState = new Map(); // device -> { version, status, progress, message, ts }
 
@@ -150,6 +167,7 @@ module.exports = {
   get, all,
   updateKilnTemperature, resetKilnBaseline, getKilnTemperature,
   setMasterOverrideActive, isMasterOverrideActive,
+  setKilnAutoTempStartEnabled, isKilnAutoTempStartEnabled,
   setOtaStatus, getOtaStatus, allOtaStatus,
 };
 

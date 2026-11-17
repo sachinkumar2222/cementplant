@@ -19,8 +19,25 @@ const router = express.Router();
 const { findItem } = require("../config/itemRegistry");
 const mqttClient = require("../mqtt/mqttClient");
 const hivemqClient = require("../mqtt/hivemqClient");
+const store = require("../state/store");
 
 function publishCommandToAvailableBrokers(item_id, command) {
+  if (item_id === "klin_auto_temp_trigger") {
+    const isEnabled = command === "on";
+    store.setKilnAutoTempStartEnabled(isEnabled);
+    const updated = store.setValue("klin_auto_temp_trigger", isEnabled ? "on" : "off", "on/off");
+    try {
+      const wsServer = require("../ws/wsServer");
+      wsServer.broadcast("klin_auto_temp_trigger", updated);
+    } catch (_) {}
+
+    mqttClient.evaluateKilnTempThreshold();
+    if (hivemqClient.isConnected()) {
+      hivemqClient.evaluateKilnTempThreshold();
+    }
+    return true;
+  }
+
   const localPublished = mqttClient.publishCommand(item_id, command);
   const cloudPublished = hivemqClient.isConnected() ? hivemqClient.publishCommand(item_id, command) : false;
   return localPublished || cloudPublished;
@@ -143,6 +160,47 @@ router.post("/actuators/master", (req, res) => {
     publishedCount: Math.max(localResult.count, cloudResult.count),
     totalActuators: Math.max(localResult.total, cloudResult.total),
     timestamp: Date.now(),
+  });
+});
+
+// Kiln Motor Auto-Start Trigger (at >= 35°C) routes
+router.get("/kiln/auto-trigger", (req, res) => {
+  const enabled = store.isKilnAutoTempStartEnabled();
+  const rawTemp = store.get("klin_dht_temp")?.value ?? null;
+  const klinState = store.get("klin")?.value ?? "off";
+  res.json({
+    enabled,
+    targetTemp: 35.0,
+    currentTemp: rawTemp !== null ? Number(rawTemp) : null,
+    kilnState: klinState,
+  });
+});
+
+router.post("/kiln/auto-trigger", (req, res) => {
+  const { enabled, command } = req.body;
+  const isEnabled = enabled !== undefined ? !!enabled : command === "on";
+
+  store.setKilnAutoTempStartEnabled(isEnabled);
+  const updated = store.setValue("klin_auto_temp_trigger", isEnabled ? "on" : "off", "on/off");
+
+  try {
+    const wsServer = require("../ws/wsServer");
+    wsServer.broadcast("klin_auto_temp_trigger", updated);
+  } catch (_) {}
+
+  mqttClient.evaluateKilnTempThreshold();
+  if (hivemqClient.isConnected()) {
+    hivemqClient.evaluateKilnTempThreshold();
+  }
+
+  const rawTemp = store.get("klin_dht_temp")?.value ?? null;
+  const klinState = store.get("klin")?.value ?? "off";
+  res.json({
+    status: "success",
+    enabled: isEnabled,
+    targetTemp: 35.0,
+    currentTemp: rawTemp !== null ? Number(rawTemp) : null,
+    kilnState: klinState,
   });
 });
 

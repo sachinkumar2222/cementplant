@@ -302,6 +302,15 @@ if (fs.existsSync(widgetDir)) {
   app.use("/widgets", express.static(widgetDir));
 }
 
+// Serve production dashboard build from dashboard-frontend/dist
+const dashboardDist = path.join(__dirname, "../dashboard-frontend/dist");
+if (fs.existsSync(dashboardDist)) {
+  app.use(express.static(dashboardDist));
+  app.get("/", (req, res) => {
+    res.sendFile(path.join(dashboardDist, "index.html"));
+  });
+}
+
 const server = http.createServer(app);
 wsServer.attach(server);
 

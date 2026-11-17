@@ -5,6 +5,7 @@
   Usage: hopper-control.html?id=clay (or sand, iron_ore, gypsum)
 -->
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Hopper Dispenser</title>
@@ -14,11 +15,14 @@
       margin: 0;
       padding: 0;
     }
-    html, body {
+
+    html,
+    body {
       background: transparent !important;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       overflow: hidden;
     }
+
     ::-webkit-scrollbar {
       display: none;
     }
@@ -50,16 +54,19 @@
       border: 1px solid rgba(192, 132, 252, 0.45);
       box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(168, 85, 247, 0.2);
     }
+
     .card-sand {
       background: rgba(194, 65, 12, 0.30);
       border: 1px solid rgba(251, 146, 60, 0.45);
       box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(249, 115, 22, 0.2);
     }
+
     .card-iron_ore {
       background: rgba(190, 18, 60, 0.30);
       border: 1px solid rgba(251, 113, 133, 0.45);
       box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35), inset 0 0 20px rgba(244, 63, 94, 0.2);
     }
+
     .card-gypsum {
       background: rgba(30, 64, 175, 0.30);
       border: 1px solid rgba(147, 197, 253, 0.45);
@@ -75,10 +82,12 @@
       color: rgba(255, 255, 255, 0.95);
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
     }
+
     .target-input-wrap {
       position: relative;
       width: 90px;
     }
+
     .target-input {
       width: 100%;
       background: rgba(15, 23, 42, 0.45);
@@ -91,10 +100,12 @@
       outline: none;
       backdrop-filter: blur(4px);
     }
+
     .target-input:focus {
       border-color: rgba(255, 255, 255, 0.6);
       background: rgba(15, 23, 42, 0.65);
     }
+
     .target-unit {
       position: absolute;
       right: 8px;
@@ -121,14 +132,17 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       transition: all 0.15s ease;
     }
+
     .dispense-btn:hover {
       background: rgba(255, 255, 255, 0.28);
       border-color: rgba(255, 255, 255, 0.55);
       transform: translateY(-1px);
     }
+
     .dispense-btn:active {
       transform: scale(0.98);
     }
+
     .dispense-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
@@ -136,6 +150,7 @@
   </style>
   <link rel="stylesheet" href="/css/custom-cards.css" />
 </head>
+
 <body data-card="dispenser">
   <div class="container">
     <div class="card card-clay" id="card">
@@ -194,8 +209,8 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ target: targetVal }),
-        }).catch(() => {});
-      } catch (err) {}
+        }).catch(() => { });
+      } catch (err) { }
 
       // 2. Broadcast target to reading card via multi-channel sync
       const eventNonce = Date.now() + "_" + Math.random();
@@ -205,27 +220,27 @@
           target: targetVal,
           nonce: eventNonce,
         }));
-      } catch (e) {}
+      } catch (e) { }
 
       try {
         const bc = new BroadcastChannel("cement_dispense_channel");
         bc.postMessage({ item_id: itemId, target: targetVal, nonce: eventNonce });
-      } catch (e) {}
+      } catch (e) { }
 
       try {
         const msg = { type: "CEMENT_DISPENSE", item_id: itemId, target: targetVal, nonce: eventNonce };
         window.postMessage(msg, "*");
         if (window.parent && window.parent !== window) window.parent.postMessage(msg, "*");
         if (window.top && window.top !== window) window.top.postMessage(msg, "*");
-      } catch (e) {}
+      } catch (e) { }
 
       try {
         fetch("/api/dispense-sync", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ item_id: itemId, target: targetVal, time: Date.now() }),
-        }).catch(() => {});
-      } catch (e) {}
+        }).catch(() => { });
+      } catch (e) { }
 
       dispenseBtn.textContent = "Target Sent ✓";
       setTimeout(() => {
@@ -235,4 +250,5 @@
     }
   </script>
 </body>
+
 </html>
