@@ -18,8 +18,8 @@ allItemIds().forEach((id) => {
 function setValue(item_id, value, unit) {
   const item = findItem(item_id);
   if (item && item.type === "material" &&
-      (typeof value !== "number" || !Number.isFinite(value) ||
-       value < 0 || value > MAX_MATERIAL_WEIGHT_GRAMS)) {
+    (typeof value !== "number" || !Number.isFinite(value) ||
+      value < 0 || value > MAX_MATERIAL_WEIGHT_GRAMS)) {
     const now = Date.now();
     const lastLog = lastRejectedMaterialLog.get(item_id) || 0;
     if (now - lastLog >= 5000) {
