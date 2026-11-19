@@ -130,8 +130,9 @@ function setKilnAutoTempStartEnabled(enabled) {
   kilnAutoTempStartEnabled = !!enabled;
   setValue("klin_auto_temp_trigger", kilnAutoTempStartEnabled ? "on" : "off", "on/off");
   if (kilnAutoTempStartEnabled) {
-    // Clear manual override for kiln motor so automatic start is active
+    // Clear manual and master overrides for kiln motor so automatic control is active
     setValue("klin_manual_override", false, "");
+    setMasterOverrideActive(false);
   }
   return kilnAutoTempStartEnabled;
 }

@@ -188,19 +188,31 @@ router.post("/kiln/auto-trigger", (req, res) => {
     wsServer.broadcast("klin_auto_temp_trigger", updated);
   } catch (_) {}
 
+  // Immediate action if enabled and temperature reading exists
+  const rawTemp = store.get("klin_dht_temp")?.value ?? null;
+  if (isEnabled && rawTemp !== null && !isNaN(rawTemp)) {
+    const tNum = Number(rawTemp);
+    if (tNum >= 35) {
+      console.log(`[KILN TRIGGER ON] Temp is ${tNum}°C >= 35°C -> Starting kiln motor immediately!`);
+      publishCommandToAvailableBrokers("klin", "on");
+    } else {
+      console.log(`[KILN TRIGGER ON] Temp is ${tNum}°C < 35°C -> Stopping kiln motor rotation.`);
+      publishCommandToAvailableBrokers("klin", "off");
+    }
+  }
+
   mqttClient.evaluateKilnTempThreshold();
   if (hivemqClient.isConnected()) {
     hivemqClient.evaluateKilnTempThreshold();
   }
 
-  const rawTemp = store.get("klin_dht_temp")?.value ?? null;
-  const klinState = store.get("klin")?.value ?? "off";
+  const finalKlinState = store.get("klin")?.value ?? "off";
   res.json({
     status: "success",
     enabled: isEnabled,
     targetTemp: 35.0,
     currentTemp: rawTemp !== null ? Number(rawTemp) : null,
-    kilnState: klinState,
+    kilnState: finalKlinState,
   });
 });
 

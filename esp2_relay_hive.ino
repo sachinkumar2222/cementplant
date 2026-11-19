@@ -1,4 +1,4 @@
-﻿/*
+/*
   ESP32-2 – 16-Channel Relay Board (2 x 8ch) + 3x DHT11 + 1x Vibration Sensor
   Mosquitto MQTT with Static IP Configuration
   ======================================================================================

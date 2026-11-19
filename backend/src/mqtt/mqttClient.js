@@ -267,11 +267,6 @@ function applyLivePayload(payload) {
 }
 
 function evaluateKilnTempThreshold() {
-  if (store.isMasterOverrideActive()) {
-    console.log("[AUTO] Temperature threshold control paused: Master Switch override is active.");
-    return;
-  }
-
   const rawTemp = store.get("klin_dht_temp")?.value;
   if (rawTemp === null || rawTemp === undefined || isNaN(rawTemp)) return;
 
@@ -279,13 +274,17 @@ function evaluateKilnTempThreshold() {
   const isBelowSetpoint = tempNum < 35;
   const isAtOrAbove35 = tempNum >= 35;
 
-  const heaterOverride = store.get("klin_heater_manual_override")?.value === true;
-  if (!heaterOverride) {
-    setAutomaticState("klin_heater", isBelowSetpoint ? "on" : "off");
-    setAutomaticState("heat_blower", isBelowSetpoint ? "on" : "off");
+  // Kiln Heater & Heat Blower (paused when Master Switch override is active)
+  if (!store.isMasterOverrideActive()) {
+    const heaterOverride = store.get("klin_heater_manual_override")?.value === true;
+    if (!heaterOverride) {
+      setAutomaticState("klin_heater", isBelowSetpoint ? "on" : "off");
+      setAutomaticState("heat_blower", isBelowSetpoint ? "on" : "off");
+    }
   }
 
-  // Kiln Motor Auto-Start & Auto-Stop Control (when button is ON in dashboard)
+  // Kiln Motor Auto-Start & Auto-Stop Control (Dedicated switch in dashboard)
+  // Runs whenever enabled by the operator, never blocked by Master Switch!
   if (store.isKilnAutoTempStartEnabled()) {
     if (isAtOrAbove35) {
       if (store.get("klin")?.value !== "on") {
@@ -298,7 +297,7 @@ function evaluateKilnTempThreshold() {
         setAutomaticState("klin", "off");
       }
     }
-  } else {
+  } else if (!store.isMasterOverrideActive()) {
     const klinOverride = store.get("klin_manual_override")?.value === true;
     if (!klinOverride) {
       setAutomaticState("klin", isBelowSetpoint ? "off" : "on");
