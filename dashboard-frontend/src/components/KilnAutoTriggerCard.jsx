@@ -54,7 +54,7 @@ export default function KilnAutoTriggerCard({ items }) {
         <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <h3 className="text-slate-900 dark:text-white font-extrabold text-xs sm:text-sm tracking-wide flex items-center gap-1.5">
-              <span>KILN 35°C AUTO-START TRIGGER</span>
+              <span>KILN 35°C AUTO-ROTATION (START ≥35°C / STOP &lt;35°C)</span>
             </h3>
 
             {/* Status Pill */}
@@ -62,12 +62,12 @@ export default function KilnAutoTriggerCard({ items }) {
               isAtOrAbove35 ? (
                 <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                  ≥35°C REACHED — KILN MOTOR STARTED
+                  ≥35°C REACHED — MOTOR ROTATING (ON)
                 </span>
               ) : (
                 <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span>
-                  ARMED: WAITING FOR 35°C
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                  &lt;35°C (COOL) — MOTOR STOPPED (OFF)
                 </span>
               )
             ) : (
@@ -78,7 +78,7 @@ export default function KilnAutoTriggerCard({ items }) {
           </div>
 
           <p className="text-slate-500 dark:text-slate-400 text-[11px] mt-0.5 leading-snug">
-            Automatically starts Kiln Motor when chamber temperature reaches <strong className="text-orange-600 dark:text-orange-400 font-semibold">35.0°C</strong> or above.
+            Automatically rotates Kiln Motor when temp ≥ <strong className="text-orange-600 dark:text-orange-400 font-semibold">35.0°C</strong> and automatically stops rotation when temp falls below <strong className="text-orange-600 dark:text-orange-400 font-semibold">35.0°C</strong>.
           </p>
         </div>
       </div>

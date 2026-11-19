@@ -291,16 +291,16 @@ function evaluateKilnTempThreshold() {
     setAutomaticState("heat_blower", isBelowSetpoint ? "on" : "off");
   }
 
-  // Kiln Motor Auto-Start Trigger (when button is ON in dashboard)
+  // Kiln Motor Auto-Start & Auto-Stop Control (when button is ON in dashboard)
   if (store.isKilnAutoTempStartEnabled()) {
     if (isAtOrAbove35) {
       if (store.get("klin")?.value !== "on") {
-        console.log(`[HiveMQ KILN AUTO-TRIGGER] Kiln temp ${tempNum}°C reached/exceeded 35°C -> Starting kiln motor (klin ON)!`);
+        console.log(`[HiveMQ KILN AUTO-CONTROL] Kiln temp ${tempNum}°C reached/exceeded 35°C -> Starting kiln motor (klin ON)!`);
         setAutomaticState("klin", "on");
       }
     } else {
-      if (store.get("klin")?.value === "on") {
-        console.log(`[HiveMQ KILN AUTO-TRIGGER] Kiln temp ${tempNum}°C < 35°C -> Kiln motor OFF (waiting for 35°C).`);
+      if (store.get("klin")?.value !== "off") {
+        console.log(`[HiveMQ KILN AUTO-CONTROL] Kiln temp ${tempNum}°C < 35°C -> Stopping kiln motor rotation (klin OFF)!`);
         setAutomaticState("klin", "off");
       }
     }
