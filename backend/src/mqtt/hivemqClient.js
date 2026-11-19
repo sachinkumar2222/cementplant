@@ -314,12 +314,12 @@ function evaluateKilnTempThreshold() {
 
 function setAutomaticState(item_id, command) {
   if (store.get(item_id)?.value === command) return;
-  if (!sendDirectCommand(item_id, command, true)) return;
+  if (!sendDirectCommand(item_id, command)) return;
   const updated = store.setValue(item_id, command, "on/off");
   if (onUpdateCallback) onUpdateCallback(item_id, updated);
 }
 
-function sendDirectCommand(item_id, command, automatic = false) {
+function sendDirectCommand(item_id, command) {
   const item = findItem(item_id);
   if (!item || !client || !client.connected) return false;
   const wireCommand = ACTUATOR_LOGIC_INVERTED ? invertOnOff(command) : command;
@@ -328,7 +328,6 @@ function sendDirectCommand(item_id, command, automatic = false) {
       type: "actuator",
       actuator: item.id,
       command: wireCommand,
-      ...(automatic ? { mode: "auto" } : {}),
     }));
     return true;
   } catch (e) {

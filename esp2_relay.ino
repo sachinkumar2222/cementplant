@@ -466,7 +466,7 @@ void mqttCallback(char *topic, byte *payload, unsigned int length) {
   // ---- Handle common relay ON/OFF commands ----
   if (topicStr != actuatorCommandTopic()) return;
 
-  StaticJsonDocument<96> doc;
+  StaticJsonDocument<256> doc;
   DeserializationError err = deserializeJson(doc, payload, length);
   if (err) {
     Serial.printf("[MQTT] Bad JSON on %s: %s\n", topic, err.c_str());
