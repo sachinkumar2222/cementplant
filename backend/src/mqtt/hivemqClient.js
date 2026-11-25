@@ -64,14 +64,26 @@ function connect(onUpdate) {
     client.subscribe(topicValues("esp1"));
     client.subscribe(topicStatus("esp1"));
     client.subscribe(topicActuatorState("esp1"));
+    client.subscribe(`${PREFIX}/esp1/control_weights`);
+    client.subscribe(`${PREFIX}/esp1/diag`);
+
     client.subscribe(topicValues("esp2"));
     client.subscribe(topicStatus("esp2"));
     client.subscribe(topicActuatorState("esp2"));
     client.subscribe(topicOverrideStatus());
+
+    client.subscribe(topicValues("esp3"));
+    client.subscribe(topicStatus("esp3"));
+    client.subscribe(topicActuatorState("esp3"));
+    client.subscribe(`${PREFIX}/esp3/demo/weights`);
+    client.subscribe(`${PREFIX}/esp3/diag`);
+
     client.subscribe(`${PREFIX}/esp1/version`);
     client.subscribe(`${PREFIX}/esp2/version`);
+    client.subscribe(`${PREFIX}/esp3/version`);
     client.subscribe(`${PREFIX}/esp1/ota/status`);
     client.subscribe(`${PREFIX}/esp2/ota/status`);
+    client.subscribe(`${PREFIX}/esp3/ota/status`);
     client.subscribe("v1/devices/me/telemetry");
   });
 
@@ -92,8 +104,9 @@ function connect(onUpdate) {
 }
 
 function handleIncoming(topic, payload) {
-  if (topic === topicStatus("esp1")) {
-    handleEsp1Status(payload);
+  if (topic === topicStatus("esp1") || topic === topicStatus("esp3")) {
+    const dev = topic.includes("esp1") ? "esp1" : "esp3";
+    handleDeviceStatus(dev, payload);
     return;
   }
 
@@ -101,6 +114,37 @@ function handleIncoming(topic, payload) {
     const devStatus = store.setDeviceStatus("esp2", payload.value);
     const updated = store.setValue("esp2_status", payload.value, "");
     if (onUpdateCallback) onUpdateCallback("esp2_status", { ...updated, deviceStatus: devStatus });
+    return;
+  }
+
+  if (topic === `${PREFIX}/esp3/demo/weights`) {
+    const devStatus = store.setDeviceStatus("esp3", "online");
+    if (payload.values) {
+      for (const [matId, val] of Object.entries(payload.values)) {
+        if (val === null || val === undefined) continue;
+        const item = findItem(matId);
+        if (!item) continue;
+        const updated = store.setValue(item.id, val, "g");
+        if (!updated) continue;
+        if (onUpdateCallback) onUpdateCallback(item.id, { ...updated, deviceSource: item.source, deviceStatus: devStatus });
+      }
+    }
+    return;
+  }
+
+  if (topic === `${PREFIX}/esp1/control_weights`) {
+    store.setDeviceStatus("esp1", "online");
+    if (payload.w) {
+      store.setLoadCellActuals(payload.w);
+      if (onUpdateCallback) onUpdateCallback("control_weights", { t: payload.t, weights: payload.w, ts: Date.now() });
+    }
+    return;
+  }
+
+  if (topic === `${PREFIX}/esp1/diag` || topic === `${PREFIX}/esp3/diag`) {
+    const dev = topic.includes("esp1") ? "esp1" : "esp3";
+    store.setDeviceStatus(dev, "online");
+    if (onUpdateCallback) onUpdateCallback(`${dev}_diag`, { device: dev, diag: payload, ts: Date.now() });
     return;
   }
 
@@ -122,15 +166,15 @@ function handleIncoming(topic, payload) {
     return;
   }
 
-  if (topic === `${PREFIX}/esp1/version` || topic === `${PREFIX}/esp2/version`) {
-    const dev = topic.includes("esp1") ? "esp1" : "esp2";
+  if (topic === `${PREFIX}/esp1/version` || topic === `${PREFIX}/esp2/version` || topic === `${PREFIX}/esp3/version`) {
+    const dev = topic.includes("esp1") ? "esp1" : (topic.includes("esp2") ? "esp2" : "esp3");
     const otaData = store.setOtaStatus(dev, { version: payload.version, title: payload.title });
     if (onUpdateCallback) onUpdateCallback("ota_status", { device: dev, ...otaData });
     return;
   }
 
-  if (topic === `${PREFIX}/esp1/ota/status` || topic === `${PREFIX}/esp2/ota/status`) {
-    const dev = topic.includes("esp1") ? "esp1" : "esp2";
+  if (topic === `${PREFIX}/esp1/ota/status` || topic === `${PREFIX}/esp2/ota/status` || topic === `${PREFIX}/esp3/ota/status`) {
+    const dev = topic.includes("esp1") ? "esp1" : (topic.includes("esp2") ? "esp2" : "esp3");
     const otaData = store.setOtaStatus(dev, payload);
     if (onUpdateCallback) onUpdateCallback("ota_status", { device: dev, ...otaData });
     return;
@@ -138,7 +182,7 @@ function handleIncoming(topic, payload) {
 
   if (topic === "v1/devices/me/telemetry") {
     if (payload.current_fw_title && payload.current_fw_version) {
-      const dev = payload.current_fw_title.includes("esp1") ? "esp1" : "esp2";
+      const dev = payload.current_fw_title.includes("esp1") ? "esp1" : (payload.current_fw_title.includes("esp2") ? "esp2" : "esp3");
       const thingsboardService = require("../services/thingsboardService");
       thingsboardService.sendTelemetry(dev, payload);
       const otaData = store.setOtaStatus(dev, {
@@ -153,33 +197,49 @@ function handleIncoming(topic, payload) {
   if (
     topic === topicValues("esp1") ||
     topic === topicValues("esp2") ||
+    topic === topicValues("esp3") ||
     topic === topicActuatorState("esp1") ||
-    topic === topicActuatorState("esp2")
+    topic === topicActuatorState("esp2") ||
+    topic === topicActuatorState("esp3")
   ) {
     applyLivePayload(payload);
   }
 }
 
-function handleEsp1Status(payload) {
+function handleDeviceStatus(source, payload) {
   if (payload.type === "material" || payload.material) {
     const ids = payload.material === "all"
-      ? dispensableItems().map((item) => item.id)
+      ? dispensableItems().filter((item) => item.source === source).map((item) => item.id)
       : [payload.material];
     ids.forEach((id) => {
       const item = findItem(id);
       if (!item) return;
-      const updated = store.setDispenseStatus(item.id, payload.status);
-      const devStatus = store.setDeviceStatus("esp1", "online");
+      const updated = store.setDispenseStatus(item.id, payload.status || payload.state);
+      const devStatus = store.setDeviceStatus(source, "online");
       if (onUpdateCallback) {
-        onUpdateCallback(item.id, { ...updated, deviceSource: "esp1", deviceStatus: devStatus });
+        onUpdateCallback(item.id, { ...updated, deviceSource: source, deviceStatus: devStatus });
       }
     });
     return;
   }
 
-  const devStatus = store.setDeviceStatus("esp1", payload.value);
-  const updated = store.setValue("esp1_status", payload.value, "");
-  if (onUpdateCallback) onUpdateCallback("esp1_status", { ...updated, deviceStatus: devStatus });
+  if (payload.status && typeof payload.status === "object") {
+    for (const [matId, st] of Object.entries(payload.status)) {
+      const item = findItem(matId);
+      if (!item) continue;
+      const updated = store.setDispenseStatus(item.id, st);
+      const devStatus = store.setDeviceStatus(source, "online");
+      if (onUpdateCallback) {
+        onUpdateCallback(item.id, { ...updated, deviceSource: source, deviceStatus: devStatus });
+      }
+    }
+    return;
+  }
+
+  const val = payload.value !== undefined ? payload.value : (typeof payload.status === "string" ? payload.status : "online");
+  const devStatus = store.setDeviceStatus(source, val);
+  const updated = store.setValue(`${source}_status`, val, "");
+  if (onUpdateCallback) onUpdateCallback(`${source}_status`, { ...updated, deviceStatus: devStatus });
 }
 
 function applyLivePayload(payload) {
@@ -204,11 +264,16 @@ function applyLivePayload(payload) {
   if (payload.type === "materials" && payload.values) {
     const devStatus = store.setDeviceStatus("esp1", "online");
     for (const [matId, val] of Object.entries(payload.values)) {
+      if (val === null || val === undefined) continue;
       const item = findItem(matId);
       if (!item) continue;
       const updated = store.setValue(item.id, val, payload.unit || item.unit);
       if (!updated) continue;
       if (onUpdateCallback) onUpdateCallback(item.id, { ...updated, deviceSource: item.source, deviceStatus: devStatus });
+    }
+    if (payload.actual) {
+      store.setLoadCellActuals(payload.actual);
+      if (onUpdateCallback) onUpdateCallback("load_cell_actuals", { actual: payload.actual, ts: Date.now() });
     }
     return;
   }
@@ -396,15 +461,81 @@ function publishTarget(item_id, target) {
   if (!item || !item.dispensable || typeof target !== "number" || !Number.isFinite(target) || target < 0) return false;
   if (!client || !client.connected) return false;
   try {
-    client.publish(topicCommand("esp1"), JSON.stringify({
-      type: "material",
+    const topic = topicCommand(item.source);
+    client.publish(topic, JSON.stringify({
       material: item.id,
       action: "target",
       target,
     }));
+    console.log(`[HiveMQ] Published target for ${item.id} (${target}g) to ${topic}`);
     return true;
   } catch (e) {
     console.error(`[HiveMQ] publishTarget failed for ${item_id}:`, e.message || e);
+    return false;
+  }
+}
+
+function publishDemoReset(material_id) {
+  if (!client || !client.connected) return false;
+  try {
+    if (!material_id || material_id === "all") {
+      client.publish(topicCommand("esp1"), JSON.stringify({ action: "demo_reset", material: "sand", empty_confirmed: true }));
+      client.publish(topicCommand("esp3"), JSON.stringify({ action: "demo_reset", material: "gypsum", empty_confirmed: true }));
+      client.publish(topicCommand("esp3"), JSON.stringify({ action: "demo_reset", material: "clay", empty_confirmed: true }));
+      client.publish(topicCommand("esp3"), JSON.stringify({ action: "demo_reset", material: "iron_ore", empty_confirmed: true }));
+      return true;
+    }
+    const item = findItem(material_id);
+    if (!item) return false;
+    const topic = topicCommand(item.source);
+    client.publish(topic, JSON.stringify({
+      action: "demo_reset",
+      material: item.id,
+      empty_confirmed: true,
+    }));
+    return true;
+  } catch (e) {
+    console.error("[HiveMQ] publishDemoReset failed:", e.message || e);
+    return false;
+  }
+}
+
+function publishStop(material_id) {
+  if (!client || !client.connected) return false;
+  try {
+    if (!material_id || material_id === "all") {
+      client.publish(topicCommand("esp1"), JSON.stringify({ action: "stop" }));
+      client.publish(topicCommand("esp3"), JSON.stringify({ action: "stop" }));
+      return true;
+    }
+    const item = findItem(material_id);
+    if (!item) return false;
+    const topic = topicCommand(item.source);
+    client.publish(topic, JSON.stringify({
+      action: "stop",
+      material: item.id,
+    }));
+    return true;
+  } catch (e) {
+    console.error("[HiveMQ] publishStop failed:", e.message || e);
+    return false;
+  }
+}
+
+function publishDemoRate(material_id, ms_per_g) {
+  if (!client || !client.connected) return false;
+  const item = findItem(material_id);
+  if (!item) return false;
+  try {
+    const topic = topicCommand(item.source);
+    client.publish(topic, JSON.stringify({
+      action: "demo_rate",
+      material: item.id,
+      ms_per_g: Number(ms_per_g),
+    }));
+    return true;
+  } catch (e) {
+    console.error("[HiveMQ] publishDemoRate failed:", e.message || e);
     return false;
   }
 }
@@ -492,6 +623,7 @@ module.exports = {
   connect, isConnected,
   publishCommand, publishMasterCommand,
   publishResumeAuto, publishTarget,
+  publishDemoReset, publishStop, publishDemoRate,
   publishOtaCommand, publishRebootCommand,
   evaluateKilnTempThreshold,
 };

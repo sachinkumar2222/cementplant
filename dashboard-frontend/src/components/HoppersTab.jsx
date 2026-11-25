@@ -66,6 +66,63 @@ export default function HoppersTab({ items }) {
     }
   }
 
+  async function emptyTray(id) {
+    setSending((prev) => ({ ...prev, [id]: true }));
+    try {
+      const res = await fetch(`${API_BASE}/api/item/${id}/reset`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!res.ok) throw new Error("Failed");
+      setMessage((prev) => ({ ...prev, [id]: "Tray Emptied ✓" }));
+      setTimeout(() => setMessage((prev) => ({ ...prev, [id]: null })), 3000);
+    } catch (err) {
+      console.error(err);
+      setMessage((prev) => ({ ...prev, [id]: "Reset Failed" }));
+      setTimeout(() => setMessage((prev) => ({ ...prev, [id]: null })), 3000);
+    } finally {
+      setSending((prev) => ({ ...prev, [id]: false }));
+    }
+  }
+
+  async function stopDispense(id) {
+    try {
+      await fetch(`${API_BASE}/api/item/${id}/stop`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      setMessage((prev) => ({ ...prev, [id]: "Stopped ✓" }));
+      setTimeout(() => setMessage((prev) => ({ ...prev, [id]: null })), 3000);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function emptyAllTrays() {
+    try {
+      await fetch(`${API_BASE}/api/materials/reset`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ material: "all" }),
+      });
+      alert("Reset command sent for all material trays.");
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function stopAll() {
+    try {
+      await fetch(`${API_BASE}/api/materials/stop`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ material: "all" }),
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   const gateState = items.lime_stone?.value;
   const isGateOpen = gateState === "open";
   const [localGateOpen, setLocalGateOpen] = useState(isGateOpen);
@@ -93,6 +150,34 @@ export default function HoppersTab({ items }) {
 
   return (
     <div className="flex flex-col gap-3">
+      {/* Top Controls Toolbar */}
+      <div className="flex flex-wrap items-center justify-between gap-2 px-1">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            Dispensing System
+          </span>
+          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+            ESP1 (Sand) • ESP3 (Gypsum, Clay, Iron Ore)
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={emptyAllTrays}
+            className="text-[11px] font-bold px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-500/30 transition-all cursor-pointer"
+            title="Sends demo_reset to reset cumulative demonstration weights to zero"
+          >
+            ↺ Empty All Trays
+          </button>
+          <button
+            onClick={stopAll}
+            className="text-[11px] font-bold px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/30 transition-all cursor-pointer"
+            title="Stops all active dispensing actions"
+          >
+            ⏹ Stop All
+          </button>
+        </div>
+      </div>
+
       {/* 4 Hoppers Dispenser Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
         {HOPPERS.map((h) => {
@@ -109,6 +194,7 @@ export default function HoppersTab({ items }) {
           const theme = HOPPER_THEMES[h.id] || HOPPER_THEMES.gypsum;
           const isBusy = sending[h.id];
           const msg = message[h.id];
+          const controllerSource = h.id === "sand" ? "ESP1" : "ESP3";
 
           return (
             <div
@@ -121,7 +207,7 @@ export default function HoppersTab({ items }) {
                     {h.label} Hopper
                   </span>
                   <span className="text-[10px] bg-white/20 font-bold px-2 py-0.2 rounded-full">
-                    ESP1
+                    {controllerSource}
                   </span>
                 </div>
 
@@ -157,6 +243,24 @@ export default function HoppersTab({ items }) {
                 >
                   {isBusy ? "Sending…" : msg ? msg : `Dispense ${h.label}`}
                 </button>
+
+                <div className="flex items-center gap-1.5 pt-0.5">
+                  <button
+                    onClick={() => emptyTray(h.id)}
+                    disabled={isBusy}
+                    className="flex-1 bg-black/20 hover:bg-black/30 font-semibold text-[10px] py-1 rounded-lg text-white/90 transition-all cursor-pointer"
+                    title="Reset cumulative weight for this hopper"
+                  >
+                    ↺ Empty Tray
+                  </button>
+                  <button
+                    onClick={() => stopDispense(h.id)}
+                    className="bg-black/20 hover:bg-black/30 font-semibold text-[10px] px-2.5 py-1 rounded-lg text-white/90 transition-all cursor-pointer"
+                    title="Stop dispensing for this hopper"
+                  >
+                    ⏹ Stop
+                  </button>
+                </div>
               </div>
             </div>
           );

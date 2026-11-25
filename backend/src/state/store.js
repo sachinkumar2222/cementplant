@@ -6,8 +6,18 @@
 const { allItemIds, findItem } = require("../config/itemRegistry");
 
 const state = new Map(); // item_id -> { value, unit, ts, dispensing?, target? }
-const MAX_MATERIAL_WEIGHT_GRAMS = 100;
+// Upper limit for cumulative demo weights and physical readings (50 kg)
+const MAX_MATERIAL_WEIGHT_GRAMS = 50000;
 const lastRejectedMaterialLog = new Map();
+
+// Physical load-cell diagnostics store
+let loadCellActuals = {
+  gypsum: null,
+  clay: null,
+  iron_ore: null,
+  sand: null,
+  ts: null,
+};
 
 // Pre-populate every registered item so /api/items always returns a full
 // snapshot, even before the first MQTT message arrives.
@@ -17,18 +27,22 @@ allItemIds().forEach((id) => {
 
 function setValue(item_id, value, unit) {
   const item = findItem(item_id);
-  if (item && item.type === "material" &&
-    (typeof value !== "number" || !Number.isFinite(value) ||
-      value < 0 || value > MAX_MATERIAL_WEIGHT_GRAMS)) {
-    const now = Date.now();
-    const lastLog = lastRejectedMaterialLog.get(item_id) || 0;
-    if (now - lastLog >= 5000) {
-      console.warn(
-        `[LOAD CELL FILTER] Rejected ${item_id} reading ${value} g; expected 0-${MAX_MATERIAL_WEIGHT_GRAMS} g. Keeping last valid reading.`
-      );
-      lastRejectedMaterialLog.set(item_id, now);
+  if (item && item.type === "material") {
+    // Treat null as unavailable data, not zero; do not overwrite valid reading with null
+    if (value === null || value === undefined) {
+      return null;
     }
-    return null;
+    if (typeof value !== "number" || !Number.isFinite(value) || value < 0 || value > MAX_MATERIAL_WEIGHT_GRAMS) {
+      const now = Date.now();
+      const lastLog = lastRejectedMaterialLog.get(item_id) || 0;
+      if (now - lastLog >= 5000) {
+        console.warn(
+          `[LOAD CELL FILTER] Rejected ${item_id} reading ${value} g; expected 0-${MAX_MATERIAL_WEIGHT_GRAMS} g. Keeping last valid reading.`
+        );
+        lastRejectedMaterialLog.set(item_id, now);
+      }
+      return null;
+    }
   }
 
   const existing = state.get(item_id) || {};
@@ -155,10 +169,20 @@ function getOtaStatus(device) {
   return otaState.get(device) || { version: "1.0.0", status: "idle", progress: 0, message: "Ready", ts: null };
 }
 
+function setLoadCellActuals(actuals) {
+  loadCellActuals = { ...loadCellActuals, ...actuals, ts: Date.now() };
+  return loadCellActuals;
+}
+
+function getLoadCellActuals() {
+  return loadCellActuals;
+}
+
 function allOtaStatus() {
   return {
     esp1: getOtaStatus("esp1"),
     esp2: getOtaStatus("esp2"),
+    esp3: getOtaStatus("esp3"),
   };
 }
 
@@ -166,6 +190,7 @@ module.exports = {
   setValue, setDispenseStatus,
   setDeviceStatus, getDeviceStatus, allDevices,
   get, all,
+  setLoadCellActuals, getLoadCellActuals,
   updateKilnTemperature, resetKilnBaseline, getKilnTemperature,
   setMasterOverrideActive, isMasterOverrideActive,
   setKilnAutoTempStartEnabled, isKilnAutoTempStartEnabled,

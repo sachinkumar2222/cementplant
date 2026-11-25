@@ -129,7 +129,7 @@ export default function HopperWidgetRoute({ hopperKeys = ["gypsum"] }) {
                   {theme.label} Hopper
                 </span>
                 <span className="text-[10px] bg-white/20 border border-white/25 font-bold px-2 py-0.2 rounded-full">
-                  ESP1
+                  {id === "sand" ? "ESP1" : "ESP3"}
                 </span>
               </div>
 

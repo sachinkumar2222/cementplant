@@ -36,7 +36,9 @@ function HopperCard({ id, label }) {
     <div className="border border-gray-200 rounded-lg p-3 flex flex-col gap-2">
       <label className="text-xs text-gray-500 flex items-center gap-1">
         {label} Target (g)
-        <span className="text-[10px] bg-gray-100 rounded px-1 py-0.5">ESP1</span>
+        <span className="text-[10px] bg-gray-100 text-gray-700 font-bold rounded px-1 py-0.5">
+          {id === "sand" ? "ESP1" : "ESP3"}
+        </span>
       </label>
       <input
         type="number"

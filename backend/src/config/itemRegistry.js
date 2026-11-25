@@ -12,12 +12,14 @@
 // and therefore accept a target command on the ESP1 command topic.
 
 const ITEM_REGISTRY = [
-  // ---- ESP1: 4 load-cell + servo pairs (all dispensable) ----
-  { id: "gypsum", type: "material", source: "esp1", unit: "g", dispensable: true },
-  { id: "clay", type: "material", source: "esp1", unit: "g", dispensable: true },
-  { id: "iron_ore", type: "material", source: "esp1", unit: "g", dispensable: true },
+  // ---- ESP1: Load-cell acquisition, Sand dispensing, Lime Stone Gate ----
   { id: "sand", type: "material", source: "esp1", unit: "g", dispensable: true },
   { id: "lime_stone", type: "actuator", source: "esp1", unit: "open/close", gate: true },
+
+  // ---- ESP3: Gypsum, Clay, and Iron Ore dispensing (firmware 1.4.5-demo-hybrid) ----
+  { id: "gypsum", type: "material", source: "esp3", unit: "g", dispensable: true },
+  { id: "clay", type: "material", source: "esp3", unit: "g", dispensable: true },
+  { id: "iron_ore", type: "material", source: "esp3", unit: "g", dispensable: true },
 
   // ---- ESP2: 16-channel relay board (2x8), 14 channels wired ----
   // Matches esp32/esp2-relay/esp2_relay.ino exactly. Channels 15-16 are spare.
@@ -46,9 +48,10 @@ const ITEM_REGISTRY = [
   { id: "preheating_tower_dht_temp", type: "sensor", source: "esp2", unit: "C" },
   { id: "preheating_tower_dht_humidity", type: "sensor", source: "esp2", unit: "%" },
   { id: "vibration_sensor", type: "sensor", source: "esp2", unit: "m/s²" },
-  // ---- ESP1 / ESP2 status and manual override virtual items ----
+  // ---- ESP1 / ESP2 / ESP3 status and manual override virtual items ----
   { id: "esp1_status", type: "sensor", source: "esp1", unit: "" },
   { id: "esp2_status", type: "sensor", source: "esp2", unit: "" },
+  { id: "esp3_status", type: "sensor", source: "esp3", unit: "" },
   { id: "klin_manual_override", type: "sensor", source: "esp2", unit: "" },
   { id: "klin_heater_manual_override", type: "sensor", source: "esp2", unit: "" },
   { id: "klin_auto_temp_trigger",       type: "actuator", source: "backend", unit: "on/off" },
