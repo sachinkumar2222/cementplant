@@ -123,7 +123,7 @@ export default function HopperWidgetRoute({ hopperKeys = ["gypsum"] }) {
             <div>
               <div className="flex items-center justify-between">
                 <span
-                  className={`text-[14px] font-bold uppercase tracking-wider ${theme.titleColor}`}
+                  className={`text-[18px] font-bold uppercase tracking-wider ${theme.titleColor}`}
                   style={{ textShadow: "0 1px 3px rgba(0,0,0,0.8)" }}
                 >
                   {theme.label} Hopper
@@ -146,19 +146,19 @@ export default function HopperWidgetRoute({ hopperKeys = ["gypsum"] }) {
 
             <div className="space-y-2.5 pt-2 border-t border-white/20">
               <div
-                className="flex items-center justify-between text-[18px] font-semibold text-white/95"
+                className="flex items-center justify-between text-[20px] font-semibold text-white/95"
                 style={{ textShadow: "0 1px 3px rgba(0,0,0,0.8)" }}
               >
                 <span>Dispense Target:</span>
-                <div className="relative w-24">
+                <div className="relative w-28">
                   <input
                     type="number"
                     min="1"
                     value={targets[id]}
                     onChange={(e) => handleTargetChange(id, e.target.value)}
-                    className="w-full bg-slate-900/60 text-white font-bold text-[18px] rounded-lg px-2.5 py-1 focus:outline-none border border-white/25 focus:border-white/50 backdrop-blur-sm"
+                    className="w-full bg-slate-900/60 text-white font-bold text-[20px] rounded-lg pl-2.5 pr-7 py-1 focus:outline-none border border-white/25 focus:border-white/50 backdrop-blur-sm"
                   />
-                  <span className="absolute right-2.5 top-1 text-[18px] text-white/70 font-bold">
+                  <span className="absolute right-2.5 top-1 text-[20px] text-white/70 font-bold">
                     g
                   </span>
                 </div>
@@ -167,7 +167,7 @@ export default function HopperWidgetRoute({ hopperKeys = ["gypsum"] }) {
               <button
                 onClick={() => dispense(id, theme.label)}
                 disabled={isBusy}
-                className="w-full bg-white/20 hover:bg-white/30 text-white font-bold text-[18px] py-2.5 rounded-xl border border-white/30 shadow-md backdrop-blur-sm transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                className="w-full bg-white/20 hover:bg-white/30 text-white font-bold text-[20px] py-3 rounded-xl border border-white/30 shadow-md backdrop-blur-sm transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
                 style={{ textShadow: "0 1px 3px rgba(0,0,0,0.7)" }}
               >
                 {isBusy ? "Sending…" : msg ? msg : `Dispense ${theme.label}`}

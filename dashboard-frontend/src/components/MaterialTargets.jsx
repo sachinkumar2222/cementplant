@@ -34,7 +34,7 @@ function HopperCard({ id, label }) {
 
   return (
     <div className="border border-gray-200 rounded-lg p-3 flex flex-col gap-2">
-      <label className="text-[18px] text-gray-700 font-semibold flex items-center gap-1.5">
+      <label className="text-[20px] text-gray-700 font-semibold flex items-center gap-1.5">
         {label} Target (g)
         <span className="text-[13px] bg-gray-100 text-gray-700 font-bold rounded px-2 py-0.5">
           {id === "sand" ? "ESP1" : "ESP3"}
@@ -44,12 +44,12 @@ function HopperCard({ id, label }) {
         type="number"
         value={target}
         onChange={(e) => setTarget(e.target.value)}
-        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-[18px] font-bold"
+        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-[20px] font-bold"
       />
       <button
         onClick={dispense}
         disabled={status === "sending"}
-        className="bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-[18px] font-semibold px-3 py-2.5 rounded-lg flex items-center justify-center gap-1.5"
+        className="bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-[20px] font-semibold px-3 py-3 rounded-lg flex items-center justify-center gap-1.5"
       >
         <span>&#10148;</span> Dispense {label}
       </button>

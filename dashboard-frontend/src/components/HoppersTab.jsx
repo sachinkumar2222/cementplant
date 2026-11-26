@@ -203,7 +203,7 @@ export default function HoppersTab({ items }) {
             >
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[14px] font-bold uppercase tracking-wider opacity-90">
+                  <span className="text-[18px] font-bold uppercase tracking-wider opacity-90">
                     {h.label} Hopper
                   </span>
                   <span className="text-[12px] bg-white/20 font-bold px-2 py-0.5 rounded-full">
@@ -220,17 +220,17 @@ export default function HoppersTab({ items }) {
               </div>
 
               <div className="space-y-2.5 pt-2 border-t border-white/20">
-                <div className="flex items-center justify-between text-[18px] font-semibold opacity-95">
+                <div className="flex items-center justify-between text-[20px] font-semibold opacity-95">
                   <span>Dispense Target:</span>
-                  <div className="relative w-24">
+                  <div className="relative w-28">
                     <input
                       type="number"
                       min="1"
                       value={targets[h.id]}
                       onChange={(e) => handleTargetChange(h.id, e.target.value)}
-                      className="w-full bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 font-bold text-[18px] rounded-lg px-2.5 py-1 focus:outline-none shadow-inner"
+                      className="w-full bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 font-bold text-[20px] rounded-lg pl-2.5 pr-7 py-1 focus:outline-none shadow-inner"
                     />
-                    <span className="absolute right-2.5 top-1 text-[18px] text-gray-500 dark:text-gray-400 font-bold">
+                    <span className="absolute right-2.5 top-1 text-[20px] text-gray-500 dark:text-gray-400 font-bold">
                       g
                     </span>
                   </div>
@@ -239,7 +239,7 @@ export default function HoppersTab({ items }) {
                 <button
                   onClick={() => dispense(h.id, h.label)}
                   disabled={isBusy}
-                  className={`w-full ${theme.btnBg} font-bold text-[18px] py-2.5 rounded-xl shadow-sm transition-all active:scale-95 disabled:opacity-60 cursor-pointer`}
+                  className={`w-full ${theme.btnBg} font-bold text-[20px] py-3 rounded-xl shadow-sm transition-all active:scale-95 disabled:opacity-60 cursor-pointer`}
                 >
                   {isBusy ? "Sending…" : msg ? msg : `Dispense ${h.label}`}
                 </button>
