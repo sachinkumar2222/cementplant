@@ -219,18 +219,18 @@ export default function HoppersTab({ items }) {
                 </div>
               </div>
 
-              <div className="space-y-2 pt-2 border-t border-white/20">
-                <div className="flex items-center justify-between text-[13px] font-semibold opacity-90">
+              <div className="space-y-2.5 pt-2 border-t border-white/20">
+                <div className="flex items-center justify-between text-[18px] font-semibold opacity-95">
                   <span>Dispense Target:</span>
-                  <div className="relative w-22">
+                  <div className="relative w-24">
                     <input
                       type="number"
                       min="1"
                       value={targets[h.id]}
                       onChange={(e) => handleTargetChange(h.id, e.target.value)}
-                      className="w-full bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 font-bold text-[14px] rounded-lg px-2.5 py-1 focus:outline-none shadow-inner"
+                      className="w-full bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 font-bold text-[18px] rounded-lg px-2.5 py-1 focus:outline-none shadow-inner"
                     />
-                    <span className="absolute right-2 top-1 text-[13px] text-gray-500 dark:text-gray-400 font-bold">
+                    <span className="absolute right-2.5 top-1 text-[18px] text-gray-500 dark:text-gray-400 font-bold">
                       g
                     </span>
                   </div>
@@ -239,7 +239,7 @@ export default function HoppersTab({ items }) {
                 <button
                   onClick={() => dispense(h.id, h.label)}
                   disabled={isBusy}
-                  className={`w-full ${theme.btnBg} font-bold text-[14px] py-2 rounded-xl shadow-sm transition-all active:scale-95 disabled:opacity-60 cursor-pointer`}
+                  className={`w-full ${theme.btnBg} font-bold text-[18px] py-2.5 rounded-xl shadow-sm transition-all active:scale-95 disabled:opacity-60 cursor-pointer`}
                 >
                   {isBusy ? "Sending…" : msg ? msg : `Dispense ${h.label}`}
                 </button>
