@@ -912,27 +912,27 @@
 
       // 🎯 Hopper Dispense Controllers (hopper-control.html)
       ctrl_dispense_iron_ore: {
-        cardWidth: 250, cardPaddingY: 16, cardPaddingX: 16, cardRadius: 18, cardGap: 12,
-        controlNameFontSize: 16, sensorValueFontSize: 16, sensorUnitFontSize: 16,
-        btnFontSize: 16, btnPaddingY: 9, btnPaddingX: 12, btnRadius: 12,
+        cardWidth: 260, cardPaddingY: 16, cardPaddingX: 16, cardRadius: 18, cardGap: 12,
+        titleFontSize: 20, controlNameFontSize: 20, sensorValueFontSize: 20, sensorUnitFontSize: 20,
+        btnFontSize: 20, btnPaddingY: 12, btnPaddingX: 14, btnRadius: 12,
         titleText: "Dispense Iron Ore"
       },
       ctrl_dispense_gypsum: {
-        cardWidth: 250, cardPaddingY: 16, cardPaddingX: 16, cardRadius: 18, cardGap: 12,
-        controlNameFontSize: 16, sensorValueFontSize: 16, sensorUnitFontSize: 16,
-        btnFontSize: 16, btnPaddingY: 9, btnPaddingX: 12, btnRadius: 12,
+        cardWidth: 260, cardPaddingY: 16, cardPaddingX: 16, cardRadius: 18, cardGap: 12,
+        titleFontSize: 20, controlNameFontSize: 20, sensorValueFontSize: 20, sensorUnitFontSize: 20,
+        btnFontSize: 20, btnPaddingY: 12, btnPaddingX: 14, btnRadius: 12,
         titleText: "Dispense Gypsum"
       },
       ctrl_dispense_clay: {
-        cardWidth: 250, cardPaddingY: 16, cardPaddingX: 16, cardRadius: 18, cardGap: 12,
-        controlNameFontSize: 16, sensorValueFontSize: 16, sensorUnitFontSize: 16,
-        btnFontSize: 16, btnPaddingY: 9, btnPaddingX: 12, btnRadius: 12,
+        cardWidth: 260, cardPaddingY: 16, cardPaddingX: 16, cardRadius: 18, cardGap: 12,
+        titleFontSize: 20, controlNameFontSize: 20, sensorValueFontSize: 20, sensorUnitFontSize: 20,
+        btnFontSize: 20, btnPaddingY: 12, btnPaddingX: 14, btnRadius: 12,
         titleText: "Dispense Clay"
       },
       ctrl_dispense_sand: {
-        cardWidth: 250, cardPaddingY: 16, cardPaddingX: 16, cardRadius: 18, cardGap: 12,
-        controlNameFontSize: 16, sensorValueFontSize: 16, sensorUnitFontSize: 16,
-        btnFontSize: 16, btnPaddingY: 9, btnPaddingX: 12, btnRadius: 12,
+        cardWidth: 260, cardPaddingY: 16, cardPaddingX: 16, cardRadius: 18, cardGap: 12,
+        titleFontSize: 20, controlNameFontSize: 20, sensorValueFontSize: 20, sensorUnitFontSize: 20,
+        btnFontSize: 20, btnPaddingY: 12, btnPaddingX: 14, btnRadius: 12,
         titleText: "Dispense Sand"
       },
 
@@ -1123,6 +1123,29 @@
       document.getElementById("wrap-ctrl1").style.display = isZoneCard ? "block" : "none";
       document.getElementById("wrap-ctrl2").style.display = (isZoneCard && currentCardKey !== "cooler") ? "block" : "none";
 
+      if (isDispense) {
+        const titleLabel = document.querySelector("#ctrl-titleFontSize .prop-label");
+        if (titleLabel) titleLabel.textContent = "Title / All Text Font Size";
+        const ctrlNameLabel = document.querySelector("#ctrl-controlNameFontSize .prop-label");
+        if (ctrlNameLabel) ctrlNameLabel.textContent = "Dispense Target: Label Size";
+        const valLabel = document.querySelector("#ctrl-sensorValueFontSize .prop-label");
+        if (valLabel) valLabel.textContent = "Target Input Number Size";
+        const unitLabel = document.querySelector("#ctrl-sensorUnitFontSize .prop-label");
+        if (unitLabel) unitLabel.textContent = "Target Unit ('g') Font Size";
+        const btnLabel = document.querySelector("#ctrl-btnFontSize .prop-label");
+        if (btnLabel) btnLabel.textContent = "Dispense Button Font Size";
+
+        ["iconFontSize", "headerPaddingBottom", "sensorLabelFontSize", "sensorBoxPaddingY", "sensorBoxPaddingX", "sensorBoxRadius", "controlPaddingY", "controlPaddingX", "controlGap", "controlRadius"].forEach(k => {
+          const el = document.getElementById(`ctrl-${k}`);
+          if (el) el.style.display = "none";
+        });
+      } else {
+        ["iconFontSize", "headerPaddingBottom", "sensorLabelFontSize", "sensorBoxPaddingY", "sensorBoxPaddingX", "sensorBoxRadius", "controlPaddingY", "controlPaddingX", "controlGap", "controlRadius"].forEach(k => {
+          const el = document.getElementById(`ctrl-${k}`);
+          if (el) el.style.display = "";
+        });
+      }
+
       document.getElementById("sim-row-weight").style.display = (isHopper || isTelemetry) ? "flex" : "none";
       document.getElementById("sim-row-temp").style.display = isZoneCard ? "flex" : "none";
       document.getElementById("sim-row-hum").style.display = isZoneCard ? "flex" : "none";
@@ -1134,6 +1157,22 @@
       const num = parseInt(val, 10);
       if (!stylesState[currentCardKey]) stylesState[currentCardKey] = {};
       stylesState[currentCardKey][key] = num;
+
+      // If user adjusts titleFontSize on a dispense card, sync text sizes
+      const isDispense = currentCardKey.startsWith("ctrl_dispense_");
+      if (isDispense && key === "titleFontSize") {
+        stylesState[currentCardKey].controlNameFontSize = num;
+        stylesState[currentCardKey].sensorValueFontSize = num;
+        stylesState[currentCardKey].sensorUnitFontSize = num;
+        stylesState[currentCardKey].btnFontSize = num;
+        ["controlNameFontSize", "sensorValueFontSize", "sensorUnitFontSize", "btnFontSize"].forEach(k => {
+          const b = document.getElementById(`badge-${k}`);
+          if (b) b.textContent = `${num}${PROPERTY_DEFS[k].unit}`;
+          const r = document.getElementById(`range-${k}`);
+          if (r) r.value = num;
+        });
+      }
+
       const badge = document.getElementById(`badge-${key}`);
       if (badge) badge.textContent = `${num}${PROPERTY_DEFS[key].unit}`;
       applyLiveStylesToPreview();
@@ -1269,25 +1308,34 @@
             }
           `;
         } else if (isDispense) {
+          const rowSize = s.controlNameFontSize || s.titleFontSize || 20;
+          const inputSize = s.sensorValueFontSize || s.titleFontSize || 20;
+          const unitSize = s.sensorUnitFontSize || s.sensorValueFontSize || s.titleFontSize || 20;
+          const btnSize = s.btnFontSize || s.titleFontSize || 20;
+          const wrapWidth = (inputSize >= 18 || rowSize >= 18) ? 108 : 90;
+
           css = `
             html body .card, html body #card, body[data-card="dispenser"] .card {
-              width: ${s.cardWidth || 250}px !important;
+              width: ${s.cardWidth || 260}px !important;
               padding: ${s.cardPaddingY || 16}px ${s.cardPaddingX || 16}px !important;
               border-radius: ${s.cardRadius || 18}px !important;
               gap: ${s.cardGap || 12}px !important;
             }
             html body .target-row, body[data-card="dispenser"] .target-row {
-              font-size: ${s.controlNameFontSize || 16}px !important;
+              font-size: ${rowSize}px !important;
+            }
+            html body .target-input-wrap, body[data-card="dispenser"] .target-input-wrap {
+              width: ${wrapWidth}px !important;
             }
             html body .target-input, html body #targetInput, body[data-card="dispenser"] .target-input {
-              font-size: ${s.sensorValueFontSize || 16}px !important;
+              font-size: ${inputSize}px !important;
             }
             html body .target-unit, body[data-card="dispenser"] .target-unit {
-              font-size: ${s.sensorUnitFontSize || 16}px !important;
+              font-size: ${unitSize}px !important;
             }
             html body .dispense-btn, html body #dispenseBtn, body[data-card="dispenser"] .dispense-btn {
-              font-size: ${s.btnFontSize || 16}px !important;
-              padding: ${s.btnPaddingY || 9}px ${s.btnPaddingX || 12}px !important;
+              font-size: ${btnSize}px !important;
+              padding: ${s.btnPaddingY || 12}px ${s.btnPaddingX || 14}px !important;
               border-radius: ${s.btnRadius || 12}px !important;
             }
           `;
@@ -1435,15 +1483,29 @@
           if (s.sensorUnitFontSize) el.style.setProperty("font-size", `${s.sensorUnitFontSize}px`, "important");
         });
         frameDoc.querySelectorAll(".control-name, .target-row").forEach(el => {
-          if (s.controlNameFontSize) el.style.setProperty("font-size", `${s.controlNameFontSize}px`, "important");
+          const sz = s.controlNameFontSize || s.titleFontSize || (isDispense ? 20 : undefined);
+          if (sz) el.style.setProperty("font-size", `${sz}px`, "important");
+        });
+        frameDoc.querySelectorAll(".target-input, #targetInput").forEach(el => {
+          const sz = s.sensorValueFontSize || s.titleFontSize || (isDispense ? 20 : undefined);
+          if (sz) el.style.setProperty("font-size", `${sz}px`, "important");
+        });
+        frameDoc.querySelectorAll(".target-unit").forEach(el => {
+          const sz = s.sensorUnitFontSize || s.sensorValueFontSize || s.titleFontSize || (isDispense ? 20 : undefined);
+          if (sz) el.style.setProperty("font-size", `${sz}px`, "important");
+        });
+        frameDoc.querySelectorAll(".target-input-wrap").forEach(el => {
+          const sz = s.sensorValueFontSize || s.controlNameFontSize || s.titleFontSize || 20;
+          el.style.setProperty("width", `${sz >= 18 ? 108 : 90}px`, "important");
         });
         frameDoc.querySelectorAll(".load-status-badge, #status-badge").forEach(el => {
           if (s.btnFontSize) el.style.setProperty("font-size", `${s.btnFontSize}px`, "important");
           if (s.btnPaddingY || s.btnPaddingX) el.style.setProperty("padding", `${s.btnPaddingY || 5}px ${s.btnPaddingX || 12}px`, "important");
         });
         frameDoc.querySelectorAll(".dispense-btn, #dispenseBtn").forEach(el => {
-          if (s.btnFontSize) el.style.setProperty("font-size", `${s.btnFontSize}px`, "important");
-          if (s.btnPaddingY || s.btnPaddingX) el.style.setProperty("padding", `${s.btnPaddingY || 9}px ${s.btnPaddingX || 12}px`, "important");
+          const sz = s.btnFontSize || s.titleFontSize || (isDispense ? 20 : undefined);
+          if (sz) el.style.setProperty("font-size", `${sz}px`, "important");
+          if (s.btnPaddingY || s.btnPaddingX) el.style.setProperty("padding", `${s.btnPaddingY || 12}px ${s.btnPaddingX || 14}px`, "important");
           if (s.btnRadius) el.style.setProperty("border-radius", `${s.btnRadius}px`, "important");
         });
         frameDoc.querySelectorAll(".power-btn").forEach(el => {

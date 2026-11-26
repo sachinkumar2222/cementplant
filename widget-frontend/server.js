@@ -316,33 +316,66 @@ function generateCssFromStyles(styles) {
     }
   }
 
-  // Hopper Dispenser Controllers (hopper-control.html)
-  const dispenseKeys = Object.keys(styles).filter(k => k.startsWith("ctrl_dispense_") || k === "dispenser");
-  if (dispenseKeys.length > 0) {
-    const d = styles.ctrl_dispense_iron_ore || styles.dispenser || styles[dispenseKeys[0]];
-    if (d) {
-      css += `/* DISPENSE CONTROLS */\n`;
-      css += `body[data-card="dispenser"] .card, html body[data-card="dispenser"] .card {\n`;
+  // Hopper Dispenser Controllers (hopper-control.html & multi-cards)
+  const dispenseMats = [
+    { key: "ctrl_dispense_iron_ore", classSel: ".card-iron_ore" },
+    { key: "ctrl_dispense_gypsum", classSel: ".card-gypsum" },
+    { key: "ctrl_dispense_clay", classSel: ".card-clay" },
+    { key: "ctrl_dispense_sand", classSel: ".card-sand" }
+  ];
+
+  const hasDispenseStyles = dispenseMats.some(({ key }) => styles[key]) || styles.dispenser;
+  if (hasDispenseStyles) {
+    css += `/* DISPENSE CONTROLS */\n`;
+    dispenseMats.forEach(({ key, classSel }) => {
+      const d = styles[key] || styles.ctrl_dispense_iron_ore || styles.ctrl_dispense_sand || styles.dispenser;
+      if (!d) return;
+      const rowSize = d.controlNameFontSize || d.titleFontSize || 20;
+      const inputSize = d.sensorValueFontSize || d.titleFontSize || 20;
+      const unitSize = d.sensorUnitFontSize || d.sensorValueFontSize || d.titleFontSize || 20;
+      const btnSize = d.btnFontSize || d.titleFontSize || 20;
+      const inputWrapWidth = (inputSize >= 18 || rowSize >= 18) ? 108 : 90;
+
+      css += `body[data-card="dispenser"] ${classSel}, html body[data-card="dispenser"] ${classSel} {\n`;
       if (d.cardWidth) css += `  width: ${d.cardWidth}px !important;\n`;
       if (d.cardPaddingY || d.cardPaddingX) css += `  padding: ${d.cardPaddingY || 16}px ${d.cardPaddingX || 16}px !important;\n`;
       if (d.cardRadius) css += `  border-radius: ${d.cardRadius}px !important;\n`;
       if (d.cardGap) css += `  gap: ${d.cardGap}px !important;\n`;
       css += `}\n`;
-      if (d.controlNameFontSize || d.titleFontSize) {
-        css += `body[data-card="dispenser"] .target-row, html body[data-card="dispenser"] .target-row {\n  font-size: ${d.controlNameFontSize || d.titleFontSize || 16}px !important;\n}\n`;
-      }
-      if (d.sensorValueFontSize) {
-        css += `body[data-card="dispenser"] .target-input, html body[data-card="dispenser"] .target-input {\n  font-size: ${d.sensorValueFontSize}px !important;\n}\n`;
-      }
-      if (d.btnFontSize || d.btnPaddingY || d.btnPaddingX || d.btnRadius) {
-        css += `body[data-card="dispenser"] .dispense-btn, html body[data-card="dispenser"] .dispense-btn {\n`;
-        if (d.btnFontSize) css += `  font-size: ${d.btnFontSize}px !important;\n`;
-        if (d.btnPaddingY || d.btnPaddingX) css += `  padding: ${d.btnPaddingY || 9}px ${d.btnPaddingX || 12}px !important;\n`;
-        if (d.btnRadius) css += `  border-radius: ${d.btnRadius}px !important;\n`;
-        css += `}\n`;
-      }
-      css += `\n`;
-    }
+      css += `body[data-card="dispenser"] ${classSel} .target-row, html body[data-card="dispenser"] ${classSel} .target-row {\n  font-size: ${rowSize}px !important;\n}\n`;
+      css += `body[data-card="dispenser"] ${classSel} .target-input-wrap, html body[data-card="dispenser"] ${classSel} .target-input-wrap {\n  width: ${inputWrapWidth}px !important;\n}\n`;
+      css += `body[data-card="dispenser"] ${classSel} .target-input, html body[data-card="dispenser"] ${classSel} .target-input {\n  font-size: ${inputSize}px !important;\n}\n`;
+      css += `body[data-card="dispenser"] ${classSel} .target-unit, html body[data-card="dispenser"] ${classSel} .target-unit {\n  font-size: ${unitSize}px !important;\n}\n`;
+      css += `body[data-card="dispenser"] ${classSel} .dispense-btn, html body[data-card="dispenser"] ${classSel} .dispense-btn {\n`;
+      css += `  font-size: ${btnSize}px !important;\n`;
+      css += `  padding: ${d.btnPaddingY || 12}px ${d.btnPaddingX || 14}px !important;\n`;
+      if (d.btnRadius) css += `  border-radius: ${d.btnRadius}px !important;\n`;
+      css += `}\n`;
+    });
+
+    // Global fallback for dispenser cards
+    const genD = styles.ctrl_dispense_iron_ore || styles.ctrl_dispense_sand || styles.dispenser || {};
+    const genRow = genD.controlNameFontSize || genD.titleFontSize || 20;
+    const genInput = genD.sensorValueFontSize || genD.titleFontSize || 20;
+    const genUnit = genD.sensorUnitFontSize || genD.sensorValueFontSize || genD.titleFontSize || 20;
+    const genBtn = genD.btnFontSize || genD.titleFontSize || 20;
+    const genWrap = (genInput >= 18 || genRow >= 18) ? 108 : 90;
+
+    css += `body[data-card="dispenser"] .card, html body[data-card="dispenser"] .card {\n`;
+    if (genD.cardWidth) css += `  width: ${genD.cardWidth}px !important;\n`;
+    if (genD.cardPaddingY || genD.cardPaddingX) css += `  padding: ${genD.cardPaddingY || 16}px ${genD.cardPaddingX || 16}px !important;\n`;
+    if (genD.cardRadius) css += `  border-radius: ${genD.cardRadius}px !important;\n`;
+    if (genD.cardGap) css += `  gap: ${genD.cardGap}px !important;\n`;
+    css += `}\n`;
+    css += `body[data-card="dispenser"] .target-row, html body[data-card="dispenser"] .target-row {\n  font-size: ${genRow}px !important;\n}\n`;
+    css += `body[data-card="dispenser"] .target-input-wrap, html body[data-card="dispenser"] .target-input-wrap {\n  width: ${genWrap}px !important;\n}\n`;
+    css += `body[data-card="dispenser"] .target-input, html body[data-card="dispenser"] .target-input {\n  font-size: ${genInput}px !important;\n}\n`;
+    css += `body[data-card="dispenser"] .target-unit, html body[data-card="dispenser"] .target-unit {\n  font-size: ${genUnit}px !important;\n}\n`;
+    css += `body[data-card="dispenser"] .dispense-btn, html body[data-card="dispenser"] .dispense-btn {\n`;
+    css += `  font-size: ${genBtn}px !important;\n`;
+    css += `  padding: ${genD.btnPaddingY || 12}px ${genD.btnPaddingX || 14}px !important;\n`;
+    if (genD.btnRadius) css += `  border-radius: ${genD.btnRadius}px !important;\n`;
+    css += `}\n\n`;
   }
 
   // Actuator Power Controllers (control.html)
