@@ -91,7 +91,7 @@
     }
 
     .card-title {
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 800;
       letter-spacing: 0.05em;
       text-transform: uppercase;
@@ -100,7 +100,7 @@
     }
 
     .card-badge {
-      font-size: 10px;
+      font-size: 12px;
       font-weight: 700;
       background: rgba(255, 255, 255, 0.18);
       border: 1px solid rgba(255, 255, 255, 0.25);
@@ -145,7 +145,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 600;
       color: rgba(255, 255, 255, 0.95);
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
@@ -153,7 +153,7 @@
 
     .target-input-wrap {
       position: relative;
-      width: 86px;
+      width: 90px;
     }
 
     .target-input {
@@ -161,7 +161,7 @@
       background: rgba(15, 23, 42, 0.45);
       color: #ffffff;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 16px;
       border-radius: 8px;
       padding: 5px 24px 5px 8px;
       border: 1px solid rgba(255, 255, 255, 0.25);
@@ -178,7 +178,7 @@
       position: absolute;
       right: 8px;
       top: 5px;
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 700;
       color: rgba(255, 255, 255, 0.75);
       pointer-events: none;
@@ -189,7 +189,7 @@
       background: rgba(255, 255, 255, 0.18);
       color: #ffffff;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 16px;
       padding: 9px 12px;
       border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, 0.35);
@@ -236,7 +236,7 @@
         <div class="target-row">
           <span>Dispense Target:</span>
           <div class="target-input-wrap">
-            <input type="number" min="1" value="10" id="target-sand" class="target-input" />
+            <input type="number" min="1" value="1" id="target-sand" class="target-input" />
             <span class="target-unit">g</span>
           </div>
         </div>
@@ -251,7 +251,7 @@
       <div>
         <div class="card-header">
           <span class="card-title">Clay Hopper</span>
-          <span class="card-badge">ESP1</span>
+          <span class="card-badge">ESP3</span>
         </div>
         <div class="card-value-row">
           <span class="card-value" id="val-clay">--</span>
@@ -262,7 +262,7 @@
         <div class="target-row">
           <span>Dispense Target:</span>
           <div class="target-input-wrap">
-            <input type="number" min="1" value="10" id="target-clay" class="target-input" />
+            <input type="number" min="1" value="1" id="target-clay" class="target-input" />
             <span class="target-unit">g</span>
           </div>
         </div>
@@ -277,7 +277,7 @@
       <div>
         <div class="card-header">
           <span class="card-title">Iron Ore Hopper</span>
-          <span class="card-badge">ESP1</span>
+          <span class="card-badge">ESP3</span>
         </div>
         <div class="card-value-row">
           <span class="card-value" id="val-iron_ore">--</span>
@@ -288,7 +288,7 @@
         <div class="target-row">
           <span>Dispense Target:</span>
           <div class="target-input-wrap">
-            <input type="number" min="1" value="10" id="target-iron_ore" class="target-input" />
+            <input type="number" min="1" value="1" id="target-iron_ore" class="target-input" />
             <span class="target-unit">g</span>
           </div>
         </div>
@@ -352,7 +352,7 @@
     async function dispense(id, label) {
       const btn = document.getElementById(`btn-${id}`);
       const targetInput = document.getElementById(`target-${id}`);
-      const targetVal = Number(targetInput.value) || 10;
+      const targetVal = Number(targetInput.value) || 1;
 
       btn.disabled = true;
       btn.textContent = "Sending…";

@@ -20,13 +20,13 @@ function invertOnOff(v) {
   return v;
 }
 
-function topicCommand(source)         { return `${PREFIX}/${source}/command`; }
-function topicValues(source)          { return `${PREFIX}/${source}/values`; }
-function topicStatus(source)          { return `${PREFIX}/${source}/status`; }
+function topicCommand(source) { return `${PREFIX}/${source}/command`; }
+function topicValues(source) { return `${PREFIX}/${source}/values`; }
+function topicStatus(source) { return `${PREFIX}/${source}/status`; }
 function topicActuatorCommand(source) { return `${PREFIX}/${source}/actuator/command`; }
-function topicActuatorState(source)   { return `${PREFIX}/${source}/actuator/state`; }
-function topicOverrideCommand()       { return `${PREFIX}/esp2/override/command`; }
-function topicOverrideStatus()        { return `${PREFIX}/esp2/override/status`; }
+function topicActuatorState(source) { return `${PREFIX}/${source}/actuator/state`; }
+function topicOverrideCommand() { return `${PREFIX}/esp2/override/command`; }
+function topicOverrideStatus() { return `${PREFIX}/esp2/override/status`; }
 
 function itemIdFromPayload(payload) {
   return payload.material || payload.sensor || payload.actuator || payload.item_id || null;
@@ -88,8 +88,8 @@ function connect(onUpdate) {
   });
 
   client.on("reconnect", () => console.log("[HiveMQ] Reconnecting..."));
-  client.on("error",     (err) => console.error("[HiveMQ] Error:", err.message));
-  client.on("offline",   () => console.warn("[HiveMQ] Client went offline."));
+  client.on("error", (err) => console.error("[HiveMQ] Error:", err.message));
+  client.on("offline", () => console.warn("[HiveMQ] Client went offline."));
 
   client.on("message", (topic, payloadBuf) => {
     let payload;
@@ -250,7 +250,7 @@ function applyLivePayload(payload) {
     for (const [actuatorId, val] of Object.entries(payload.values)) {
       const item = findItem(actuatorId);
       if (!item) continue;
-      
+
       let finalVal = val;
       if (ACTUATOR_LOGIC_INVERTED && item.type === "actuator") {
         finalVal = invertOnOff(finalVal);
@@ -285,7 +285,7 @@ function applyLivePayload(payload) {
       if (!item) continue;
       const updated = store.setValue(item.id, val, payload.unit || item.unit);
       if (onUpdateCallback) onUpdateCallback(item.id, { ...updated, deviceSource: item.source, deviceStatus: devStatus });
-      
+
       // Keep existing special logic for kiln temperature threshold evaluation
       if (item.id === "klin_dht_temp") {
         evaluateKilnTempThreshold();
@@ -557,7 +557,7 @@ function publishMasterCommand(command) {
           command: wireCommand,
         }));
         publishedCount++;
-      } catch (e) {}
+      } catch (e) { }
     }
     const updated = store.setValue(item.id, command, "on/off");
     if (onUpdateCallback) onUpdateCallback(item.id, { ...updated, deviceSource: item.source });

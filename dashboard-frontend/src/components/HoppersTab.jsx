@@ -33,10 +33,10 @@ const HOPPERS = [
 
 export default function HoppersTab({ items }) {
   const [targets, setTargets] = useState({
-    gypsum: 10,
-    clay: 10,
-    iron_ore: 10,
-    sand: 10,
+    gypsum: 1,
+    clay: 1,
+    iron_ore: 1,
+    sand: 1,
   });
   const [sending, setSending] = useState({});
   const [message, setMessage] = useState({});
@@ -52,7 +52,7 @@ export default function HoppersTab({ items }) {
       const res = await fetch(`${API_BASE}/api/item/${id}/target`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ target: Number(targets[id]) || 10 }),
+        body: JSON.stringify({ target: Number(targets[id]) || 1 }),
       });
       if (!res.ok) throw new Error("Failed");
       setMessage((prev) => ({ ...prev, [id]: "Target Sent ✓" }));
@@ -203,10 +203,10 @@ export default function HoppersTab({ items }) {
             >
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider opacity-90">
+                  <span className="text-[14px] font-bold uppercase tracking-wider opacity-90">
                     {h.label} Hopper
                   </span>
-                  <span className="text-[10px] bg-white/20 font-bold px-2 py-0.2 rounded-full">
+                  <span className="text-[12px] bg-white/20 font-bold px-2 py-0.5 rounded-full">
                     {controllerSource}
                   </span>
                 </div>
@@ -220,17 +220,17 @@ export default function HoppersTab({ items }) {
               </div>
 
               <div className="space-y-2 pt-2 border-t border-white/20">
-                <div className="flex items-center justify-between text-[11px] font-semibold opacity-90">
+                <div className="flex items-center justify-between text-[13px] font-semibold opacity-90">
                   <span>Dispense Target:</span>
-                  <div className="relative w-20">
+                  <div className="relative w-22">
                     <input
                       type="number"
                       min="1"
                       value={targets[h.id]}
                       onChange={(e) => handleTargetChange(h.id, e.target.value)}
-                      className="w-full bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 font-bold text-xs rounded-lg px-2.5 py-1 focus:outline-none shadow-inner"
+                      className="w-full bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 font-bold text-[14px] rounded-lg px-2.5 py-1 focus:outline-none shadow-inner"
                     />
-                    <span className="absolute right-2 top-1 text-[11px] text-gray-500 dark:text-gray-400 font-bold">
+                    <span className="absolute right-2 top-1 text-[13px] text-gray-500 dark:text-gray-400 font-bold">
                       g
                     </span>
                   </div>
@@ -239,7 +239,7 @@ export default function HoppersTab({ items }) {
                 <button
                   onClick={() => dispense(h.id, h.label)}
                   disabled={isBusy}
-                  className={`w-full ${theme.btnBg} font-bold text-xs py-2 rounded-xl shadow-sm transition-all active:scale-95 disabled:opacity-60 cursor-pointer`}
+                  className={`w-full ${theme.btnBg} font-bold text-[14px] py-2 rounded-xl shadow-sm transition-all active:scale-95 disabled:opacity-60 cursor-pointer`}
                 >
                   {isBusy ? "Sending…" : msg ? msg : `Dispense ${h.label}`}
                 </button>
@@ -248,14 +248,14 @@ export default function HoppersTab({ items }) {
                   <button
                     onClick={() => emptyTray(h.id)}
                     disabled={isBusy}
-                    className="flex-1 bg-black/20 hover:bg-black/30 font-semibold text-[10px] py-1 rounded-lg text-white/90 transition-all cursor-pointer"
+                    className="flex-1 bg-black/20 hover:bg-black/30 font-semibold text-[12px] py-1.5 rounded-lg text-white/90 transition-all cursor-pointer"
                     title="Reset cumulative weight for this hopper"
                   >
                     ↺ Empty Tray
                   </button>
                   <button
                     onClick={() => stopDispense(h.id)}
-                    className="bg-black/20 hover:bg-black/30 font-semibold text-[10px] px-2.5 py-1 rounded-lg text-white/90 transition-all cursor-pointer"
+                    className="bg-black/20 hover:bg-black/30 font-semibold text-[12px] px-3 py-1.5 rounded-lg text-white/90 transition-all cursor-pointer"
                     title="Stop dispensing for this hopper"
                   >
                     ⏹ Stop

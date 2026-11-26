@@ -13,7 +13,7 @@ const MATERIALS = [
 ];
 
 function HopperCard({ id, label }) {
-  const [target, setTarget] = useState(10);
+  const [target, setTarget] = useState(1);
   const [status, setStatus] = useState(null); // null | "sending" | "sent" | "error"
 
   async function dispense() {
@@ -34,9 +34,9 @@ function HopperCard({ id, label }) {
 
   return (
     <div className="border border-gray-200 rounded-lg p-3 flex flex-col gap-2">
-      <label className="text-xs text-gray-500 flex items-center gap-1">
+      <label className="text-[14px] text-gray-500 flex items-center gap-1">
         {label} Target (g)
-        <span className="text-[10px] bg-gray-100 text-gray-700 font-bold rounded px-1 py-0.5">
+        <span className="text-[12px] bg-gray-100 text-gray-700 font-bold rounded px-1.5 py-0.5">
           {id === "sand" ? "ESP1" : "ESP3"}
         </span>
       </label>
@@ -44,12 +44,12 @@ function HopperCard({ id, label }) {
         type="number"
         value={target}
         onChange={(e) => setTarget(e.target.value)}
-        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-[16px] font-semibold"
       />
       <button
         onClick={dispense}
         disabled={status === "sending"}
-        className="bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-xs font-medium px-3 py-2 rounded-lg flex items-center justify-center gap-1.5"
+        className="bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-[14px] font-medium px-3 py-2 rounded-lg flex items-center justify-center gap-1.5"
       >
         <span>&#10148;</span> Dispense {label}
       </button>

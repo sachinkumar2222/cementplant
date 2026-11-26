@@ -105,20 +105,20 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 600;
       opacity: 0.95;
     }
     .target-input-wrap {
       position: relative;
-      width: 84px;
+      width: 90px;
     }
     .target-input {
       width: 100%;
       background: #ffffff;
       color: #111827;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 16px;
       border-radius: 8px;
       padding: 4px 24px 4px 8px;
       border: none;
@@ -129,7 +129,7 @@
       position: absolute;
       right: 8px;
       top: 4px;
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 700;
       color: #6b7280;
       pointer-events: none;
@@ -139,7 +139,7 @@
       width: 100%;
       background: #ffffff;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 16px;
       padding: 8px 12px;
       border-radius: 12px;
       border: none;
@@ -173,7 +173,7 @@
       <div>
         <div class="card-header">
           <span class="card-title">Gypsum Hopper</span>
-          <span class="card-badge">ESP1</span>
+          <span class="card-badge">ESP3</span>
         </div>
         <div class="card-value-row">
           <span class="card-value" id="val-gypsum">--</span>
@@ -184,7 +184,7 @@
         <div class="target-row">
           <span>Dispense Target:</span>
           <div class="target-input-wrap">
-            <input type="number" min="1" value="10" id="target-gypsum" class="target-input" />
+            <input type="number" min="1" value="1" id="target-gypsum" class="target-input" />
             <span class="target-unit">g</span>
           </div>
         </div>
@@ -199,7 +199,7 @@
       <div>
         <div class="card-header">
           <span class="card-title">Iron Ore Hopper</span>
-          <span class="card-badge">ESP1</span>
+          <span class="card-badge">ESP3</span>
         </div>
         <div class="card-value-row">
           <span class="card-value" id="val-iron_ore">--</span>
@@ -210,7 +210,7 @@
         <div class="target-row">
           <span>Dispense Target:</span>
           <div class="target-input-wrap">
-            <input type="number" min="1" value="10" id="target-iron_ore" class="target-input" />
+            <input type="number" min="1" value="1" id="target-iron_ore" class="target-input" />
             <span class="target-unit">g</span>
           </div>
         </div>
@@ -274,7 +274,7 @@
     async function dispense(id, label) {
       const btn = document.getElementById(`btn-${id}`);
       const targetInput = document.getElementById(`target-${id}`);
-      const targetVal = Number(targetInput.value) || 10;
+      const targetVal = Number(targetInput.value) || 1;
 
       btn.disabled = true;
       btn.textContent = "Sending…";

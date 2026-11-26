@@ -207,7 +207,7 @@
       <div class="input-row">
         <label class="input-label" for="target-sand">Target Weight:</label>
         <div class="input-group">
-          <input type="number" id="target-sand" class="val-input" value="10" min="1" max="100" />
+          <input type="number" id="target-sand" class="val-input" value="1" min="1" max="100" />
           <span class="unit-tag">grams</span>
         </div>
       </div>
@@ -228,12 +228,12 @@
     <div class="panel panel-clay">
       <div class="panel-title-row">
         <span class="panel-title">Clay Hopper</span>
-        <span class="panel-badge">ESP1</span>
+        <span class="panel-badge">ESP3</span>
       </div>
       <div class="input-row">
         <label class="input-label" for="target-clay">Target Weight:</label>
         <div class="input-group">
-          <input type="number" id="target-clay" class="val-input" value="10" min="1" max="100" />
+          <input type="number" id="target-clay" class="val-input" value="1" min="1" max="100" />
           <span class="unit-tag">grams</span>
         </div>
       </div>
@@ -254,12 +254,12 @@
     <div class="panel panel-iron_ore">
       <div class="panel-title-row">
         <span class="panel-title">Iron Ore Hopper</span>
-        <span class="panel-badge">ESP1</span>
+        <span class="panel-badge">ESP3</span>
       </div>
       <div class="input-row">
         <label class="input-label" for="target-iron_ore">Target Weight:</label>
         <div class="input-group">
-          <input type="number" id="target-iron_ore" class="val-input" value="10" min="1" max="100" />
+          <input type="number" id="target-iron_ore" class="val-input" value="1" min="1" max="100" />
           <span class="unit-tag">grams</span>
         </div>
       </div>
@@ -280,12 +280,12 @@
     <div class="panel panel-gypsum">
       <div class="panel-title-row">
         <span class="panel-title">Gypsum Hopper</span>
-        <span class="panel-badge">ESP1</span>
+        <span class="panel-badge">ESP3</span>
       </div>
       <div class="input-row">
         <label class="input-label" for="target-gypsum">Target Weight:</label>
         <div class="input-group">
-          <input type="number" id="target-gypsum" class="val-input" value="10" min="1" max="100" />
+          <input type="number" id="target-gypsum" class="val-input" value="1" min="1" max="100" />
           <span class="unit-tag">grams</span>
         </div>
       </div>
@@ -356,7 +356,7 @@
     async function triggerUpdate(id, label) {
       const input = document.getElementById(`target-${id}`);
       const btn = document.getElementById(`btn-${id}`);
-      const targetVal = Number(input.value) || 10;
+      const targetVal = Number(input.value) || 1;
 
       btn.disabled = true;
       btn.textContent = "Sending…";

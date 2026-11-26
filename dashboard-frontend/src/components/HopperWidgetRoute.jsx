@@ -44,10 +44,10 @@ const HOPPER_THEMES = {
 export default function HopperWidgetRoute({ hopperKeys = ["gypsum"] }) {
   const { items } = useLiveData();
   const [targets, setTargets] = useState({
-    gypsum: 10,
-    iron_ore: 10,
-    sand: 10,
-    clay: 10,
+    gypsum: 1,
+    iron_ore: 1,
+    sand: 1,
+    clay: 1,
   });
   const [sending, setSending] = useState({});
   const [message, setMessage] = useState({});
@@ -74,7 +74,7 @@ export default function HopperWidgetRoute({ hopperKeys = ["gypsum"] }) {
       const res = await fetch(`${API_BASE}/api/item/${id}/target`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ target: Number(targets[id]) || 10 }),
+        body: JSON.stringify({ target: Number(targets[id]) || 1 }),
       });
       if (!res.ok) throw new Error("Failed");
       setMessage((prev) => ({ ...prev, [id]: "Target Sent ✓" }));
@@ -123,12 +123,12 @@ export default function HopperWidgetRoute({ hopperKeys = ["gypsum"] }) {
             <div>
               <div className="flex items-center justify-between">
                 <span
-                  className={`text-xs font-bold uppercase tracking-wider ${theme.titleColor}`}
+                  className={`text-[14px] font-bold uppercase tracking-wider ${theme.titleColor}`}
                   style={{ textShadow: "0 1px 3px rgba(0,0,0,0.8)" }}
                 >
                   {theme.label} Hopper
                 </span>
-                <span className="text-[10px] bg-white/20 border border-white/25 font-bold px-2 py-0.2 rounded-full">
+                <span className="text-[12px] bg-white/20 border border-white/25 font-bold px-2 py-0.5 rounded-full">
                   {id === "sand" ? "ESP1" : "ESP3"}
                 </span>
               </div>
@@ -146,19 +146,19 @@ export default function HopperWidgetRoute({ hopperKeys = ["gypsum"] }) {
 
             <div className="space-y-2.5 pt-2 border-t border-white/20">
               <div
-                className="flex items-center justify-between text-[11px] font-semibold text-white/95"
+                className="flex items-center justify-between text-[13px] font-semibold text-white/95"
                 style={{ textShadow: "0 1px 3px rgba(0,0,0,0.8)" }}
               >
                 <span>Dispense Target:</span>
-                <div className="relative w-20">
+                <div className="relative w-22">
                   <input
                     type="number"
                     min="1"
                     value={targets[id]}
                     onChange={(e) => handleTargetChange(id, e.target.value)}
-                    className="w-full bg-slate-900/60 text-white font-bold text-xs rounded-lg px-2.5 py-1 focus:outline-none border border-white/25 focus:border-white/50 backdrop-blur-sm"
+                    className="w-full bg-slate-900/60 text-white font-bold text-[14px] rounded-lg px-2.5 py-1 focus:outline-none border border-white/25 focus:border-white/50 backdrop-blur-sm"
                   />
-                  <span className="absolute right-2 top-1 text-[11px] text-white/70 font-bold">
+                  <span className="absolute right-2 top-1 text-[13px] text-white/70 font-bold">
                     g
                   </span>
                 </div>
@@ -167,7 +167,7 @@ export default function HopperWidgetRoute({ hopperKeys = ["gypsum"] }) {
               <button
                 onClick={() => dispense(id, theme.label)}
                 disabled={isBusy}
-                className="w-full bg-white/20 hover:bg-white/30 text-white font-bold text-xs py-2 rounded-xl border border-white/30 shadow-md backdrop-blur-sm transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                className="w-full bg-white/20 hover:bg-white/30 text-white font-bold text-[14px] py-2 rounded-xl border border-white/30 shadow-md backdrop-blur-sm transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
                 style={{ textShadow: "0 1px 3px rgba(0,0,0,0.7)" }}
               >
                 {isBusy ? "Sending…" : msg ? msg : `Dispense ${theme.label}`}
